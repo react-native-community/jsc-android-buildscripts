@@ -1,0 +1,43 @@
+diff --exclude=.svn -aur webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
+--- webkit/Source/cmake/FindICU.cmake	2017-05-16 12:00:04.000000000 +0200
++++ cmake/FindICU.cmake	2017-05-19 16:25:44.000000000 +0200
+@@ -25,7 +25,7 @@
+ # Look for the library.
+ find_library(
+     ICU_LIBRARY
+-    NAMES libicuuc cygicuuc cygicuuc32 icuuc
++    NAMES libicuuc cygicuuc cygicuuc32 icuuc icuuc_jsc
+     HINTS ${PC_ICU_LIBRARY_DIRS}
+           ${PC_ICU_LIBDIR}
+           ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -51,7 +51,7 @@
+     pkg_check_modules(PC_ICU_I18N icu-i18n)
+     find_library(
+         ICU_I18N_LIBRARY
+-        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin
++        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin icui18n_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -68,7 +68,7 @@
+     # Look for the ICU data libraries
+     find_library(
+         ICU_DATA_LIBRARY
+-        NAMES icudata libicudata cygicudata cygicudata32
++        NAMES icudata libicudata cygicudata cygicudata32 icudata_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+diff --exclude=.svn -aur webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
+--- webkit/Source/cmake/OptionsJSCOnly.cmake	2017-05-16 12:00:04.000000000 +0200
++++ cmake/OptionsJSCOnly.cmake	2017-05-26 13:58:10.000000000 +0200
+@@ -23,7 +23,8 @@
+ set(ENABLE_WEBCORE OFF)
+ set(ENABLE_WEBKIT OFF)
+ set(ENABLE_WEBKIT2 OFF)
+-set(ENABLE_API_TESTS ON)
++set(ENABLE_API_TESTS OFF)
++set(ENABLE_SAMPLING_PROFILER OFF)
+ 
+ if (WTF_CPU_X86 OR WTF_CPU_X86_64)
+     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)

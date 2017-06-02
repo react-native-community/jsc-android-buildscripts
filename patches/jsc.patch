@@ -1,0 +1,33 @@
+diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeLists.txt
+--- JavaScriptCore-org/CMakeLists.txt	2017-02-10 02:49:33.000000000 +0100
++++ JavaScriptCore/CMakeLists.txt	2017-06-02 10:18:36.000000000 +0200
+@@ -18,7 +18,7 @@
+     "${JAVASCRIPTCORE_DIR}/dfg"
+     "${JAVASCRIPTCORE_DIR}/disassembler"
+     "${JAVASCRIPTCORE_DIR}/disassembler/udis86"
+-    "${JAVASCRIPTCORE_DIR}/disassembler/arm64"
++    "${JAVASCRIPTCORE_DIR}/disassembler/ARM64"
+     "${JAVASCRIPTCORE_DIR}/domjit"
+     "${JAVASCRIPTCORE_DIR}/ftl"
+     "${JAVASCRIPTCORE_DIR}/heap"
+@@ -1491,7 +1491,7 @@
+ 
+ target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
+ 
+-add_subdirectory(shell)
++# add_subdirectory(shell)
+ 
+ WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
+ WEBKIT_FRAMEWORK(JavaScriptCore)
+diff --exclude=.svn -aur JavaScriptCore-org/heap/EdenGCActivityCallback.cpp JavaScriptCore/heap/EdenGCActivityCallback.cpp
+--- JavaScriptCore-org/heap/EdenGCActivityCallback.cpp	2016-11-02 23:01:04.000000000 +0100
++++ JavaScriptCore/heap/EdenGCActivityCallback.cpp	2017-05-30 15:57:45.000000000 +0200
+@@ -30,7 +30,7 @@
+ 
+ namespace JSC {
+ 
+-#if USE(CF) || USE(GLIB)
++#if 1
+ 
+ EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
+     : GCActivityCallback(heap)

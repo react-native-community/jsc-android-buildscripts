@@ -1,0 +1,15 @@
+diff --exclude=.svn -aur WTF-org/wtf/Assertions.cpp WTF/wtf/Assertions.cpp
+--- WTF-org/wtf/Assertions.cpp	2016-09-01 03:33:40.000000000 +0200
++++ WTF/wtf/Assertions.cpp	2017-05-30 14:47:06.000000000 +0200
+@@ -72,11 +72,9 @@
+ #include <unistd.h>
+ #endif
+ 
+-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
+ #include <cxxabi.h>
+ #include <dlfcn.h>
+ #include <execinfo.h>
+-#endif
+ 
+ extern "C" {
+ 
