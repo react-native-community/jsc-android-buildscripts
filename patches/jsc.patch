@@ -1,6 +1,6 @@
 diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeLists.txt
 --- JavaScriptCore-org/CMakeLists.txt	2017-02-10 02:49:33.000000000 +0100
-+++ JavaScriptCore/CMakeLists.txt	2017-06-02 10:18:36.000000000 +0200
++++ JavaScriptCore/CMakeLists.txt	2017-06-05 12:00:20.000000000 +0200
 @@ -18,7 +18,7 @@
      "${JAVASCRIPTCORE_DIR}/dfg"
      "${JAVASCRIPTCORE_DIR}/disassembler"
@@ -19,6 +19,14 @@ diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeL
  
  WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
  WEBKIT_FRAMEWORK(JavaScriptCore)
+@@ -1503,6 +1503,7 @@
+         install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
+     endif ()
+ endif ()
++set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME jsc)
+ 
+ # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
+ 
 diff --exclude=.svn -aur JavaScriptCore-org/heap/EdenGCActivityCallback.cpp JavaScriptCore/heap/EdenGCActivityCallback.cpp
 --- JavaScriptCore-org/heap/EdenGCActivityCallback.cpp	2016-11-02 23:01:04.000000000 +0100
 +++ JavaScriptCore/heap/EdenGCActivityCallback.cpp	2017-05-30 15:57:45.000000000 +0200
