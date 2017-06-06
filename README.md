@@ -63,5 +63,5 @@ As a part of this project we provide a patch to react-native source code that al
 
 This project has been built in cooperation between [Expo.io](https://expo.io/) and [Software Mansion](https://swmansion.com)
 
-![Expo.io](https://avatars2.githubusercontent.com/u/12504344?v=3&s=200  | width=200)
-![Software Mansion](https://avatars1.githubusercontent.com/u/6952717?v=3&s=200 | width=200)
+![Expo.io](https://avatars2.githubusercontent.com/u/12504344?v=3&s=144)
+![Software Mansion](https://avatars1.githubusercontent.com/u/6952717?v=3&s=144)
