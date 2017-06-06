@@ -2,9 +2,12 @@
 
 source './common.sh'
 
-rm -rf $ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM
-mkdir -p $ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM
-cd $ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM
+ICU_VERSION="56.1"
+
+BUILD_DIR=$ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM
+rm -rf $BUILD_DIR
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
 
 CROSS_BUILD_DIR=$(realpath ../host)
 PATH=$TOOLCHAIN_DIR/bin:$PATH
@@ -33,4 +36,8 @@ PATH=$TOOLCHAIN_DIR/bin:$PATH
 
 make -j5
 
-cp stubdata/lib* lib/
+cp stubdata/libicudata_jsc.so.$ICU_VERSION lib/
+
+cp stubdata/libicudata_jsc.so.$ICU_VERSION $INSTALL_DIR/libicudata_jsc.so
+cp lib/libicui18n_jsc.so.$ICU_VERSION $INSTALL_DIR/libicui18n_jsc.so
+cp lib/libicuuc_jsc.so.$ICU_VERSION $INSTALL_DIR/libicuuc_jsc.so

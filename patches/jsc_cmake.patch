@@ -1,4 +1,4 @@
-diff --exclude=.svn -aur webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
+diff --exclude=.svn -aur webkit/Source/cmake/FindICU.cmake cmake/FindICU.cmake
 --- webkit/Source/cmake/FindICU.cmake	2017-05-16 12:00:04.000000000 +0200
 +++ cmake/FindICU.cmake	2017-05-19 16:25:44.000000000 +0200
 @@ -25,7 +25,7 @@
@@ -28,7 +28,7 @@ diff --exclude=.svn -aur webkit/Source/cmake/FindICU.cmake target/webkit/Source/
          HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
                ${PC_ICU_I18N_LIBDIR}
                ${WEBKIT_LIBRARIES_LINK_DIR}
-diff --exclude=.svn -aur webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
+diff --exclude=.svn -aur webkit/Source/cmake/OptionsJSCOnly.cmake cmake/OptionsJSCOnly.cmake
 --- webkit/Source/cmake/OptionsJSCOnly.cmake	2017-05-16 12:00:04.000000000 +0200
 +++ cmake/OptionsJSCOnly.cmake	2017-05-26 13:58:10.000000000 +0200
 @@ -23,7 +23,8 @@

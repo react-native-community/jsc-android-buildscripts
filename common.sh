@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOTDIR=`pwd`
+if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
 ARCH=$JSC_ARCH
 
 ANDROID_API=21
@@ -24,30 +24,49 @@ PLATFORM_CFLAGS_arm=" \
 -mfpu=neon \
 -mthumb \
 "
-
 PLATFORM_LDFLAGS_arm=" \
 -L$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib/armv7-a \
 -march=armv7-a \
 -Wl,--fix-cortex-a8 \
 "
+JNI_ARCH_arm=armeabi-v7a
 
 PLATFORM_LDFLAGS_arm64=" \
 -L$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib \
 "
+JNI_ARCH_arm64=arm64-v8a
 
+PLATFORM_CFLAGS_x86=" \
+-march=i686 \
+-mtune=intel \
+-mssse3 \
+-mfpmath=sse \
+-m32 \
+"
 PLATFORM_LDFLAGS_x86=" \
 -L$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib \
 "
+JNI_ARCH_x86=x86
 
+PLATFORM_CFLAGS_x86_64=" \
+-march=x86-64 \
+-msse4.2 \
+-mpopcnt \
+-m64 \
+-mtune=intel \
+"
 PLATFORM_LDFLAGS_x86_64=" \
 -L$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib \
 "
+JNI_ARCH_x86_64=x86_64
 
 # arch
 var="PLATFORM_CFLAGS_$JSC_ARCH"
 PLATFORM_CFLAGS=${!var}
 var="PLATFORM_LDFLAGS_$JSC_ARCH"
 PLATFORM_LDFLAGS=${!var}
+var="JNI_ARCH_$JSC_ARCH"
+JNI_ARCH=${!var}
 
 # checks
 err=false
@@ -83,7 +102,9 @@ COMMON_CXXFLAGS=" \
 --std=c++11 \
 "
 
-ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS"
-ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS"
+ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS -Os"
+ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS -Os"
 ICU_LDFLAGS="$COMMON_LDFLAGS $PLATFORM_LDFLAGS"
 
+INSTALL_DIR=$ROOTDIR/lib/distribution/jsc/lib/$JNI_ARCH
+mkdir -p $INSTALL_DIR

@@ -11,7 +11,6 @@ CMAKE_CXX_FLAGS=" \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
--I$ROOTDIR/extra_headers/wtf/ \
 -I$ROOTDIR/target/icu/source/i18n \
 "
 CMAKE_LD_FLAGS=" \
@@ -48,4 +47,5 @@ $PLATFORM_LDFLAGS \
   -DCMAKE_VERBOSE_MAKEFILE=on \
   "
 
-  mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM
+mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM
+cp $ROOTDIR/target/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
