@@ -8,14 +8,19 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 ## Requirements
 
+You can try the provided Docker image.
+To use it prefix each command with `docker run -vLOCAL_WORKDIR_PATH:/bitrise/src --rm swmansion/jsc-android-buildscripts`.
+
 ## Build instructions
 
-1. ./fetch_sources.sh
-2. ./icu-prep.sh
-3. JSC_ARCH=arm ./toolchain.sh
-4. JSC_ARCH=arm ./icu.sh
-5. ./jsc-prep.sh
-6. JSC_ARCH=arm ./jsc.sh
+1. `git clone https://github.com/SoftwareMansion/jsc-android-buildscripts.git .`
+2. `./fetch_sources.sh`
+3. `./icu-prep.sh`
+4. `./jsc-prep.sh`
+5. `./all.sh`
+6. `./gradlew installArchives` (add `-w /bitrise/src/lib` to `docker run` args)
+
+The maven repo containing android-jsc aar will be available at `LOCAL_WORKDIR_PATH/lib/android`.
 
 ## Distribution
 
