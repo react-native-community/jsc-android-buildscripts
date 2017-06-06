@@ -48,5 +48,6 @@ $PLATFORM_LDFLAGS \
   -DCMAKE_VERBOSE_MAKEFILE=on \
   "
 
-mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM
 cp $ROOTDIR/target/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
+mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM
+cp $TOOLCHAIN_LINK_DIR/libc++_shared.so $INSTALL_DIR
