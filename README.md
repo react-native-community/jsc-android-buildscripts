@@ -8,10 +8,28 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 ## Requirements
 
-You can try the provided Docker image.
-To use it prefix each command with `docker run -vLOCAL_WORKDIR_PATH:/bitrise/src --rm swmansion/jsc-android-buildscripts`.
+
+There is a huge list of requirements that needs to be installed on your system in order to be able to cross-compile JSC for android. To simplify the process of setting up the environment we provide a docker image that comes with everything you will need. If you decide to use our docker the only thing you need to do is to prefix each command with this:
+```sh
+docker run -vLOCAL_WORKDIR_PATH:/bitrise/src --rm swmansion/jsc-android-buildscripts
+```
+
+##### Example:
+
+```sh
+docker run -vLOCAL_WORKDIR_PATH:/bitrise/src --rm swmansion/jsc-android-buildscripts ./fetch_sources.sh
+```
+
+#### Don't want to use docker
+
+As mentioned the list of dependencies is huge, we tried to list everything what's needed below:
+ - Android SDK & NDK
+ - ruby (2.3), python (2.7), node (7.x), git, svn, gperf
+ - cmake installed via Android SDK manager
 
 ## Build instructions
+
+> **IMPORTANT:** Remember to prefix each command with an appropriate docker instruction given above when using our docker image
 
 1. `git clone https://github.com/SoftwareMansion/jsc-android-buildscripts.git .`
 2. `./fetch_sources.sh`
@@ -24,10 +42,26 @@ The maven repo containing android-jsc aar will be available at `LOCAL_WORKDIR_PA
 
 ## Distribution
 
+(TODO)
+
 ## How to use it with React Native
 
+We will be working on getting react-native core updated in order to use new version of JSC. Once that gets approved the only thing you will need to do is to update your RN version! Until then you can fork react-native and patch it with the following patch: (TODO)
+
 ## Testing
+
+As a part of this project we provide a patch to react-native source code that allows for measuring react native application cold-start time. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundle into the JS VM such that we measure and store the execution time, then we modify the process of instantiating the bridge in a way that allows for running in multiple times. To learn more about how the perf tests work and how to perform them refer to [this document](../blob/master/TESTING). Results for Samsung Galaxy S4 are presented below:
+
+|                     | android-jsc (r174650) | new JSC (r216995) |
+| ------------------- |----------------------:| -----------------:|
+| cold start time     | 427 ms                | 443 ms            |
+| binary size (x86)   | (TODO)                | (TODO)            |
+| binary size (armv7) | (TODO)                | (TODO)            |
+| binary size (arm64) | N/A                   | (TODO)            |
 
 ## Credits
 
 This project has been built in cooperation between [Expo.io](https://expo.io/) and [Software Mansion](https://swmansion.com)
+
+![Expo.io](https://avatars2.githubusercontent.com/u/12504344?v=3&s=200  | width=200)
+![Software Mansion](https://avatars1.githubusercontent.com/u/6952717?v=3&s=200 | width=200)
