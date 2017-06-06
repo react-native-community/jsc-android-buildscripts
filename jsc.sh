@@ -4,6 +4,7 @@ source common.sh
 
 PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/3.6.3155560/bin/:$PATH
 
+rm -rf target/webkit/$CROSS_COMPILE_PLATFORM
 rm -rf target/webkit/WebKitBuild
 cd target/webkit/Tools/Scripts
 
