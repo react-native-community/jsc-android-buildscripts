@@ -46,7 +46,7 @@ The maven repo containing android-jsc aar will be available at `LOCAL_WORKDIR_PA
 
 ## How to use it with React Native
 
-We will be working on getting react-native core updated in order to use new version of JSC. Once that gets approved the only thing you will need to do is to update your RN version! Until then you can fork react-native and patch it with the following patch: (TODO)
+We will be working on getting react-native core updated in order to use new version of JSC. Once that gets approved the only thing you will need to do is to update your RN version! Until then you can fork react-native and patch it with [this patch](./patches/react-native.patch).
 
 ## Testing
 

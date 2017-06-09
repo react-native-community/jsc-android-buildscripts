@@ -1,0 +1,26 @@
+diff --git a/ReactAndroid/build.gradle b/ReactAndroid/build.gradle
+index cebce68f6..4b79f631f 100644
+--- a/ReactAndroid/build.gradle
++++ b/ReactAndroid/build.gradle
+@@ -271,6 +271,12 @@ android {
+     }
+ }
+ 
++repositories {
++    maven {
++        url "LOCAL_WORKDIR_PATH/lib/android"
++    }
++}
++
+ dependencies {
+     compile fileTree(dir: 'src/main/third-party/java/infer-annotations/', include: ['*.jar'])
+     compile 'javax.inject:javax.inject:1'
+@@ -284,7 +290,7 @@ dependencies {
+     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+     compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+     compile 'com.squareup.okio:okio:1.9.0'
+-    compile 'org.webkit:android-jsc:r174650'
++    compile "org.webkit:android-jsc:+"
+ 
+     testCompile "junit:junit:${JUNIT_VERSION}"
+     testCompile "org.powermock:powermock-api-mockito:${POWERMOCK_VERSION}"
