@@ -52,12 +52,13 @@ We will be working on getting react-native core updated in order to use new vers
 
 As a part of this project we provide a patch to react-native source code that allows for measuring react native application cold-start time. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundle into the JS VM such that we measure and store the execution time, then we modify the process of instantiating the bridge in a way that allows for running in multiple times. To learn more about how the perf tests work and how to perform them refer to [this document](./TESTING.md). Results for Samsung Galaxy S4 are presented below:
 
-|                     | android-jsc (r174650) | new JSC (r216995) |
-| ------------------- |----------------------:| -----------------:|
-| cold start time     | 427 ms                | 443 ms            |
-| binary size (x86)   | (TODO)                | (TODO)            |
-| binary size (armv7) | (TODO)                | (TODO)            |
-| binary size (arm64) | N/A                   | (TODO)            |
+|                      | android-jsc (r174650) | new JSC (r216995) |
+| -------------------- |----------------------:| -----------------:|
+| cold start time      | 427 ms                | 443 ms            |
+| binary size (armv7)  | 1.8 MiB               | 5.7 MiB           |
+| binary size (x86)    | 4.4 MiB               | 10 MiB            |
+| binary size (arm64)  | N/A                   | 11 MiB            |
+| binary size (x86_64) | N/A                   | 13 MiB            |
 
 ## Credits
 
