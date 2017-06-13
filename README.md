@@ -39,27 +39,66 @@ The Maven repo containing the android-jsc AAR will be available at `./lib/androi
 
 ## Distribution
 
-Pre-build version of the JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
+JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
+The library is packaged as a local Maven repository containing AAR files that include the binaries.
+Please refer to the section below in order to learn how your app can consume this format.
 
-The library is packaged as a local Maven repository containing AAR files that include the binaries. In order for this format to be consumed by the React Native app one need to add `jsc-android` in `package.json` and also change `android/build.gradle` such that local Maven repo is added to the list of available repositories:
+## How to use it with my React Native app
+
+Follow steps below in order for your React Native app to use new version of JSC VM on android:
+
+1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
-+    maven {
-+        // Local Maven repo containing AARs with JSC library built for Android
-+        url "$rootDir/../node_modules/jsc-android/android"
-+    }
+dependencies {
++  "jsc-android": "^216113.0.0-beta.3",
 ```
 
-Once that's done Gradle during the build step should be able to locate `android-jsc` AAR installed under `node_modules/jsc-android` that is defined as a dependency of the react-native android module [here](https://github.com/facebook/react-native/blob/master/ReactAndroid/build.gradle#L289).
+then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
+
+2. Modify `andorid/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
+```diff
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
++       maven {
++           // Local Maven repo containing AARs with JSC library built for Android
++           url "$rootDir/../node_modules/jsc-android/android"
++       }
+    }
+}
+```
+
+3. Update your app's `build.gradle` file located in `android/app/build.gradle` to force app builds to use new version of the JSC library as opposed to the version specified in [react-native gradle module as a dependency](https://github.com/facebook/react-native/blob/e8df8d9fd579ff14224cacdb816f9ff07eef978d/ReactAndroid/build.gradle#L289):
+
+```diff
+}
+
++configurations.all {
++    resolutionStrategy {
++        force 'org.webkit:android-jsc:r216113'
++    }
++}
+
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
+```
+
+4. You're done, rebuild your app and enjoy updated version of JSC on android!
 
 ## How to use it with React Native
 
-We will be working on updating React Native to use a new version of JSC. Once that gets approved the only thing you will need to do is to update your RN version! Until then you can fork React Native and patch it with [this patch](./patches/react-native.patch).
+We will be working on updating React Native to use a new version of JSC. Once that gets approved the only thing you will need to do is to update your RN version!
 
 ## Testing
 
 As a part of this project we provide a patch to the React Native source code that allows for measuring a React Native application's cold-start time. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundles into the JS VM such that we measure and store the execution time, and to modify the process of instantiating the bridge so we can run it multiple times. To learn more about how the perf tests work and how to perform them, refer to [this document](./TESTING.md). Results for the Samsung Galaxy S4 are presented below:
 
-|                      | android-jsc (r174650) | new JSC (r216995) |
+|                      | android-jsc (r174650) | new JSC (r216113) |
 | -------------------- |----------------------:| -----------------:|
 | cold start time      | 427 ms                | 443 ms            |
 | binary size (armv7)  | 1.8 MiB               | 5.7 MiB           |
