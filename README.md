@@ -39,7 +39,17 @@ The Maven repo containing the android-jsc AAR will be available at `./lib/androi
 
 ## Distribution
 
-(TODO)
+Pre-build version of the JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
+
+The library is packaged as a local Maven repository containing AAR files that include the binaries. In order for this format to be consumed by the React Native app one need to add `jsc-android` in `package.json` and also change `android/build.gradle` such that local Maven repo is added to the list of available repositories:
+```diff
++    maven {
++        // Local Maven repo containing AARs with JSC library built for Android
++        url "$rootDir/../node_modules/jsc-android/android"
++    }
+```
+
+Once that's done Gradle during the build step should be able to locate `android-jsc` AAR installed under `node_modules/jsc-android` that is defined as a dependency of the react-native android module [here](https://github.com/facebook/react-native/blob/master/ReactAndroid/build.gradle#L289).
 
 ## How to use it with React Native
 
