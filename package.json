@@ -1,6 +1,6 @@
 {
   "name": "jsc-android",
-  "version": "216113.0.0-beta.3",
+  "version": "216113.0.0-beta.4",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
   "files": [
     "android/"
   ],
-  "license": "UNLICENSED",
+  "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/SoftwareMansion/jsc-android-buildscripts/issues"
   },
