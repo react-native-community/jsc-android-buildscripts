@@ -1,16 +1,50 @@
-diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeLists.txt
---- JavaScriptCore-org/CMakeLists.txt 2017-02-10 02:49:33.000000000 +0100
-+++ JavaScriptCore/CMakeLists.txt 2017-06-05 12:00:20.000000000 +0200
-@@ -18,7 +18,7 @@
-     "${JAVASCRIPTCORE_DIR}/dfg"
-     "${JAVASCRIPTCORE_DIR}/disassembler"
-     "${JAVASCRIPTCORE_DIR}/disassembler/udis86"
--    "${JAVASCRIPTCORE_DIR}/disassembler/arm64"
-+    "${JAVASCRIPTCORE_DIR}/disassembler/ARM64"
-     "${JAVASCRIPTCORE_DIR}/domjit"
-     "${JAVASCRIPTCORE_DIR}/ftl"
-     "${JAVASCRIPTCORE_DIR}/heap"
-@@ -1491,7 +1491,7 @@
+diff -aur orig/webkit/Source/cmake/FindICU.cmake webkit/Source/cmake/FindICU.cmake
+--- orig/webkit/Source/cmake/FindICU.cmake	2016-11-30 19:45:57.627237000 +0100
++++ webkit/Source/cmake/FindICU.cmake	2017-06-14 10:45:36.042729515 +0200
+@@ -25,7 +25,7 @@
+ # Look for the library.
+ find_library(
+     ICU_LIBRARY
+-    NAMES libicuuc cygicuuc cygicuuc32 icuuc
++    NAMES libicuuc cygicuuc cygicuuc32 icuuc icuuc_jsc
+     HINTS ${PC_ICU_LIBRARY_DIRS}
+           ${PC_ICU_LIBDIR}
+           ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -51,7 +51,7 @@
+     pkg_check_modules(PC_ICU_I18N icu-i18n)
+     find_library(
+         ICU_I18N_LIBRARY
+-        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin
++        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin icui18n_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -68,7 +68,7 @@
+     # Look for the ICU data libraries
+     find_library(
+         ICU_DATA_LIBRARY
+-        NAMES icudata libicudata cygicudata cygicudata32
++        NAMES icudata libicudata cygicudata cygicudata32 icudata_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+diff -aur orig/webkit/Source/cmake/OptionsJSCOnly.cmake webkit/Source/cmake/OptionsJSCOnly.cmake
+--- orig/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-04-17 15:51:21.809161000 +0200
++++ webkit/Source/cmake/OptionsJSCOnly.cmake	2017-06-14 10:45:36.042729515 +0200
+@@ -23,7 +23,8 @@
+ set(ENABLE_WEBCORE OFF)
+ set(ENABLE_WEBKIT OFF)
+ set(ENABLE_WEBKIT2 OFF)
+-set(ENABLE_API_TESTS ON)
++set(ENABLE_API_TESTS OFF)
++set(ENABLE_SAMPLING_PROFILER OFF)
+ 
+ if (WTF_CPU_X86 OR WTF_CPU_X86_64)
+     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+diff -aur orig/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/JavaScriptCore/CMakeLists.txt
+--- orig/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.684637000 +0200
++++ webkit/Source/JavaScriptCore/CMakeLists.txt	2017-06-14 10:45:36.042729515 +0200
+@@ -1543,7 +1543,7 @@
  
  target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
  
@@ -19,7 +53,7 @@ diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeL
  
  WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
  WEBKIT_FRAMEWORK(JavaScriptCore)
-@@ -1503,6 +1503,7 @@
+@@ -1555,6 +1555,7 @@
          install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
      endif ()
  endif ()
@@ -27,26 +61,25 @@ diff --exclude=.svn -aur JavaScriptCore-org/CMakeLists.txt JavaScriptCore/CMakeL
  
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
  
-diff --exclude=.svn -aur JavaScriptCore-org/heap/EdenGCActivityCallback.cpp JavaScriptCore/heap/EdenGCActivityCallback.cpp
---- JavaScriptCore-org/heap/EdenGCActivityCallback.cpp  2016-11-02 23:01:04.000000000 +0100
-+++ JavaScriptCore/heap/EdenGCActivityCallback.cpp  2017-05-30 15:57:45.000000000 +0200
-@@ -30,7 +30,7 @@
+diff -aur orig/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/Assertions.cpp
+--- orig/webkit/Source/WTF/wtf/Assertions.cpp	2017-04-25 04:53:49.356899000 +0200
++++ webkit/Source/WTF/wtf/Assertions.cpp	2017-06-14 11:09:30.575649644 +0200
+@@ -74,7 +74,6 @@
+ #endif
  
- namespace JSC {
+ #if HAVE(BACKTRACE)
+-#include <execinfo.h>
+ #endif
  
--#if USE(CF) || USE(GLIB)
-+#if 1
- 
- EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
-     : GCActivityCallback(heap)
-diff --exclude=.svn -aur JavaScriptCore-org/inspector/JSGlobalObjectInspectorController.cpp JavaScriptCore/inspector/JSGlobalObjectInspectorController.cpp
---- JavaScriptCore-org/inspector/JSGlobalObjectInspectorController.cpp  2016-12-14 17:04:30.000000000 +0100
-+++ JavaScriptCore/inspector/JSGlobalObjectInspectorController.cpp  2017-06-06 13:23:24.000000000 +0200
-@@ -52,7 +52,6 @@
- #if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
+ extern "C" {
+diff -aur orig/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/StackTrace.cpp
+--- orig/webkit/Source/WTF/wtf/StackTrace.cpp	2017-04-25 04:53:49.356899000 +0200
++++ webkit/Source/WTF/wtf/StackTrace.cpp	2017-06-14 11:09:10.912006447 +0200
+@@ -33,7 +33,6 @@
+ #if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
  #include <cxxabi.h>
  #include <dlfcn.h>
 -#include <execinfo.h>
  #endif
  
- #if ENABLE(REMOTE_INSPECTOR)
+ namespace WTF {
