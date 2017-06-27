@@ -100,11 +100,11 @@ As a part of this project we provide a patch to the React Native source code tha
 
 |                      | android-jsc (r174650) | new JSC (r216113) |
 | -------------------- |----------------------:| -----------------:|
-| cold start time      | 427 ms                | 443 ms            |
-| binary size (armv7)  | 1.8 MiB               | 5.7 MiB           |
-| binary size (x86)    | 4.4 MiB               | 10 MiB            |
-| binary size (arm64)  | N/A                   | 11 MiB            |
-| binary size (x86_64) | N/A                   | 13 MiB            |
+| cold start time      | 427 ms                | ? ms              |
+| binary size (armv7)  | 1.8 MiB               | 4.4 MiB           |
+| binary size (x86)    | 4.4 MiB               | 7.5 MiB           |
+| binary size (arm64)  | N/A                   | 6.7 MiB           |
+| binary size (x86_64) | N/A                   | 7.4 MiB           |
 
 ## Credits
 
