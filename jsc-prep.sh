@@ -2,8 +2,6 @@
 
 ROOTDIR=`pwd`
 
-cd $ROOTDIR/target/webkit/Source
+cd $ROOTDIR/target
 
 patch -p0 < $ROOTDIR/patches/jsc.patch
-patch -p0 < $ROOTDIR/patches/wtf.patch
-patch -p0 < $ROOTDIR/patches/jsc_cmake.patch
