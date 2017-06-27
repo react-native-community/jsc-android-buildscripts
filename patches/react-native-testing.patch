@@ -1,0 +1,83 @@
+diff --git a/ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java b/ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+index 926b665e6..8d1827883 100644
+--- a/ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
++++ b/ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+@@ -20,12 +20,25 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+ import com.facebook.react.modules.core.PermissionAwareActivity;
+ import com.facebook.react.modules.core.PermissionListener;
+ 
++import android.os.Handler;
++
+ /**
+  * Base Activity for React Native applications.
+  */
+ public abstract class ReactActivity extends Activity
+     implements DefaultHardwareBackBtnHandler, PermissionAwareActivity {
+ 
++  final Handler handler = new Handler();
++  final int delay = 2000;
++
++  private Runnable runnableCode = new Runnable() {
++      @Override
++      public void run() {
++          getReactInstanceManager().recreateReactContextInBackground();
++          handler.postDelayed(runnableCode, delay);
++      }
++  };
++
+   private final ReactActivityDelegate mDelegate;
+ 
+   protected ReactActivity() {
+@@ -75,6 +88,7 @@ public abstract class ReactActivity extends Activity
+   @Override
+   public void onActivityResult(int requestCode, int resultCode, Intent data) {
+     mDelegate.onActivityResult(requestCode, resultCode, data);
++    handler.postDelayed(runnableCode, delay);
+   }
+ 
+   @Override
+diff --git a/ReactCommon/cxxreact/JSCExecutor.cpp b/ReactCommon/cxxreact/JSCExecutor.cpp
+index 8c86db591..6d8559063 100644
+--- a/ReactCommon/cxxreact/JSCExecutor.cpp
++++ b/ReactCommon/cxxreact/JSCExecutor.cpp
+@@ -33,6 +33,9 @@
+ #include "ModuleRegistry.h"
+ #include "RecoverableError.h"
+ 
++#include <android/log.h>
++#include <time.h>
++
+ #if defined(WITH_JSC_EXTRA_TRACING) || (DEBUG && defined(WITH_FBSYSTRACE))
+ #include "JSCTracing.h"
+ #endif
+@@ -292,10 +295,18 @@ static const char* explainLoadSourceStatus(JSLoadSourceStatus status) {
+ }
+ #endif
+ 
++int64_t getTimeNsec() {
++  struct timespec now;
++  clock_gettime(CLOCK_MONOTONIC, &now);
++  return (int64_t) now.tv_sec * 1000000000LL;
++}
++
+ void JSCExecutor::loadApplicationScript(std::unique_ptr<const JSBigString> script, std::string sourceURL) {
+   SystraceSection s("JSCExecutor::loadApplicationScript",
+                     "sourceURL", sourceURL);
+ 
++  auto start = getTimeNsec();
++
+   ReactMarker::logMarker(ReactMarker::RUN_JS_BUNDLE_START);
+   String jsSourceURL(m_context, sourceURL.c_str());
+ 
+@@ -315,6 +326,11 @@ void JSCExecutor::loadApplicationScript(std::unique_ptr<const JSBigString> scrip
+ 
+       flush();
+ 
++      auto end = getTimeNsec();
++      double duration = ((double) (end - start)) / 1000000;
++
++      __android_log_print(ANDROID_LOG_ERROR, "jni", "JSC_EXEC_TIME: %lf", duration);
++
+       ReactMarker::logMarker(ReactMarker::CREATE_REACT_CONTEXT_STOP);
+       ReactMarker::logMarker(ReactMarker::RUN_JS_BUNDLE_STOP);
+       return;
