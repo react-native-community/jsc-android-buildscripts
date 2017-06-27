@@ -50,7 +50,7 @@ Follow steps below in order for your React Native app to use new version of JSC 
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
-+  "jsc-android": "^216113.0.0-beta.4",
++  "jsc-android": "^216113.0.0-beta.5",
 ```
 
 then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
