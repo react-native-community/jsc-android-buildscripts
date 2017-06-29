@@ -1,26 +1,27 @@
 diff --git a/ReactAndroid/build.gradle b/ReactAndroid/build.gradle
-index cebce68f6..4b79f631f 100644
+index 132bd7e67..47bc2a8d4 100644
 --- a/ReactAndroid/build.gradle
 +++ b/ReactAndroid/build.gradle
-@@ -271,6 +271,12 @@ android {
+@@ -271,6 +271,13 @@ android {
      }
  }
  
 +repositories {
 +    maven {
-+        url "LOCAL_WORKDIR_PATH/lib/android"
++        // Local Maven repo containing AARs with JSC library built for Android
++        url "$rootDir/../node_modules/jsc-android/android"
 +    }
 +}
 +
  dependencies {
      compile fileTree(dir: 'src/main/third-party/java/infer-annotations/', include: ['*.jar'])
      compile 'javax.inject:javax.inject:1'
-@@ -284,7 +290,7 @@ dependencies {
+@@ -285,7 +292,7 @@ dependencies {
      compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
      compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
      compile 'com.squareup.okio:okio:1.9.0'
 -    compile 'org.webkit:android-jsc:r174650'
-+    compile "org.webkit:android-jsc:+"
++    compile 'org.webkit:android-jsc:r216113'
  
      testCompile "junit:junit:${JUNIT_VERSION}"
      testCompile "org.powermock:powermock-api-mockito:${POWERMOCK_VERSION}"
