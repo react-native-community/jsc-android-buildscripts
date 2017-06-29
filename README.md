@@ -96,7 +96,7 @@ We will be working on updating React Native to use a new version of JSC. Once th
 
 ## Testing
 
-As a part of this project we provide a patch to the React Native source code that allows for measuring a React Native application's cold-start. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundles into the JS VM such that we measure and store the execution time, and to modify the process of instantiating the bridge so we can run it multiple times. To learn more about how the perf tests work and how to perform them, refer to [this document](./TESTING.md). Results for the Samsung Galaxy S4 are presented below, cold start has been measured on rather large React Native app with bundle of size at around 6M:
+As a part of this project we provide a patch to the React Native source code that allows for measuring a React Native application's cold-start. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundles into the JS VM such that we measure and store the execution time, and to modify the process of instantiating the bridge so we can run it multiple times. To learn more about how the perf tests work and how to perform them, refer to [this document](./TESTING.md). Results for the Samsung Galaxy S4 are presented below, cold start has been measured on rather large React Native app with minified bundle of size at around 3M:
 
 |                      | android-jsc (r174650) | new JSC (r216113) |
 | -------------------- |----------------------:| -----------------:|
