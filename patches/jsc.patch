@@ -1,6 +1,52 @@
-diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/JavaScriptCore/CMakeLists.txt
---- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-06-27 13:37:42.000000000 +0200
-+++ webkit/Source/JavaScriptCore/CMakeLists.txt	2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
+--- target-org/webkit/Source/cmake/FindICU.cmake	2016-11-30 19:45:57.000000000 +0100
++++ target/webkit/Source/cmake/FindICU.cmake	2017-07-11 11:34:55.962374878 +0200
+@@ -25,7 +25,7 @@
+ # Look for the library.
+ find_library(
+     ICU_LIBRARY
+-    NAMES libicuuc cygicuuc cygicuuc32 icuuc
++    NAMES libicuuc cygicuuc cygicuuc32 icuuc icuuc_jsc
+     HINTS ${PC_ICU_LIBRARY_DIRS}
+           ${PC_ICU_LIBDIR}
+           ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -51,7 +51,7 @@
+     pkg_check_modules(PC_ICU_I18N icu-i18n)
+     find_library(
+         ICU_I18N_LIBRARY
+-        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin
++        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin icui18n_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+@@ -68,7 +68,7 @@
+     # Look for the ICU data libraries
+     find_library(
+         ICU_DATA_LIBRARY
+-        NAMES icudata libicudata cygicudata cygicudata32
++        NAMES icudata libicudata cygicudata cygicudata32 icudata_jsc
+         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
+               ${PC_ICU_I18N_LIBDIR}
+               ${WEBKIT_LIBRARIES_LINK_DIR}
+diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
+--- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-04-17 15:51:21.000000000 +0200
++++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-07-11 11:34:55.962374878 +0200
+@@ -23,7 +23,11 @@
+ set(ENABLE_WEBCORE OFF)
+ set(ENABLE_WEBKIT OFF)
+ set(ENABLE_WEBKIT2 OFF)
+-set(ENABLE_API_TESTS ON)
++set(ENABLE_API_TESTS OFF)
++set(ENABLE_SAMPLING_PROFILER OFF)
++set(ENABLE_DFG_JIT OFF)
++set(ENABLE_FTL_JIT OFF)
++set(ENABLE_JIT ON)
+ 
+ if (WTF_CPU_X86 OR WTF_CPU_X86_64)
+     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
+--- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.000000000 +0200
++++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-07-11 11:34:55.962374878 +0200
 @@ -1543,7 +1543,7 @@
  
  target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
@@ -18,9 +64,9 @@ diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/J
  
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
  
-diff -aur target-org/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/Assertions.cpp
---- target-org/webkit/Source/WTF/wtf/Assertions.cpp	2017-06-27 13:38:14.000000000 +0200
-+++ webkit/Source/WTF/wtf/Assertions.cpp	2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/WTF/wtf/Assertions.cpp target/webkit/Source/WTF/wtf/Assertions.cpp
+--- target-org/webkit/Source/WTF/wtf/Assertions.cpp	2017-04-25 04:53:49.000000000 +0200
++++ target/webkit/Source/WTF/wtf/Assertions.cpp	2017-07-11 11:34:55.962374878 +0200
 @@ -74,7 +74,6 @@
  #endif
  
@@ -29,9 +75,9 @@ diff -aur target-org/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/
  #endif
  
  extern "C" {
-diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
---- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-06-27 13:38:15.000000000 +0200
-+++ webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-05 12:45:34.000000000 +0200
+diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
+--- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2016-10-08 05:31:15.000000000 +0200
++++ target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-11 11:34:55.962374878 +0200
 @@ -24,24 +24,29 @@
  #include <locale.h>
  #include <wtf/Vector.h>
@@ -71,9 +117,9 @@ diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cp
  }
  
  Vector<String> platformUserPreferredLanguages()
-diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/StackTrace.cpp
---- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-06-27 13:38:15.000000000 +0200
-+++ webkit/Source/WTF/wtf/StackTrace.cpp	2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp target/webkit/Source/WTF/wtf/StackTrace.cpp
+--- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-04-25 04:53:49.000000000 +0200
++++ target/webkit/Source/WTF/wtf/StackTrace.cpp	2017-07-11 11:34:55.962374878 +0200
 @@ -33,7 +33,6 @@
  #if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
  #include <cxxabi.h>
@@ -82,49 +128,30 @@ diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/
  #endif
  
  namespace WTF {
-diff -aur target-org/webkit/Source/cmake/FindICU.cmake webkit/Source/cmake/FindICU.cmake
---- target-org/webkit/Source/cmake/FindICU.cmake	2017-06-27 13:37:41.000000000 +0200
-+++ webkit/Source/cmake/FindICU.cmake	2017-06-27 13:39:41.000000000 +0200
-@@ -25,7 +25,7 @@
- # Look for the library.
- find_library(
-     ICU_LIBRARY
--    NAMES libicuuc cygicuuc cygicuuc32 icuuc
-+    NAMES libicuuc cygicuuc cygicuuc32 icuuc icuuc_jsc
-     HINTS ${PC_ICU_LIBRARY_DIRS}
-           ${PC_ICU_LIBDIR}
-           ${WEBKIT_LIBRARIES_LINK_DIR}
-@@ -51,7 +51,7 @@
-     pkg_check_modules(PC_ICU_I18N icu-i18n)
-     find_library(
-         ICU_I18N_LIBRARY
--        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin
-+        NAMES icui18n libicui18n libicuin cygicuin cygicuin32 icuin icui18n_jsc
-         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
-               ${PC_ICU_I18N_LIBDIR}
-               ${WEBKIT_LIBRARIES_LINK_DIR}
-@@ -68,7 +68,7 @@
-     # Look for the ICU data libraries
-     find_library(
-         ICU_DATA_LIBRARY
--        NAMES icudata libicudata cygicudata cygicudata32
-+        NAMES icudata libicudata cygicudata cygicudata32 icudata_jsc
-         HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
-               ${PC_ICU_I18N_LIBDIR}
-               ${WEBKIT_LIBRARIES_LINK_DIR}
-diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake webkit/Source/cmake/OptionsJSCOnly.cmake
---- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-06-27 13:37:41.000000000 +0200
-+++ webkit/Source/cmake/OptionsJSCOnly.cmake	2017-06-27 13:49:04.000000000 +0200
-@@ -23,7 +23,11 @@
- set(ENABLE_WEBCORE OFF)
- set(ENABLE_WEBKIT OFF)
- set(ENABLE_WEBKIT2 OFF)
--set(ENABLE_API_TESTS ON)
-+set(ENABLE_API_TESTS OFF)
-+set(ENABLE_SAMPLING_PROFILER OFF)
-+set(ENABLE_DFG_JIT OFF)
-+set(ENABLE_FTL_JIT OFF)
-+set(ENABLE_JIT ON)
+diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
+--- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.000000000 +0100
++++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-07-11 11:36:01.845264855 +0200
+@@ -28,12 +28,13 @@
  
- if (WTF_CPU_X86 OR WTF_CPU_X86_64)
-     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+ #include "config.h"
+ #include "Collator.h"
++#include <StringView.h>
+ 
+ #if UCONFIG_NO_COLLATION
+ 
+ namespace WTF {
+ 
+-int Collator::collate(StringView a, StringView b) const
++int Collator::collate(StringView a, StringView b)
+ {
+     unsigned commonLength = std::min(a.length(), b.length());
+     for (unsigned i = 0; i < commonLength; ++i) {
+@@ -51,7 +52,7 @@
+     return 0;
+ }
+ 
+-int Collator::collateUTF8(const char* a, const char* b) const
++int Collator::collateUTF8(const char* a, const char* b)
+ {
+     return collate(String::fromUTF8(a), String::fromUTF8(b));
+ }

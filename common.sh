@@ -1,12 +1,33 @@
 #!/bin/bash
 
+
+# functions
+fix_zero_value_flag() {
+  flag=$1
+  var="ENABLE_$flag"
+  if [[ ${!var} == 0 ]]; then unset "$var"; fi
+}
+
+process_switch_options() {
+  flag=$1
+  var="ENABLE_$flag"
+  if [[ ${!var} ]]; then
+    suffix="ON"
+  else
+    suffix="OFF"
+  fi
+  var2="SWITCH_COMMON_CFLAGS_${flag}_${suffix}"
+  readonly "SWITCH_COMMON_CFLAGS_${flag}"="${!var2}"
+  var2="SWITCH_BUILD_WEBKIT_OPTIONS_${flag}_${suffix}"
+  readonly "SWITCH_BUILD_WEBKIT_OPTIONS_${flag}"="${!var2}"
+}
+
 if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
 ARCH=$JSC_ARCH
 
 ANDROID_API=21
 
 # platform specific settings
-
 CROSS_COMPILE_PLATFORM_arm="arm-linux-androideabi"
 CROSS_COMPILE_PLATFORM_arm64="aarch64-linux-android"
 CROSS_COMPILE_PLATFORM_x86="i686-linux-android"
@@ -16,6 +37,12 @@ CROSS_COMPILE_PLATFORM_x86_64="x86_64-linux-android"
 var="CROSS_COMPILE_PLATFORM_$JSC_ARCH"
 CROSS_COMPILE_PLATFORM=${!var}
 TOOLCHAIN_DIR=$ROOTDIR/target/toolchains/$CROSS_COMPILE_PLATFORM
+
+# options flags
+# INTL
+SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=1"
+SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
+SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 
 # settings
 TOOLCHAIN_LINK_DIR_arm="$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib/armv7-a"
@@ -73,9 +100,13 @@ var="JNI_ARCH_$JSC_ARCH"
 JNI_ARCH=${!var}
 var="TOOLCHAIN_LINK_DIR_$JSC_ARCH"
 TOOLCHAIN_LINK_DIR=${!var}
+# switches
+fix_zero_value_flag "INTL"
+process_switch_options "INTL"
 
 # checks
 err=false
+if ! [[ $FLAVOR ]]; then echo "set FLAVOR to the name of the flavor"; err=true; fi
 if ! [[ $CROSS_COMPILE_PLATFORM ]]; then echo "set JSC_ARCH to one of {arm,arm64,x86,x86_64}"; err=true; fi
 if ! [[ $ANDROID_HOME ]]; then echo "set ANDROID_HOME to android sdk dir"; err=true; fi
 if ! [[ $ANDROID_NDK ]]; then echo "set ANDROID_NDK to android ndk dir"; err=true; fi
@@ -102,6 +133,7 @@ COMMON_CFLAGS=" \
 -fPIC \
 -fvisibility=hidden \
 -DNDEBUG \
+$SWITCH_COMMON_CFLAGS_INTL \
 "
 
 COMMON_CXXFLAGS=" \
@@ -112,5 +144,5 @@ ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS -Os"
 ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS -Os"
 ICU_LDFLAGS="$COMMON_LDFLAGS $PLATFORM_LDFLAGS"
 
-INSTALL_DIR=$ROOTDIR/lib/distribution/jsc/lib/$JNI_ARCH
+INSTALL_DIR=$ROOTDIR/lib/distribution-${FLAVOR}/jsc/lib/$JNI_ARCH
 mkdir -p $INSTALL_DIR
