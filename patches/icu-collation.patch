@@ -1,6 +1,6 @@
 diff -aur target-org/icu/source/config/Makefile.inc.in target/icu/source/config/Makefile.inc.in
 --- target-org/icu/source/config/Makefile.inc.in	2017-07-05 13:23:06.000000000 +0200
-+++ target/icu/source/config/Makefile.inc.in	2017-07-05 14:01:36.333613849 +0200
++++ target/icu/source/config/Makefile.inc.in	2017-07-06 14:02:52.275016858 +0200
 @@ -143,7 +143,7 @@
  
  # Versioned target for a shared library
@@ -12,7 +12,7 @@ diff -aur target-org/icu/source/config/Makefile.inc.in target/icu/source/config/
  # Use as follows:  $(INVOKE) $(GENRB) arguments .. 
 diff -aur target-org/icu/source/config/mh-linux target/icu/source/config/mh-linux
 --- target-org/icu/source/config/mh-linux	2017-07-05 13:23:06.000000000 +0200
-+++ target/icu/source/config/mh-linux	2017-07-05 14:01:36.333613849 +0200
++++ target/icu/source/config/mh-linux	2017-07-06 14:02:52.275016858 +0200
 @@ -25,9 +25,12 @@
  
  ## Compiler switch to embed a library name
@@ -30,7 +30,7 @@ diff -aur target-org/icu/source/config/mh-linux target/icu/source/config/mh-linu
  LD_SOOPTIONS= -Wl,-Bsymbolic
 diff -aur target-org/icu/source/data/Makefile.in target/icu/source/data/Makefile.in
 --- target-org/icu/source/data/Makefile.in	2017-07-05 13:23:06.000000000 +0200
-+++ target/icu/source/data/Makefile.in	2017-07-05 14:01:36.333613849 +0200
++++ target/icu/source/data/Makefile.in	2017-07-06 14:05:31.607995855 +0200
 @@ -24,9 +24,9 @@
  ifeq ($(PKGDATA_OPTS),)
  PKGDATA_OPTS = -O $(top_builddir)/data/icupkg.inc
@@ -44,14 +44,13 @@ diff -aur target-org/icu/source/data/Makefile.in target/icu/source/data/Makefile
  
  # This allows all the data to be in one directory
  ifeq ($(PKGDATA_MODE),dll)
-@@ -448,6 +448,12 @@
+@@ -448,6 +448,11 @@
  MISC_FILES_LIST=$(DAT_FILES_SHORT) $(CNV_FILES_SHORT) $(CNV_FILES_SHORT_SPECIAL) $(CURR_FILES_SHORT) $(RBNF_FILES_SHORT) $(RBNF_INDEX_RES_SHORT) $(TRANSLIT_FILES_SHORT) $(SPREP_FILES_SHORT) $(CFU_FILES_SHORT)
  UNI_CORE_DATA=pnames.icu uprops.icu ucase.icu ubidi.icu nfc.nrm
  UNI_CORE_TARGET_DATA=$(UNI_CORE_DATA:%=$(BUILDDIR)/%)
-+COLL_FILES_LIST=""
 +BRK_FILES_LIST=""
 +LOCALE_FILES_LIST=$(RES_FILES_SHORT) 
-+MISC_FILES_LIST=""
++MISC_FILES_LIST=coll/ucadata.icu
 +
 +
  

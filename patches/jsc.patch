@@ -1,6 +1,6 @@
-diff -aur org/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/JavaScriptCore/CMakeLists.txt
---- org/webkit/Source/JavaScriptCore/CMakeLists.txt  2017-06-27 13:37:42.000000000 +0200
-+++ webkit/Source/JavaScriptCore/CMakeLists.txt  2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/JavaScriptCore/CMakeLists.txt
+--- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-06-27 13:37:42.000000000 +0200
++++ webkit/Source/JavaScriptCore/CMakeLists.txt	2017-06-27 13:39:41.000000000 +0200
 @@ -1543,7 +1543,7 @@
  
  target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
@@ -18,9 +18,9 @@ diff -aur org/webkit/Source/JavaScriptCore/CMakeLists.txt webkit/Source/JavaScri
  
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
  
-diff -aur org/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/Assertions.cpp
---- org/webkit/Source/WTF/wtf/Assertions.cpp 2017-06-27 13:38:14.000000000 +0200
-+++ webkit/Source/WTF/wtf/Assertions.cpp 2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/Assertions.cpp
+--- target-org/webkit/Source/WTF/wtf/Assertions.cpp	2017-06-27 13:38:14.000000000 +0200
++++ webkit/Source/WTF/wtf/Assertions.cpp	2017-06-27 13:39:41.000000000 +0200
 @@ -74,7 +74,6 @@
  #endif
  
@@ -29,9 +29,51 @@ diff -aur org/webkit/Source/WTF/wtf/Assertions.cpp webkit/Source/WTF/wtf/Asserti
  #endif
  
  extern "C" {
-diff -aur org/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/StackTrace.cpp
---- org/webkit/Source/WTF/wtf/StackTrace.cpp 2017-06-27 13:38:15.000000000 +0200
-+++ webkit/Source/WTF/wtf/StackTrace.cpp 2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
+--- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-06-27 13:38:15.000000000 +0200
++++ webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-05 12:45:34.000000000 +0200
+@@ -24,24 +24,29 @@
+ #include <locale.h>
+ #include <wtf/Vector.h>
+ #include <wtf/text/WTFString.h>
++#include <sys/system_properties.h>
+ 
+ namespace WTF {
+ 
+ void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
+ 
+-// Using pango_language_get_default() here is not an option, because
+-// it doesn't support changing the locale in runtime, so it returns
+-// always the same value.
+ static String platformLanguage()
+ {
+-    String localeDefault(setlocale(LC_CTYPE, nullptr));
+-    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
++    char buf[2 * (PROP_VALUE_MAX + 1)];
++
++    int locale_len = __system_property_get("persist.sys.locale", buf);
++    if (locale_len == 0) {
++      int lang_len = __system_property_get("persist.sys.language", buf);
++      if(lang_len == 0) {
+         return ASCIILiteral("en-US");
++      }
++      int country_len = __system_property_get("persist.sys.country", buf + lang_len + 1);
++      if(country_len != 0) {
++        buf[lang_len] = '-';
++      }
++    }
+ 
+-    String normalizedDefault = localeDefault;
+-    normalizedDefault.replace('_', '-');
+-    normalizedDefault.truncate(normalizedDefault.find('.'));
+-    return normalizedDefault;
++    return String(buf);
+ }
+ 
+ Vector<String> platformUserPreferredLanguages()
+diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/StackTrace.cpp
+--- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-06-27 13:38:15.000000000 +0200
++++ webkit/Source/WTF/wtf/StackTrace.cpp	2017-06-27 13:39:41.000000000 +0200
 @@ -33,7 +33,6 @@
  #if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
  #include <cxxabi.h>
@@ -40,9 +82,9 @@ diff -aur org/webkit/Source/WTF/wtf/StackTrace.cpp webkit/Source/WTF/wtf/StackTr
  #endif
  
  namespace WTF {
-diff -aur org/webkit/Source/cmake/FindICU.cmake webkit/Source/cmake/FindICU.cmake
---- org/webkit/Source/cmake/FindICU.cmake  2017-06-27 13:37:41.000000000 +0200
-+++ webkit/Source/cmake/FindICU.cmake  2017-06-27 13:39:41.000000000 +0200
+diff -aur target-org/webkit/Source/cmake/FindICU.cmake webkit/Source/cmake/FindICU.cmake
+--- target-org/webkit/Source/cmake/FindICU.cmake	2017-06-27 13:37:41.000000000 +0200
++++ webkit/Source/cmake/FindICU.cmake	2017-06-27 13:39:41.000000000 +0200
 @@ -25,7 +25,7 @@
  # Look for the library.
  find_library(
@@ -70,9 +112,9 @@ diff -aur org/webkit/Source/cmake/FindICU.cmake webkit/Source/cmake/FindICU.cmak
          HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
                ${PC_ICU_I18N_LIBDIR}
                ${WEBKIT_LIBRARIES_LINK_DIR}
-diff -aur org/webkit/Source/cmake/OptionsJSCOnly.cmake webkit/Source/cmake/OptionsJSCOnly.cmake
---- org/webkit/Source/cmake/OptionsJSCOnly.cmake 2017-06-27 13:37:41.000000000 +0200
-+++ webkit/Source/cmake/OptionsJSCOnly.cmake 2017-06-27 13:49:04.000000000 +0200
+diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake webkit/Source/cmake/OptionsJSCOnly.cmake
+--- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-06-27 13:37:41.000000000 +0200
++++ webkit/Source/cmake/OptionsJSCOnly.cmake	2017-06-27 13:49:04.000000000 +0200
 @@ -23,7 +23,11 @@
  set(ENABLE_WEBCORE OFF)
  set(ENABLE_WEBKIT OFF)

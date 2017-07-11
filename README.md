@@ -106,6 +106,18 @@ As a part of this project we provide a patch to the React Native source code tha
 | binary size (arm64)  | N/A                   | 6.7 MiB           |
 | binary size (x86_64) | N/A                   | 7.4 MiB           |
 
+## ICU data
+
+ICU data are data tables for ICU to provide i18n features such as collation and date/time localization ([read more](http://userguide.icu-project.org/icudata)). Starting with `216113.0.0-beta.6` by default we provide the build with date/time l18n data only (~2.0 MiB per architecture). This allows you to use `Intl.DateTimeFormat` and `Date.toLocaleString`.
+
+### Building ICU with no data
+
+Just uncomment two lines in `icu.sh` responsible for copying `stubdata` lib. This saves ~2.0 MiB per architecture.
+
+### Building ICU also with collation data
+
+Modify `icu-prep.sh` to use `patches/icu-collation.patch` instead of `patches/icu.patch`. This adds additional ~2.2 MiB per architecture.
+
 ## Credits
 
 This project has been built in cooperation between [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
