@@ -90,6 +90,20 @@ dependencies {
 
 4. You're done, rebuild your app and enjoy updated version of JSC on android!
 
+
+## Testing
+
+As a part of this project we provide a patch to the React Native source code that allows for measuring a React Native application's cold-start. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundles into the JS VM such that we measure and store the execution time, and to modify the process of instantiating the bridge so we can run it multiple times. To learn more about how the perf tests work and how to perform them, refer to [this document](./TESTING.md). Results for the Samsung Galaxy S4 are presented below, cold start has been measured on rather large React Native app with minified bundle of size at around 3M:
+
+|                      | android-jsc (r174650) | new JSC (r216113) |
+| -------------------- |----------------------:| -----------------:|
+| cold start time      | 2530 ms               | 2150 ms (-15%)    |
+| binary size (armv7)  | 1.8 MiB               | 4.3 MiB           |
+| binary size (x86)    | 4.4 MiB               | 7.4 MiB           |
+| binary size (arm64)  | N/A                   | 6.5 MiB           |
+| binary size (x86_64) | N/A                   | 7.2 MiB           |
+
+
 ## International variant
 
 Starting with 216113.0.0 version, we provide two build variants which differ in i18n support.
@@ -129,18 +143,6 @@ Note that using variant with i18n support will have some significant impact on t
 | binary size (x86)    | 15.6 MiB                       | 
 | binary size (arm64)  | 14.4 MiB                       | 
 | binary size (x86_64) | 15.2 MiB                       | 
-
-## Testing
-
-As a part of this project we provide a patch to the React Native source code that allows for measuring a React Native application's cold-start. The methodology behind this test is to modify the part of the code that is responsible for loading JS bundles into the JS VM such that we measure and store the execution time, and to modify the process of instantiating the bridge so we can run it multiple times. To learn more about how the perf tests work and how to perform them, refer to [this document](./TESTING.md). Results for the Samsung Galaxy S4 are presented below, cold start has been measured on rather large React Native app with minified bundle of size at around 3M:
-
-|                      | android-jsc (r174650) | new JSC (r216113) |
-| -------------------- |----------------------:| -----------------:|
-| cold start time      | 2530 ms               | 2150 ms (-15%)    |
-| binary size (armv7)  | 1.8 MiB               | 4.3 MiB           |
-| binary size (x86)    | 4.4 MiB               | 7.4 MiB           |
-| binary size (arm64)  | N/A                   | 6.5 MiB           |
-| binary size (x86_64) | N/A                   | 7.2 MiB           |
 
 
 ## Credits
