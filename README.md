@@ -33,7 +33,7 @@ As mentioned the list of dependencies is huge, we tried to list everything that 
 3. `./icu-prep.sh`
 4. `./jsc-prep.sh`
 5. `./all.sh`
-6. `./gradlew installArchives` (add `-w /bitrise/src/lib` to `docker run` args)
+6. `./gradlew lib:installArchives libIntl:installArchives` (add `-w /bitrise/src/lib` to `docker run` args)
 
 The Maven repo containing the android-jsc AAR will be available at `./lib/android`.
 
@@ -106,17 +106,37 @@ As a part of this project we provide a patch to the React Native source code tha
 | binary size (arm64)  | N/A                   | 6.7 MiB           |
 | binary size (x86_64) | N/A                   | 7.4 MiB           |
 
-## ICU data
+## International variant
 
-ICU data are data tables for ICU to provide i18n features such as collation and date/time localization ([read more](http://userguide.icu-project.org/icudata)). Starting with `216113.0.0-beta.6` by default we provide the build with date/time l18n data only (~2.0 MiB per architecture). This allows you to use `Intl.DateTimeFormat` and `Date.toLocaleString`.
+Starting with <unreleased> version, we provide two build variants which differ in i18n support.
 
-### Building ICU with no data
+### Default variant
 
-Just uncomment two lines in `icu.sh` responsible for copying `stubdata` lib. This saves ~2.0 MiB per architecture.
+By default we ship with no international support. Methods like `Date.toLocaleString` will act as `Date.toString`. `String.localeCompare` will just compare each character's byte value.
 
-### Building ICU also with collation data
+### International variant
 
-Modify `icu-prep.sh` to use `patches/icu-collation.patch` instead of `patches/icu.patch`. This adds additional ~2.2 MiB per architecture.
+International variant includes ICU i18n library and necessary data allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that give correct results when using with locales other than `en-US`. Note that this variant is about 6MiB larger per architecture than default.
+
+To use this variant instead replace patch from the third installation step with:
+
+```diff
+}
+
++configurations.all {
++    resolutionStrategy {
++        eachDependency { DependencyResolveDetails details ->
++            if (details.requested.name == 'android-jsc') {
++                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r216113'
++            }
++        }
++    }
++}
+
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
+```
+
 
 ## Credits
 

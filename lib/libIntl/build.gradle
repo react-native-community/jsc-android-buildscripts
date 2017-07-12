@@ -12,9 +12,12 @@ android {
 
     sourceSets {
         main {
-            jniLibs.srcDirs = ['../distribution-no-intl/jsc/lib']
+            jniLibs.srcDirs = ['../distribution-intl/jsc/lib']
         }
     }
 }
 
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
 apply from: 'release.gradle'

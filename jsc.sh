@@ -4,7 +4,12 @@ source common.sh
 
 PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/3.6.3155560/bin/:$PATH
 
-rm -rf target/webkit/$CROSS_COMPILE_PLATFORM
+# conditional patch
+if ! [[ $ENABLE_INTL ]]; then
+  patch -p0 < $ROOTDIR/patches/intl/icu-disabled.patch
+fi
+
+rm -rf target/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
 rm -rf target/webkit/WebKitBuild
 cd target/webkit/Tools/Scripts
 
@@ -26,7 +31,7 @@ $PLATFORM_LDFLAGS \
   --jsc-only \
   --release \
   --jit \
-  --intl \
+  "$SWITCH_BUILD_WEBKIT_OPTIONS_INTL" \
   --no-webassembly \
   --no-xslt \
   --no-netscape-plugin-api \
@@ -36,7 +41,7 @@ $PLATFORM_LDFLAGS \
   -DCMAKE_SYSTEM_PROCESSOR=$ARCH \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \
   -DWEBKIT_LIBRARIES_INCLUDE_DIR=$ROOTDIR/target/icu/source/common \
-  -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM/lib \
+  -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
   -DCMAKE_C_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_CXX_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_SYSROOT=$ANDROID_NDK/platforms/android-$ANDROID_API/arch-$ARCH \
@@ -49,5 +54,11 @@ $PLATFORM_LDFLAGS \
   "
 
 cp $ROOTDIR/target/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
-mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM
+mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 cp $TOOLCHAIN_LINK_DIR/libc++_shared.so $INSTALL_DIR
+
+# conditional patch undo
+cd $ROOTDIR
+if ! [[ $ENABLE_INTL ]]; then
+  patch -p0 -R < $ROOTDIR/patches/intl/icu-disabled.patch
+fi

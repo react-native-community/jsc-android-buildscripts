@@ -4,7 +4,7 @@ source './common.sh'
 
 ICU_VERSION="56.1"
 
-BUILD_DIR=$ROOTDIR/target/icu/$CROSS_COMPILE_PLATFORM
+BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
@@ -36,10 +36,13 @@ PATH=$TOOLCHAIN_DIR/bin:$PATH
 
 make -j5
 
-cp lib/libicudata_jsc.so $INSTALL_DIR/libicudata_jsc.so
+if [[ $ENABLE_INTL ]]; then
+    cp lib/libicudata_jsc.so $INSTALL_DIR/libicudata_jsc.so
+    cp lib/libicui18n_jsc.so.$ICU_VERSION $INSTALL_DIR/libicui18n_jsc.so
+else
+    rm lib/libicui18n_jsc.so*
+    cp stubdata/libicudata_jsc.so.$ICU_VERSION lib/
+    cp stubdata/libicudata_jsc.so.$ICU_VERSION $INSTALL_DIR/libicudata_jsc.so
+fi
 
-#cp stubdata/libicudata_jsc.so.$ICU_VERSION lib/
-#cp stubdata/libicudata_jsc.so.$ICU_VERSION $INSTALL_DIR/libicudata_jsc.so
-
-cp lib/libicui18n_jsc.so.$ICU_VERSION $INSTALL_DIR/libicui18n_jsc.so
 cp lib/libicuuc_jsc.so.$ICU_VERSION $INSTALL_DIR/libicuuc_jsc.so

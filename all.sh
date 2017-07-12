@@ -1,8 +1,20 @@
 #!/bin/bash
 
-for arch in arm arm64 x86 x86_64
-do
-  JSC_ARCH=$arch ./toolchain.sh
-  JSC_ARCH=$arch ./icu.sh
-  JSC_ARCH=$arch ./jsc.sh
-done
+compile() {
+  for arch in arm arm64 x86 x86_64
+  do
+    export JSC_ARCH=$arch
+    ./toolchain.sh
+    ./icu.sh
+    ./jsc.sh
+  done
+}
+
+export FLAVOR=no-intl
+export ENABLE_INTL=0
+compile
+
+
+export FLAVOR=intl
+export ENABLE_INTL=1
+compile
