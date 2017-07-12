@@ -108,7 +108,7 @@ As a part of this project we provide a patch to the React Native source code tha
 
 ## International variant
 
-Starting with <unreleased> version, we provide two build variants which differ in i18n support.
+Starting with 216113.0.0 version, we provide two build variants which differ in i18n support.
 
 ### Default variant
 
