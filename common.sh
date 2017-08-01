@@ -25,7 +25,7 @@ process_switch_options() {
 if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
 ARCH=$JSC_ARCH
 
-ANDROID_API=21
+ANDROID_API=15
 
 # platform specific settings
 CROSS_COMPILE_PLATFORM_arm="arm-linux-androideabi"

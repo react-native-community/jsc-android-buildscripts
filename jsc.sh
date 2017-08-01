@@ -14,10 +14,13 @@ rm -rf target/webkit/WebKitBuild
 cd target/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
+-I$ROOTDIR/extra_headers \
+-I$ANDROID_NDK/sources/android/support/include \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
 -I$ROOTDIR/target/icu/source/i18n \
+-DPTHREAD_KEYS_MAX=1024 \
 "
 CMAKE_LD_FLAGS=" \
 -latomic \
@@ -42,6 +45,7 @@ $PLATFORM_LDFLAGS \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \
   -DWEBKIT_LIBRARIES_INCLUDE_DIR=$ROOTDIR/target/icu/source/common \
   -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
+  -DLLVM_LIBRARIES=$ANDROID_NDK/sources/cxx-stl/llvm-libc++/libs/$JNI_ARCH/libandroid_support.a \
   -DCMAKE_C_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_CXX_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_SYSROOT=$ANDROID_NDK/platforms/android-$ANDROID_API/arch-$ARCH \
