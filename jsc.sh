@@ -14,13 +14,12 @@ rm -rf target/webkit/WebKitBuild
 cd target/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
+$SWITCH_JSC_CFLAGS_COMPAT \
 -I$ROOTDIR/extra_headers \
--I$ANDROID_NDK/sources/android/support/include \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
 -I$ROOTDIR/target/icu/source/i18n \
--DPTHREAD_KEYS_MAX=1024 \
 "
 CMAKE_LD_FLAGS=" \
 -latomic \
@@ -40,12 +39,12 @@ $PLATFORM_LDFLAGS \
   --no-netscape-plugin-api \
   --no-tools \
   --cmakeargs="-DCMAKE_SYSTEM_NAME=Android \
+  $SWITCH_BUILD_WEBKIT_CMAKE_ARGS_COMPAT \
   -DCMAKE_SYSTEM_VERSION=$ANDROID_API \
   -DCMAKE_SYSTEM_PROCESSOR=$ARCH \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \
   -DWEBKIT_LIBRARIES_INCLUDE_DIR=$ROOTDIR/target/icu/source/common \
   -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
-  -DLLVM_LIBRARIES=$ANDROID_NDK/sources/cxx-stl/llvm-libc++/libs/$JNI_ARCH/libandroid_support.a \
   -DCMAKE_C_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_CXX_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_SYSROOT=$ANDROID_NDK/platforms/android-$ANDROID_API/arch-$ARCH \
