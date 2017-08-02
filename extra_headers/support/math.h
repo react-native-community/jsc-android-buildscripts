@@ -25,6 +25,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
+// This file is a workaround of the problem with original compatlib 
+// math.h file, in which #include_next is placed before missing
+// declarations, causing missing declarations to be unavailable.
+
 #ifndef FIXED_ANDROID_SUPPORT_MATH_H
 #define FIXED_ANDROID_SUPPORT_MATH_H
 
