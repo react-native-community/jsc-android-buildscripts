@@ -15,7 +15,6 @@ cd target/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
 $SWITCH_JSC_CFLAGS_COMPAT \
--I$ROOTDIR/extra_headers \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
