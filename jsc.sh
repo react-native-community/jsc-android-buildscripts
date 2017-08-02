@@ -14,6 +14,7 @@ rm -rf target/webkit/WebKitBuild
 cd target/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
+$SWITCH_JSC_CFLAGS_COMPAT \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
@@ -37,6 +38,7 @@ $PLATFORM_LDFLAGS \
   --no-netscape-plugin-api \
   --no-tools \
   --cmakeargs="-DCMAKE_SYSTEM_NAME=Android \
+  $SWITCH_BUILD_WEBKIT_CMAKE_ARGS_COMPAT \
   -DCMAKE_SYSTEM_VERSION=$ANDROID_API \
   -DCMAKE_SYSTEM_PROCESSOR=$ARCH \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \

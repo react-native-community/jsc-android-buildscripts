@@ -20,12 +20,14 @@ process_switch_options() {
   readonly "SWITCH_COMMON_CFLAGS_${flag}"="${!var2}"
   var2="SWITCH_BUILD_WEBKIT_OPTIONS_${flag}_${suffix}"
   readonly "SWITCH_BUILD_WEBKIT_OPTIONS_${flag}"="${!var2}"
+  var2="SWITCH_BUILD_WEBKIT_CMAKE_ARGS_${flag}_${suffix}"
+  readonly "SWITCH_BUILD_WEBKIT_CMAKE_ARGS_${flag}"="${!var2}"
+  var2="SWITCH_JSC_CFLAGS_${flag}_${suffix}"
+  readonly "SWITCH_JSC_CFLAGS_${flag}"="${!var2}"
 }
 
 if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
 ARCH=$JSC_ARCH
-
-ANDROID_API=21
 
 # platform specific settings
 CROSS_COMPILE_PLATFORM_arm="arm-linux-androideabi"
@@ -37,12 +39,6 @@ CROSS_COMPILE_PLATFORM_x86_64="x86_64-linux-android"
 var="CROSS_COMPILE_PLATFORM_$JSC_ARCH"
 CROSS_COMPILE_PLATFORM=${!var}
 TOOLCHAIN_DIR=$ROOTDIR/target/toolchains/$CROSS_COMPILE_PLATFORM
-
-# options flags
-# INTL
-SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=1"
-SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
-SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 
 # settings
 TOOLCHAIN_LINK_DIR_arm="$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib/armv7-a"
@@ -100,12 +96,33 @@ var="JNI_ARCH_$JSC_ARCH"
 JNI_ARCH=${!var}
 var="TOOLCHAIN_LINK_DIR_$JSC_ARCH"
 TOOLCHAIN_LINK_DIR=${!var}
+
+# options flags
+# INTL
+SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=1"
+SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
+SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
+
+# COMPAT - for platforms below 21
+SWITCH_JSC_CFLAGS_COMPAT_ON=" \
+-I$ROOTDIR/extra_headers/support \
+-I$ANDROID_NDK/sources/android/support/include \
+-DPTHREAD_KEYS_MAX=1024 \
+"
+SWITCH_BUILD_WEBKIT_CMAKE_ARGS_COMPAT_ON=" \
+-DLLVM_LIBRARIES=$ANDROID_NDK/sources/cxx-stl/llvm-libc++/libs/$JNI_ARCH/libandroid_support.a \
+"
+
 # switches
 fix_zero_value_flag "INTL"
 process_switch_options "INTL"
 
+fix_zero_value_flag "COMPAT"
+process_switch_options "COMPAT"
+
 # checks
 err=false
+if ! [[ $ANDROID_API ]]; then echo "set ANDROID_API to the minimum supported Android platform version (e.g. 15)"; err=true; fi
 if ! [[ $FLAVOR ]]; then echo "set FLAVOR to the name of the flavor"; err=true; fi
 if ! [[ $CROSS_COMPILE_PLATFORM ]]; then echo "set JSC_ARCH to one of {arm,arm64,x86,x86_64}"; err=true; fi
 if ! [[ $ANDROID_HOME ]]; then echo "set ANDROID_HOME to android sdk dir"; err=true; fi

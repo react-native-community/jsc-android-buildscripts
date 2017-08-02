@@ -1,12 +1,26 @@
 #!/bin/bash
 
+compile_arch() {
+  ./toolchain.sh
+  ./icu.sh
+  ./jsc.sh
+}
+
 compile() {
-  for arch in arm arm64 x86 x86_64
+  for arch in arm x86
   do
     export JSC_ARCH=$arch
-    ./toolchain.sh
-    ./icu.sh
-    ./jsc.sh
+    export ANDROID_API=15
+    export ENABLE_COMPAT=1
+    compile_arch
+  done
+
+  for arch in arm64 x86_64
+  do
+    export JSC_ARCH=$arch
+    export ANDROID_API=21
+    export ENABLE_COMPAT=0
+    compile_arch
   done
 }
 
