@@ -174,3 +174,16 @@ diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/we
  {
      return collate(String::fromUTF8(a), String::fromUTF8(b));
  }
+diff -aur org/target/webkit/Source/cmake/OptionsCommon.cmake target/webkit/Source/cmake/OptionsCommon.cmake
+--- target-org/webkit/Source/cmake/OptionsCommon.cmake      2017-11-15 16:28:52.120093206 +0100
++++ target/webkit/Source/cmake/OptionsCommon.cmake  2017-04-09 02:50:32.875166000 +0200
+@@ -255,7 +255,7 @@
+
+ # Check for headers
+ _HAVE_CHECK_INCLUDE(HAVE_ERRNO_H errno.h)
+-_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
++#_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
+ _HAVE_CHECK_INCLUDE(HAVE_MMAP sys/mman.h)
+ _HAVE_CHECK_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
+ _HAVE_CHECK_INCLUDE(HAVE_STRINGS_H strings.h)
+
