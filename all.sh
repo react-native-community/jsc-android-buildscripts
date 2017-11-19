@@ -1,8 +1,11 @@
 #!/bin/bash -e
 
 compile_arch() {
+  echo "=== compiling toolchain ==="
   ./toolchain.sh
+  echo "=== compiling icu ==="
   ./icu.sh
+  echo "=== compiling jsc ==="
   ./jsc.sh
 }
 
