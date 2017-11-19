@@ -13,7 +13,7 @@ compile() {
   for arch in arm x86
   do
     export JSC_ARCH=$arch
-    export ANDROID_API=15
+    export ANDROID_API=21
     export ENABLE_COMPAT=1
     compile_arch
   done
