@@ -2,7 +2,7 @@
 
 source './common.sh'
 
-ICU_VERSION="56.1"
+ICU_VERSION="58.2"
 
 BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR

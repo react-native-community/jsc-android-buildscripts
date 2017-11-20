@@ -1,7 +1,7 @@
-diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
---- target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp      2017-02-03 22:59:08.000000000 +0100
-+++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp  2017-08-02 10:07:11.000383124 +0200
-@@ -84,13 +84,8 @@
+diff -aur org/target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
+--- org/target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp	2017-08-02 23:50:33.142768000 +0200
++++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp	2017-09-22 16:07:37.960523944 +0200
+@@ -88,13 +88,8 @@
  
  void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
  {
@@ -17,9 +17,9 @@ diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/S
  }
  
  void* DebugHeap::realloc(void* object, size_t size)
-diff -aur target-org/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
---- target-org/webkit/Source/cmake/FindICU.cmake	2016-11-30 19:45:57.000000000 +0100
-+++ target/webkit/Source/cmake/FindICU.cmake	2017-07-11 11:34:55.962374878 +0200
+diff -aur org/target/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
+--- org/target/webkit/Source/cmake/FindICU.cmake	2016-11-30 19:45:57.627237000 +0100
++++ target/webkit/Source/cmake/FindICU.cmake	2017-09-22 16:07:37.960523944 +0200
 @@ -25,7 +25,7 @@
  # Look for the library.
  find_library(
@@ -47,26 +47,27 @@ diff -aur target-org/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmak
          HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
                ${PC_ICU_I18N_LIBDIR}
                ${WEBKIT_LIBRARIES_LINK_DIR}
-diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
---- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-04-17 15:51:21.000000000 +0200
-+++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-07-11 11:34:55.962374878 +0200
-@@ -23,7 +23,11 @@
- set(ENABLE_WEBCORE OFF)
- set(ENABLE_WEBKIT OFF)
- set(ENABLE_WEBKIT2 OFF)
--set(ENABLE_API_TESTS ON)
-+set(ENABLE_API_TESTS OFF)
-+set(ENABLE_SAMPLING_PROFILER OFF)
-+set(ENABLE_DFG_JIT OFF)
-+set(ENABLE_FTL_JIT OFF)
-+set(ENABLE_JIT ON)
+diff -aur org/target/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
+--- org/target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-07-21 15:46:13.271637000 +0200
++++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-09-22 16:09:37.714434733 +0200
+@@ -38,7 +38,12 @@
+ if (WIN32)
+     set(ENABLE_API_TESTS OFF)
+ else ()
+-    set(ENABLE_API_TESTS ON)
++    set(ENABLE_API_TESTS OFF)
++    set(ENABLE_API_TESTS OFF)
++    set(ENABLE_SAMPLING_PROFILER OFF)
++    set(ENABLE_DFG_JIT OFF)
++    set(ENABLE_FTL_JIT OFF)
++    set(ENABLE_JIT ON)
+ endif ()
  
  if (WTF_CPU_X86 OR WTF_CPU_X86_64)
-     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
-diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
---- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.000000000 +0200
-+++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-07-11 11:34:55.962374878 +0200
-@@ -1543,7 +1543,7 @@
+diff -aur org/target/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
+--- org/target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-08-30 12:07:57.867199000 +0200
++++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-09-22 16:07:37.964523874 +0200
+@@ -1555,7 +1555,7 @@
  
  target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
  
@@ -75,7 +76,7 @@ diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/S
  
  WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
  WEBKIT_FRAMEWORK(JavaScriptCore)
-@@ -1555,6 +1555,7 @@
+@@ -1567,6 +1567,7 @@
          install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
      endif ()
  endif ()
@@ -83,20 +84,44 @@ diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/S
  
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
  
-diff -aur target-org/webkit/Source/WTF/wtf/Assertions.cpp target/webkit/Source/WTF/wtf/Assertions.cpp
---- target-org/webkit/Source/WTF/wtf/Assertions.cpp	2017-04-25 04:53:49.000000000 +0200
-+++ target/webkit/Source/WTF/wtf/Assertions.cpp	2017-07-11 11:34:55.962374878 +0200
-@@ -74,7 +74,6 @@
- #endif
+diff -aur org/target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp
+--- org/target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp	2017-05-12 07:21:41.606604000 +0200
++++ target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp	2017-09-22 16:19:31.792092365 +0200
+@@ -34,7 +34,7 @@
  
- #if HAVE(BACKTRACE)
--#include <execinfo.h>
- #endif
+ namespace WTF {
  
- extern "C" {
-diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
---- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2016-10-08 05:31:15.000000000 +0200
-+++ target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-11 11:34:55.962374878 +0200
+-#if OS(LINUX)
++/*#if OS(LINUX)
+ template<typename Functor>
+ static void forEachLine(FILE* file, Functor functor)
+ {
+@@ -47,11 +47,11 @@
+         size = 0;
+     }
+ }
+-#endif
++#endif*/
+ 
+ std::optional<size_t> memoryFootprint()
+ {
+-#if OS(LINUX)
++/*#if OS(LINUX)
+     FILE* file = fopen("/proc/self/smaps", "r");
+     if (!file)
+         return std::nullopt;
+@@ -88,7 +88,7 @@
+     });
+     fclose(file);
+     return totalPrivateDirtyInKB * KB;
+-#endif
++#endif*/
+     return std::nullopt;
+ }
+ 
+diff -aur org/target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
+--- org/target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2016-10-08 05:31:15.318259000 +0200
++++ target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-09-22 16:07:37.964523874 +0200
 @@ -24,24 +24,29 @@
  #include <locale.h>
  #include <wtf/Vector.h>
@@ -136,20 +161,9 @@ diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cp
  }
  
  Vector<String> platformUserPreferredLanguages()
-diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp target/webkit/Source/WTF/wtf/StackTrace.cpp
---- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-04-25 04:53:49.000000000 +0200
-+++ target/webkit/Source/WTF/wtf/StackTrace.cpp	2017-07-11 11:34:55.962374878 +0200
-@@ -33,7 +33,6 @@
- #if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
- #include <cxxabi.h>
- #include <dlfcn.h>
--#include <execinfo.h>
- #endif
- 
- namespace WTF {
-diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
---- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.000000000 +0100
-+++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-07-11 11:36:01.845264855 +0200
+diff -aur org/target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
+--- org/target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.813217000 +0100
++++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-09-22 16:07:45.664389475 +0200
 @@ -28,12 +28,13 @@
  
  #include "config.h"
@@ -175,7 +189,7 @@ diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/we
      return collate(String::fromUTF8(a), String::fromUTF8(b));
  }
 diff -aur org/target/webkit/Source/cmake/OptionsCommon.cmake target/webkit/Source/cmake/OptionsCommon.cmake
---- target-org/webkit/Source/cmake/OptionsCommon.cmake      2017-11-15 16:28:52.120093206 +0100
+--- org/target/webkit/Source/cmake/OptionsCommon.cmake      2017-11-15 16:28:52.120093206 +0100
 +++ target/webkit/Source/cmake/OptionsCommon.cmake  2017-04-09 02:50:32.875166000 +0200
 @@ -255,7 +255,7 @@
 
