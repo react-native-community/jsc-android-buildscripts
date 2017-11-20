@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/bash -e
 
 source common.sh
 
-PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/3.6.3155560/bin/:$PATH
+CMAKE_FOLDER=$(cd $ANDROID_HOME/cmake && ls -1 | sort -r | head -1)
+PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/$CMAKE_FOLDER/bin/:$PATH
 
 # conditional patch
 if ! [[ $ENABLE_INTL ]]; then

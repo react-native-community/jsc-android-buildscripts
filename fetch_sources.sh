@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 TARGET_DIR=target
 SVN_DIR=releases/WebKitGTK/webkit-2.17.1
