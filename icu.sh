@@ -2,7 +2,11 @@
 
 source './common.sh'
 
-ICU_VERSION="56.1"
+# Get the ICU version from the single source of truth as defined in icu4c/source/configure
+geticuversion() {
+    sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"
+}
+ICU_VERSION=`geticuversion target/icu/source/common/unicode/uvernum.h`
 
 BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR
