@@ -24,7 +24,7 @@
     "start": "./icu-prep.sh && ./jsc-prep.sh && ./all.sh && cd lib && ./gradlew installArchives && cd .. && mkdir output && mv lib/android output/android && say -v Carmit \"I'm not slacking off, my code's compiling\""
   },
   "config": {
-    "webkitGTK": "2.19.2",
+    "webkitGTK": "2.18.2",
     "android_icu": "8.0.0_r34"
   }
 }
