@@ -1,10 +1,8 @@
 #!/bin/bash -e
 
-which xcpretty >/dev/null 2>&1 && xc=xcpretty || xc=cat
-
-./icu-prep.sh | xcpretty
-./jsc-prep.sh | xcpretty
-./all.sh | xcpretty
+./icu-prep.sh
+./jsc-prep.sh
+./all.sh
 cd lib
 ./gradlew clean installArchives
 cd ..
