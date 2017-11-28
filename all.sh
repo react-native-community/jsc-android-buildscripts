@@ -18,13 +18,13 @@ compile() {
     compile_arch
   done
 
-  for arch in arm64 x86_64
-  do
-    export JSC_ARCH=$arch
-    export ANDROID_API=21
-    export ENABLE_COMPAT=0
-    compile_arch
-  done
+  # for arch in arm64 x86_64
+  # do
+  #   export JSC_ARCH=$arch
+  #   export ANDROID_API=21
+  #   export ENABLE_COMPAT=0
+  #   compile_arch
+  # done
 }
 
 export FLAVOR=no-intl
@@ -32,6 +32,6 @@ export ENABLE_INTL=0
 compile
 
 
-export FLAVOR=intl
-export ENABLE_INTL=1
-compile
+# export FLAVOR=intl
+# export ENABLE_INTL=1
+# compile
