@@ -4,7 +4,7 @@
 ./jsc-prep.sh
 ./all.sh
 cd lib
-./gradlew clean installArchives
+./gradlew clean lib:installArchives
 cd ..
 mkdir output
 mv lib/android output/android
