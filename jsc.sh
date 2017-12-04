@@ -32,7 +32,6 @@ $PLATFORM_LDFLAGS \
 ./build-webkit \
   --jsc-only \
   --release \
-  --jit \
   "$SWITCH_BUILD_WEBKIT_OPTIONS_INTL" \
   --no-webassembly \
   --no-xslt \

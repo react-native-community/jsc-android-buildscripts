@@ -10,7 +10,7 @@ compile_arch() {
 }
 
 compile() {
-  for arch in arm x86
+  for arch in arm #x86
   do
     export JSC_ARCH=$arch
     export ANDROID_API=21
