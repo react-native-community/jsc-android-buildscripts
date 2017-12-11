@@ -62,8 +62,8 @@ diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Sour
 -endif ()
 +set(ENABLE_API_TESTS OFF)
 +set(ENABLE_SAMPLING_PROFILER OFF)
-+set(ENABLE_DFG_JIT OFF)
-+set(ENABLE_FTL_JIT OFF)
++set(ENABLE_DFG_JIT ON)
++set(ENABLE_FTL_JIT ON)
 +set(ENABLE_JIT ON)
 
  if (WTF_CPU_X86 OR WTF_CPU_X86_64)
