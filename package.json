@@ -27,6 +27,6 @@
   "config": {
     "webkitGTK": "2.18.2",
     "android_icu": "8.0.0_r34",
-    "name": "allJIT"
+    "name": "tip"
   }
 }
