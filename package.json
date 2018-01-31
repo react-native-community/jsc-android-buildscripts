@@ -21,12 +21,14 @@
   "homepage": "https://github.com/SoftwareMansion/jsc-android-buildscripts#readme",
   "scripts": {
     "download": "./fetch_sources.sh",
-    "prepare": "./icu-prep.sh && ./jsc-prep.sh",
+    "prepare": "./version-prep.sh && ./icu-prep.sh && ./jsc-prep.sh",
     "start": "./start.sh"
   },
   "config": {
     "webkitGTK": "2.18.2",
     "android_icu": "8.0.0_r34",
-    "name": "tip"
+    "name": "tip",
+    "x64": false,
+    "i18n": false
   }
 }
