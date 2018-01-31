@@ -21,7 +21,7 @@
   "homepage": "https://github.com/SoftwareMansion/jsc-android-buildscripts#readme",
   "scripts": {
     "download": "./fetch_sources.sh",
-    "prepare": "./version-prep.sh && ./icu-prep.sh && ./jsc-prep.sh",
+    "prep": "./version-prep.sh && ./icu-prep.sh && ./jsc-prep.sh",
     "start": "./start.sh"
   },
   "config": {
