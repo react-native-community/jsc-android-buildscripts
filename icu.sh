@@ -7,6 +7,7 @@ geticuversion() {
     sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"
 }
 ICU_VERSION=`geticuversion target/icu/source/common/unicode/uvernum.h`
+echo "detected ICU_VERSION: ${ICU_VERSION}"
 
 BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR
