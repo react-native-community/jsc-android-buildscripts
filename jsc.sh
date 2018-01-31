@@ -20,6 +20,7 @@ $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
 -I$ROOTDIR/target/icu/source/i18n \
+-I/usr/include \
 "
 CMAKE_LD_FLAGS=" \
 -latomic \
