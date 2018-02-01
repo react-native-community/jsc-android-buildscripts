@@ -1,11 +1,13 @@
 #!/bin/bash -e
 
+export ANDROID_API=21
+
 compile_arch() {
-  echo "=== compiling toolchain ==="
+  echo "\n\n\n=================== compiling toolchain for $JSC_ARCH ===================\n\n\n"
   ./toolchain.sh
-  echo "=== compiling icu ==="
+  echo "\n\n\n=================== compiling icu for $JSC_ARCH ===================\n\n\n"
   ./icu.sh
-  echo "=== compiling jsc ==="
+  echo "\n\n\n=================== compiling jsc for $JSC_ARCH ===================n\n\n"
   ./jsc.sh
 }
 
@@ -13,7 +15,6 @@ compile() {
   for arch in arm x86
   do
     export JSC_ARCH=$arch
-    export ANDROID_API=21
     export ENABLE_COMPAT=1
     compile_arch
   done
@@ -23,7 +24,6 @@ compile() {
     for arch in arm64 x86_64
     do
       export JSC_ARCH=$arch
-      export ANDROID_API=21
       export ENABLE_COMPAT=0
       compile_arch
     done
