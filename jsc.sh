@@ -7,7 +7,7 @@ PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/$CMAKE_FOLDER/bin/:$PATH
 
 # conditional patch
 if ! [[ $ENABLE_INTL ]]; then
-  patch -p0 < $ROOTDIR/patches/intl/icu-disabled.patch
+  patch -N -p0 < $ROOTDIR/patches/intl/icu-disabled.patch
 fi
 
 rm -rf target/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
@@ -20,7 +20,7 @@ $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
 -I$ROOTDIR/target/icu/source/i18n \
--I/usr/include \
+-I$TOOLCHAIN_DIR/sysroot/usr/include \
 "
 CMAKE_LD_FLAGS=" \
 -latomic \
@@ -48,7 +48,7 @@ $PLATFORM_LDFLAGS \
   -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
   -DCMAKE_C_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_CXX_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
-  -DCMAKE_SYSROOT=$ANDROID_NDK/platforms/android-$ANDROID_API/arch-$ARCH \
+  -DCMAKE_SYSROOT=$TOOLCHAIN_DIR/sysroot \
   -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS} $COMMON_CXXFLAGS $CMAKE_CXX_FLAGS' \
   -DCMAKE_C_FLAGS='${CMAKE_C_FLAGS} $CMAKE_CXX_FLAGS' \
   -DCMAKE_SHARED_LINKER_FLAGS='${CMAKE_SHARED_LINKER_FLAGS} $CMAKE_LD_FLAGS' \

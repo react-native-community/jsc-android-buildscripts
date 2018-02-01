@@ -103,22 +103,9 @@ SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 
-# COMPAT - for platforms below 21
-SWITCH_JSC_CFLAGS_COMPAT_ON=" \
--I$ROOTDIR/extra_headers/support \
--I$ANDROID_NDK/sources/android/support/include \
--DPTHREAD_KEYS_MAX=1024 \
-"
-SWITCH_BUILD_WEBKIT_CMAKE_ARGS_COMPAT_ON=" \
--DLLVM_LIBRARIES=$ANDROID_NDK/sources/cxx-stl/llvm-libc++/libs/$JNI_ARCH/libandroid_support.a \
-"
-
 # switches
 fix_zero_value_flag "INTL"
 process_switch_options "INTL"
-
-fix_zero_value_flag "COMPAT"
-process_switch_options "COMPAT"
 
 # checks
 err=false
@@ -136,7 +123,6 @@ COMMON_LDFLAGS=" \
 -fuse-ld=gold \
 -Wl,--icf=safe \
 -Wl,-z,noexecstack \
--s \
 "
 
 COMMON_CFLAGS=" \
@@ -159,7 +145,7 @@ COMMON_CXXFLAGS=" \
 
 ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS -Os"
 ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS -Os"
-ICU_LDFLAGS="$COMMON_LDFLAGS $PLATFORM_LDFLAGS"
+ICU_LDFLAGS="$COMMON_LDFLAGS $PLATFORM_LDFLAGS -s"
 
 INSTALL_DIR=$ROOTDIR/lib/distribution-${FLAVOR}/jsc/lib/$JNI_ARCH
 mkdir -p $INSTALL_DIR
