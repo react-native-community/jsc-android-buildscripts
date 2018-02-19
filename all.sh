@@ -3,11 +3,11 @@
 export ANDROID_API=21
 
 compile_arch() {
-  echo "\n\n\n=================== compiling toolchain for $JSC_ARCH ===================\n\n\n"
+  printf "\n\n\n=================== compiling toolchain for $JSC_ARCH ===================\n\n\n"
   ./toolchain.sh
-  echo "\n\n\n=================== compiling icu for $JSC_ARCH ===================\n\n\n"
+  printf "\n\n\n=================== compiling icu for $JSC_ARCH ===================\n\n\n"
   ./icu.sh
-  echo "\n\n\n=================== compiling jsc for $JSC_ARCH ===================n\n\n"
+  printf "\n\n\n=================== compiling jsc for $JSC_ARCH ===================n\n\n"
   ./jsc.sh
 }
 
