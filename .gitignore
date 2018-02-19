@@ -1,3 +1,6 @@
+/lib/distribution-no-intl/jsc
+/lib/build
+/target
 *.iml
 .gradle
 /local.properties
