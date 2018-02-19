@@ -1,5 +1,6 @@
 /lib/distribution-no-intl/jsc
 /lib/build
+/lib/android
 /target
 *.iml
 .gradle
