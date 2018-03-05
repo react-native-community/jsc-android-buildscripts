@@ -1,0 +1,46 @@
+apply plugin: "com.android.application"
+
+apply from: "$rootDir/../node_modules/react-native/react.gradle"
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        applicationId "com.reactnativeperf"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"//, "arm64-v8a", "x86_64"
+        }
+    }
+    signingConfigs {
+      release {
+        storeFile file("$rootDir/keystores/release.keystore")
+        storePassword 'jscore'
+        keyAlias 'jscore'
+        keyPassword 'jscore'
+      }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:26.1.0"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(":react-native-navigation")
+}
+
+configurations.all {
+    resolutionStrategy {
+        force "org.webkit:android-jsc:${project.JSC_NAME}"
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "react-native-android-perf-measure",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "cd android && rm -rf build && rm -rf app/build && ./gradlew installRelease"
+  },
+  "dependencies": {
+    "react-native": "0.51.0",
+    "react": "16.0.0",
+    "prop-types": "*",
+    "react-native-navigation": "1.x.x",
+    "lodash": "4.x.x"
+  }
+}

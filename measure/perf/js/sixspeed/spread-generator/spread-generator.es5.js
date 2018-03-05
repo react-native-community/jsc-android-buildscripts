@@ -1,0 +1,32 @@
+module.exports = {
+  run: function (assertEqual) {
+
+    function generator() {
+      var i = 0;
+      return {
+        next: function () {
+          i++;
+          if (i >= 4) {
+            return { done: true };
+          } else {
+            return {
+              value: i,
+              done: false
+            };
+          }
+        }
+      };
+    }
+
+    function fn() {
+      var iterator = generator();
+      var args = [iterator.next().value, iterator.next().value, iterator.next().value];
+      iterator.next();
+
+      return Math.max.apply(Math, args);
+    }
+
+    assertEqual(fn(), 3);
+
+  }
+};
