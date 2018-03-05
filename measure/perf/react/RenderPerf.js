@@ -7,6 +7,8 @@ import {
 } from 'react-native';
 const _ = require('lodash');
 
+const SCALE = 1000;
+
 class RenderPerf extends Component {
   render() {
     let start = Date.now();
@@ -14,7 +16,7 @@ class RenderPerf extends Component {
     const r = (
       <View style={styles.container} onLayout={(params) => this.onLayout(start, params)}>
         <Text style={styles.welcome}>RenderPerf {this.props.deep ? 'deep' : 'flat'} test</Text>
-        {this.props.deep ? this.renderDeep(1000) : this.renderLots(1000)}
+        {this.props.deep ? this.renderDeep(SCALE) : this.renderLots(SCALE)}
       </View>
     );
 
