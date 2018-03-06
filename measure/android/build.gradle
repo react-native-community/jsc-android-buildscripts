@@ -13,6 +13,14 @@ copy() {
   into file(project.JSC_DIR)
 }
 
+allprojects {
+  configurations.all {
+    resolutionStrategy {
+      force "org.webkit:android-jsc:${project.JSC_NAME}"
+    }
+  }
+}
+
 buildscript {
     repositories {
         google()

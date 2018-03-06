@@ -38,9 +38,3 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(":react-native-navigation")
 }
-
-configurations.all {
-    resolutionStrategy {
-        force "org.webkit:android-jsc:${project.JSC_NAME}"
-    }
-}
