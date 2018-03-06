@@ -5,7 +5,11 @@ A simple react native app with some measurements of the performance of the andro
 It has 3 tests:
 - A render test that measures the time it takes to render a 1000 children on screen, both the js-based render and a full roundtrip (after the native done layout+measure)
 - A deep render test, same as above but it renders a 1000 children deeply (each child inside the previous)
-- A JS execution speed test based on 4 suites (`jetstream`, `octane2`, `sixspeed`, `sunspider`)
+- A JS execution speed test based on 4 suites:
+  - [`jetstream`](http://browserbench.org/JetStream/)
+  - [`octane2`](https://chromium.github.io/octane/)
+  - [`sixspeed`](https://github.com/kpdecker/six-speed)
+  - [`sunspider`](https://webkit.org/perf/sunspider/sunspider.html)
 
 To run it:
 
