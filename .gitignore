@@ -1,3 +1,4 @@
+/downloaded
 /lib/build
 /lib/android
 /target
@@ -5,7 +6,6 @@
 /build
 /captures
 /android
-/downloaded
 
 
 # Created by https://www.gitignore.io/api/node,android,intellij+all,visualstudio,androidstudio,visualstudiocode
