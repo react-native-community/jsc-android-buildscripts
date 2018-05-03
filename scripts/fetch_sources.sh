@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # download sources
-TARGET_DIR=target
+TARGET_DIR=downloaded
 SVN_DIR="releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}"
 
 mkdir -p $TARGET_DIR/webkit

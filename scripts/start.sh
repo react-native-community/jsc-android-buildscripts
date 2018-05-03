@@ -4,7 +4,7 @@ source ./calc-version.sh
 
 ./all.sh
 cd lib
-./gradlew clean lib:installArchives
+./gradlew clean installArchives
 
 cd android
 zip -r "../../result/$VERSION_NAME.zip" "."
