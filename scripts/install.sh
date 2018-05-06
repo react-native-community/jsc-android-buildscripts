@@ -4,6 +4,7 @@
 TARGET_DIR=downloaded
 SVN_DIR="releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}"
 
+rm -rf $TARGET_DIR
 mkdir -p $TARGET_DIR/webkit
 svn export https://svn.webkit.org/repository/webkit/$SVN_DIR/Source $TARGET_DIR/webkit/Source
 svn export https://svn.webkit.org/repository/webkit/$SVN_DIR/Tools $TARGET_DIR/webkit/Tools

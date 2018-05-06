@@ -25,8 +25,8 @@
   "config": {
     "webkitGTK": "2.18.2",
     "android_icu": "8.0.0_r34",
-    "hint": "tip",
     "x64": false,
-    "i18n": false
+    "i18n": false,
+    "hint": "tip"
   }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source ./calc-version.sh
+VERSION_NAME=$(node ./scripts/getVersion)
 
 ./all.sh
 cd lib

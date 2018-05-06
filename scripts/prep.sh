@@ -1,15 +1,12 @@
 #!/bin/bash -e
 
-source ./scripts/calc-version.sh
-
-rm -rf target 
-cp -Rf downloaded target
-
 ROOTDIR=`pwd`
 
-echo "=============== prepare version ================="
-sed -i.bak "s/VERSION_NAME=.*/VERSION_NAME=${VERSION_NAME}/" lib/lib/gradle.properties lib/libIntl/gradle.properties
-rm lib/lib/gradle.properties.bak lib/libIntl/gradle.properties.bak
+VERSION_NAME=$(node -p "require('./scripts/getVersion')()")
+node -p "require('./scripts/updateGradleVersion')('${VERSION_NAME}')"
+
+rm -rf target
+cp -Rf downloaded target
 
 echo "=============== prepare icu ====================="
 patch -p0 < $ROOTDIR/patches/icu.patch
