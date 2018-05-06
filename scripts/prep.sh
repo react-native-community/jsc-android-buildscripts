@@ -21,6 +21,7 @@ cd $ROOTDIR/target/icu/host
 ../source/runConfigureICU Linux --prefix=$PWD/prebuilts CFLAGS="-Os" CXXFLAGS="--std=c++11"
 
 make -j5
+cd $ROOTDIR
 
 echo "=============== prepare jsc ====================="
 patch -p0 < $ROOTDIR/patches/jsc.patch

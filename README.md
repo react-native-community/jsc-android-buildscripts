@@ -22,7 +22,7 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 1. Clone this repo
 2. `npm install`: downloads all needed sources to `./downloaded`
-3. `npm run prep`: copies downloaded sources to `./target` and prepare for compilation
+3. `npm run prep`: copies downloaded sources to `./target` and prepares for compilation
 4. `npm run start`: builds jsc (this might take some time...) out of prepared sources under `./target` into `./result`
 
 The zipfile containing the android-jsc AAR will be available at `/result`.
