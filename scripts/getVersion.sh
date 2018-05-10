@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 bitness="x32"
 if $npm_package_config_x64 ="true"

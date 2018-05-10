@@ -1,16 +1,19 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-VERSION_NAME=$(node ./scripts/getVersion)
+ROOTDIR=$PWD
+VERSION_NAME=$($ROOTDIR/scripts/getVersion.sh)
 
-./all.sh
-cd lib
+$ROOTDIR/scripts/compile/all.sh
+
+cd $ROOTDIR/lib
 ./gradlew clean installArchives
 
-cd android
+cd $ROOTDIR/lib/android
 zip -r "../../result/$VERSION_NAME.zip" "."
 
+cd $ROOTDIR
 git add -A
-git commit -am "compiled $VERSION_NAME"
+git commit -m "compiled $VERSION_NAME"
 
 printf "\n\n\n\n\n\t\t\tCompiled Version: ${VERSION_NAME}\n\n\n\n\n\n"
 say -v Carmit "I am not slacking off, my code's compiling"

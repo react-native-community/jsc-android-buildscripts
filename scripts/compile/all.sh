@@ -1,14 +1,15 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
+SCRIPT_DIR=$(cd `dirname $0`; pwd)
 export ANDROID_API=21
 
 compile_arch() {
   printf "\n\n\n=================== compiling toolchain for $JSC_ARCH ===================\n\n\n"
-  ./toolchain.sh
+  $SCRIPT_DIR/toolchain.sh
   printf "\n\n\n=================== compiling icu for $JSC_ARCH ===================\n\n\n"
-  ./icu.sh
+  $SCRIPT_DIR/icu.sh
   printf "\n\n\n=================== compiling jsc for $JSC_ARCH ===================n\n\n"
-  ./jsc.sh
+  $SCRIPT_DIR/jsc.sh
 }
 
 compile() {

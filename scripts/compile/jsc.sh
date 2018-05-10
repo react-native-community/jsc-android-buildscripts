@@ -1,6 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-source common.sh
+SCRIPT_DIR=$(cd `dirname $0`; pwd)
+source $SCRIPT_DIR/common.sh
 
 CMAKE_FOLDER=$(cd $ANDROID_HOME/cmake && ls -1 | sort -r | head -1)
 PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/$CMAKE_FOLDER/bin/:$PATH
@@ -10,9 +11,9 @@ if ! [[ $ENABLE_INTL ]]; then
   patch -N -p0 < $ROOTDIR/patches/intl/icu-disabled.patch
 fi
 
-rm -rf target/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
-rm -rf target/webkit/WebKitBuild
-cd target/webkit/Tools/Scripts
+rm -rf $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
+rm -rf $ROOTDIR/target/webkit/WebKitBuild
+cd $ROOTDIR/target/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
 $SWITCH_JSC_CFLAGS_COMPAT \
@@ -30,7 +31,7 @@ $COMMON_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
 
-./build-webkit \
+$ROOTDIR/target/webkit/Tools/Scripts/build-webkit \
   --jsc-only \
   --release \
   --jit \

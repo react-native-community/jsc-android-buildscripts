@@ -1,23 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-source './common.sh'
+SCRIPT_DIR=$(cd `dirname $0`; pwd)
+source $SCRIPT_DIR/common.sh
 
 # Get the ICU version from the single source of truth as defined in icu4c/source/configure
 geticuversion() {
     sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"
 }
-ICU_VERSION=`geticuversion target/icu/source/common/unicode/uvernum.h`
-echo "detected ICU_VERSION: ${ICU_VERSION}"
+ICU_VERSION=`geticuversion $ROOTDIR/target/icu/source/common/unicode/uvernum.h`
+echo "===================== detected ICU_VERSION: ${ICU_VERSION} ======================="
 
 BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
-CROSS_BUILD_DIR=$(realpath ../host)
+CROSS_BUILD_DIR=$(realpath $ROOTDIR/target/icu/host)
 PATH=$TOOLCHAIN_DIR/bin:$PATH
 
-../source/configure --prefix=$(pwd)/prebuilts \
+$ROOTDIR/target/icu/source/configure --prefix=$(pwd)/prebuilts \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-shared=yes \
     --enable-extras=no \

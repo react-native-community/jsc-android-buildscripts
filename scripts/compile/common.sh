@@ -1,5 +1,4 @@
-#!/bin/bash -e
-
+#!/bin/bash -ex
 
 # functions
 fix_zero_value_flag() {
