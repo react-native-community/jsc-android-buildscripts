@@ -2,7 +2,7 @@
 
 project.ext.JSC_ZIP_DIR = "$rootDir/../../result"
 project.ext.JSC_DIR = "$rootDir/../jsc"
-def listFiles = new File(project.JSC_ZIP_DIR).listFiles()
+def listFiles = new File(project.JSC_ZIP_DIR).listFiles().findAll{ it.name.endsWith('.zip') }
 project.ext.JSC_ZIP_FILE = listFiles[listFiles.size() - 1]
 project.ext.JSC_NAME = project.JSC_ZIP_FILE.name.take(project.JSC_ZIP_FILE.name.lastIndexOf('.'))
 println "\n\n\t\tCompiling using javascript core for android, version ======== ${(char)27}[35m${project.JSC_NAME}${(char)27}[0m =======\n\n"
