@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-project.ext.JSC_ZIP_DIR = "$rootDir/../../result"
+project.ext.JSC_ZIP_DIR = "$rootDir/../../dist"
 project.ext.JSC_DIR = "$rootDir/../jsc"
 def listFiles = new File(project.JSC_ZIP_DIR).listFiles().findAll{ it.name.endsWith('.zip') }
 project.ext.JSC_ZIP_FILE = listFiles[listFiles.size() - 1]

@@ -4,7 +4,7 @@ A simple react native app with some measurements of the performance of the andro
 
 ## How to run
 
-1. Compile the jsc locally (from root project, so that the compiled result will be at `/result`)
+1. Compile the jsc locally (from root project, so that the compiled result will be at `/dist`)
 1. Connect a physical device
 1. `npm i` from within `/measure`
 1. `npm run android`. This will unzip the compiled jsc into the android dir, and use it to compile a release version of this app
