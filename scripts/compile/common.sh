@@ -28,6 +28,8 @@ process_switch_options() {
 if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
 ARCH=$JSC_ARCH
 
+TARGETDIR=$ROOTDIR/build/target
+
 # platform specific settings
 CROSS_COMPILE_PLATFORM_arm="arm-linux-androideabi"
 CROSS_COMPILE_PLATFORM_arm64="aarch64-linux-android"
@@ -37,7 +39,7 @@ CROSS_COMPILE_PLATFORM_x86_64="x86_64-linux-android"
 # arch
 var="CROSS_COMPILE_PLATFORM_$JSC_ARCH"
 CROSS_COMPILE_PLATFORM=${!var}
-TOOLCHAIN_DIR=$ROOTDIR/target/toolchains/$CROSS_COMPILE_PLATFORM
+TOOLCHAIN_DIR=$TARGETDIR/toolchains/$CROSS_COMPILE_PLATFORM
 
 # settings
 TOOLCHAIN_LINK_DIR_arm="$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/lib/armv7-a"

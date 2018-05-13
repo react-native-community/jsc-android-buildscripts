@@ -7,18 +7,18 @@ source $SCRIPT_DIR/common.sh
 geticuversion() {
     sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"
 }
-ICU_VERSION=`geticuversion $ROOTDIR/target/icu/source/common/unicode/uvernum.h`
+ICU_VERSION=`geticuversion $TARGETDIR/icu/source/common/unicode/uvernum.h`
 echo "===================== detected ICU_VERSION: ${ICU_VERSION} ======================="
 
-BUILD_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
+BUILD_DIR=$TARGETDIR/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
-CROSS_BUILD_DIR=$(realpath $ROOTDIR/target/icu/host)
+CROSS_BUILD_DIR=$(realpath $TARGETDIR/icu/host)
 PATH=$TOOLCHAIN_DIR/bin:$PATH
 
-$ROOTDIR/target/icu/source/configure --prefix=$(pwd)/prebuilts \
+$TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-shared=yes \
     --enable-extras=no \

@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 bitness="x32"
-if $npm_package_config_x64 ="true"
+if $npm_package_config_x64 = "true"
 then
     bitness="x64"
 fi

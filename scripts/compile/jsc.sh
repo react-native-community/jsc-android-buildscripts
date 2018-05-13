@@ -8,19 +8,19 @@ PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/$CMAKE_FOLDER/bin/:$PATH
 
 # conditional patch
 if ! [[ $ENABLE_INTL ]]; then
-  patch -N -p0 < $ROOTDIR/patches/intl/icu-disabled.patch
+  patch -d $TARGETDIR -N -p1 < $ROOTDIR/patches/intl/icu-disabled.patch
 fi
 
-rm -rf $ROOTDIR/target/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
-rm -rf $ROOTDIR/target/webkit/WebKitBuild
-cd $ROOTDIR/target/webkit/Tools/Scripts
+rm -rf $TARGETDIR/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
+rm -rf $TARGETDIR/webkit/WebKitBuild
+cd $TARGETDIR/webkit/Tools/Scripts
 
 CMAKE_CXX_FLAGS=" \
 $SWITCH_JSC_CFLAGS_COMPAT \
 $COMMON_CFLAGS \
 $PLATFORM_CFLAGS \
 -fno-rtti \
--I$ROOTDIR/target/icu/source/i18n \
+-I$TARGETDIR/icu/source/i18n \
 -I$TOOLCHAIN_DIR/sysroot/usr/include \
 "
 CMAKE_LD_FLAGS=" \
@@ -31,7 +31,7 @@ $COMMON_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
 
-$ROOTDIR/target/webkit/Tools/Scripts/build-webkit \
+$TARGETDIR/webkit/Tools/Scripts/build-webkit \
   --jsc-only \
   --release \
   --jit \
@@ -45,8 +45,8 @@ $ROOTDIR/target/webkit/Tools/Scripts/build-webkit \
   -DCMAKE_SYSTEM_VERSION=$ANDROID_API \
   -DCMAKE_SYSTEM_PROCESSOR=$ARCH \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \
-  -DWEBKIT_LIBRARIES_INCLUDE_DIR=$ROOTDIR/target/icu/source/common \
-  -DWEBKIT_LIBRARIES_LINK_DIR=$ROOTDIR/target/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
+  -DWEBKIT_LIBRARIES_INCLUDE_DIR=$TARGETDIR/icu/source/common \
+  -DWEBKIT_LIBRARIES_LINK_DIR=$TARGETDIR/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
   -DCMAKE_C_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_CXX_COMPILER=$CROSS_COMPILE_PLATFORM-clang \
   -DCMAKE_SYSROOT=$TOOLCHAIN_DIR/sysroot \
@@ -58,12 +58,12 @@ $ROOTDIR/target/webkit/Tools/Scripts/build-webkit \
   -DCMAKE_VERBOSE_MAKEFILE=on \
   "
 
-cp $ROOTDIR/target/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
-mv $ROOTDIR/target/webkit/WebKitBuild $ROOTDIR/target/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
+cp $TARGETDIR/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
+mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 cp $TOOLCHAIN_LINK_DIR/libc++_shared.so $INSTALL_DIR
 
 # conditional patch undo
 cd $ROOTDIR
 if ! [[ $ENABLE_INTL ]]; then
-  patch -p0 -R < $ROOTDIR/patches/intl/icu-disabled.patch
+  patch -d $TARGETDIR -p1 -R < $ROOTDIR/patches/intl/icu-disabled.patch
 fi
