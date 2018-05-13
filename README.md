@@ -28,3 +28,5 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 The zipfile containing the android-jsc AAR will be available at `/result`.
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
+
+[Measurements](/measure)
