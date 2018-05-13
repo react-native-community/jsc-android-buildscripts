@@ -6,7 +6,12 @@ VERSION_NAME=$($ROOTDIR/scripts/getVersion.sh)
 $ROOTDIR/scripts/compile/all.sh
 
 cd $ROOTDIR/lib
-./gradlew clean installArchives
+if ${npm_package_config_i18n}
+then
+  ./gradlew clean libIntl:installArchives
+else
+  ./gradlew clean lib:installArchives
+fi
 
 cd $ROOTDIR/lib/android
 zip -r "../../result/$VERSION_NAME.zip" "."
@@ -16,4 +21,5 @@ git add -A
 git commit -m "compiled $VERSION_NAME"
 
 printf "\n\n\n\n\n\t\t\tCompiled Version: ${VERSION_NAME}\n\n\n\n\n\n"
-say -v Carmit "I am not slacking off, my code's compiling"
+say -v Carmit "I am not slacking off, my code is compiling."
+say -v Carmit "${VERSION_NAME}"

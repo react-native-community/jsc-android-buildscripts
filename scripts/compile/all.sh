@@ -31,13 +31,13 @@ compile() {
   fi
 }
 
-export FLAVOR=no-intl
-export ENABLE_INTL=0
-compile
-
 if ${npm_package_config_i18n}
 then
   export FLAVOR=intl
   export ENABLE_INTL=1
+  compile
+else
+  export FLAVOR=no-intl
+  export ENABLE_INTL=0
   compile
 fi
