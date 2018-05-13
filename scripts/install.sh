@@ -1,7 +1,8 @@
 #!/bin/bash -ex
 
 # download sources
-TARGET_DIR=$PWD/downloaded
+rm -rf $PWD/build
+TARGET_DIR=$PWD/build/download
 SVN_URL="releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}"
 
 rm -rf $TARGET_DIR
