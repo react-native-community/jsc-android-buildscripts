@@ -12,7 +12,7 @@ A simple react native app with some measurements of the performance of the andro
 
 ## Measurements
 
-- All measurements run on (a very clean) Pixel XL
+- All measurements run on (a very clean) Pixel XL, release mode
 - Render is measured with 1000 elements, flat or deep. The timing is taken after a full roundtrip (after `onLayout`)
 - Synthetic tests were modified to be able to run on RN environment, based on the following:
   - [`jetstream`](http://browserbench.org/JetStream/)
@@ -25,7 +25,7 @@ A simple react native app with some measurements of the performance of the andro
 
 | Version                         | Launch | Sunspider | Jetstream HashMap | Octane2 | SixSpeed | Render Flat | Render Deep | Size |
 |---------------------------------|:------:|:---------:|:-----------------:|:-------:|:--------:|:-----------:|:-----------:|:----:|
-| Stock RN44 ()                   |    ?   |    550    |        4150       |   2500  |   1400   |     900     |     1400    |   ?  |
+| Stock RN44 (r174650, Oct2014)   |    ?   |    550    |        4150       |   2500  |   1400   |     900     |     1400    |   ?  |
 | 2.17.2-r216113.0.2 (npm)        |    ?   |    480    |        3300       |   1950  |    440   |     850     |     1250    |   ?  |
 | 2.18.2-8.0.0_r34-x32-en-tip     |    ?   |    480    |        3250       |   1800  |    400   |     850     |     1300    |   ?  |
 | 2.18.2-8.0.0_r34-x32-en-nobabel |    ?   |    480    |        3300       |   1850  |    410   |     900     |     1350    |   ?  |
