@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 ROOTDIR=$PWD
-VERSION_NAME=$($ROOTDIR/scripts/getVersion.sh)
+VERSION_NAME=$($ROOTDIR/scripts/version.sh)
 
 $ROOTDIR/scripts/compile/all.sh
 

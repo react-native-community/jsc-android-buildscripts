@@ -31,4 +31,5 @@ The library is packaged as a local Maven repository containing AAR files that in
 
 - **[Measurements](/measure)**
 - WebkitGTK Sources can be found [here](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
+- ICU Sources can be found [here](https://android.googlesource.com/platform/external/icu/)
 - Revision information can be found [here](https://trac.webkit.org/)
