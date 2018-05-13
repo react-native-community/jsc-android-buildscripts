@@ -3,15 +3,15 @@
 ROOTDIR=$PWD
 VERSION_NAME=$($ROOTDIR/scripts/version.sh)
 
-# $ROOTDIR/scripts/compile/all.sh
+$ROOTDIR/scripts/compile/all.sh
 
 cd $ROOTDIR/lib
-# if ${npm_package_config_i18n}
-# then
-#   ./gradlew clean libIntl:installArchives
-# else
-#   ./gradlew clean lib:installArchives
-# fi
+if ${npm_package_config_i18n}
+then
+  ./gradlew clean libIntl:installArchives
+else
+  ./gradlew clean lib:installArchives
+fi
 
 cd $ROOTDIR/lib/android
 zip -r "../../dist/$VERSION_NAME.zip" "."
