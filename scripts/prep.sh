@@ -3,7 +3,7 @@
 ROOTDIR=$PWD
 TARGETDIR=$ROOTDIR/build/target
 
-echo "=============== prepare downloaded sources ====================="
+echo "=============== copy downloaded sources ====================="
 rm -rf $TARGETDIR
 cp -Rf $ROOTDIR/build/download $TARGETDIR
 
