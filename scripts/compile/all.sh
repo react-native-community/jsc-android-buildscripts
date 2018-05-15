@@ -13,7 +13,7 @@ compile_arch() {
 }
 
 compile() {
-  for arch in arm x86
+  for arch in arm #x86
   do
     export JSC_ARCH=$arch
     export ENABLE_COMPAT=1
