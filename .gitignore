@@ -1,10 +1,5 @@
 /build
 /dist
-/lib/build
-/lib/android
-/lib/distribution/
-/lib/distribution-intl/
-/lib/distribution-no-intl/
 
 # Created by https://www.gitignore.io/api/node,android,reactnative,intellij+all,androidstudio,visualstudiocode
 

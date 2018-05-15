@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {}
+
+apply plugin: 'maven'
+
+task createAAR(type: Upload) {
+    project.group = "org.webkit"
+    project.version = project.hasProperty("VERSION_NAME") ? project.VERSION_NAME : ""
+
+    def DIST_DIR = "${projectDir}/../../dist"
+
+    doFirst {
+        delete(DIST_DIR)
+    }
+
+    doLast {
+        if (project.version.isEmpty()) {
+            throw new RuntimeException("expecting --project-prop VERSION_NAME=??? but was empty")
+        }
+    }
+
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        repository url: "file://${DIST_DIR}"
+        pom.project {
+            name "android-jsc"
+            artifactId "android-jsc"
+            packaging "aar"
+        }
+    }
+}
