@@ -9,6 +9,12 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["${rootDir}/../build/compiled"]
+        }
+    }
 }
 
 dependencies {}
@@ -19,7 +25,7 @@ task createAAR(type: Upload) {
     project.group = "org.webkit"
     project.version = project.hasProperty("VERSION_NAME") ? project.VERSION_NAME : ""
 
-    def DIST_DIR = "${projectDir}/../../dist"
+    def DIST_DIR = "${rootDir}/../dist"
 
     doFirst {
         delete(DIST_DIR)
