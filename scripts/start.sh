@@ -3,6 +3,8 @@
 ROOTDIR=$PWD
 VERSION_NAME=$($ROOTDIR/scripts/version.sh)
 
+rm -rf $ROOTDIR/build/compiled
+
 $ROOTDIR/scripts/compile/all.sh
 
 cd $ROOTDIR/lib
