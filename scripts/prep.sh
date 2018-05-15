@@ -7,12 +7,7 @@ echo "=============== copy downloaded sources ====================="
 rm -rf $TARGETDIR
 cp -Rf $ROOTDIR/build/download $TARGETDIR
 
-echo "=============== prepare gradle version ====================="
-VERSION_NAME=$($ROOTDIR/scripts/version.sh)
-echo $VERSION_NAME
-sed -i '' -e "s/VERSION_NAME=.+/VERSION_NAME=${VERSION_NAME}/" $ROOTDIR/lib/lib/gradle.properties $ROOTDIR/lib/libIntl/gradle.properties
-
-echo "=============== prepare icu ====================="
+echo "=============== patch and make icu into target/icu/host ====================="
 patch -d $TARGETDIR -p1 < $ROOTDIR/patches/icu.patch
 
 rm -rf $TARGETDIR/icu/host
@@ -22,5 +17,5 @@ $TARGETDIR/icu/source/runConfigureICU Linux --prefix=$PWD/prebuilts CFLAGS="-Os"
 make -j5
 cd $ROOTDIR
 
-echo "=============== prepare jsc ====================="
+echo "=============== patch jsc ====================="
 patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
