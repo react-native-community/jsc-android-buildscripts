@@ -10,19 +10,18 @@ const _ = require('lodash');
 const SCALE = 1000;
 
 class RenderPerf extends Component {
-  render() {
-    let start = Date.now();
+  constructor(props) {
+    this.startTime = Date.now();
+    this.onLayout = this.onLayout.bind(this);
+  }
 
-    const r = (
-      <View style={styles.container} onLayout={(params) => this.onLayout(start, params)}>
+  render() {
+    return (
+      <View style={styles.container} onLayout={this.onLayout}>
         <Text style={styles.welcome}>RenderPerf {this.props.deep ? 'deep' : 'flat'} test</Text>
         {this.props.deep ? this.renderDeep(SCALE) : this.renderLots(SCALE)}
       </View>
     );
-
-    alert(`render: ${Date.now() - start}`);
-
-    return r;
   }
 
   renderLots(count) {
@@ -54,9 +53,9 @@ class RenderPerf extends Component {
     }
   }
 
-  onLayout(startTime, params) {
+  onLayout(params) {
     if (params.nativeEvent.layout.width) {
-      alert(`onLayout: ${Date.now() - startTime}`);
+      alert(`onLayout: ${Date.now() - this.startTime}`);
     }
   }
 }

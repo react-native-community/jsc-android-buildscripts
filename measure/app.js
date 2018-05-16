@@ -6,11 +6,10 @@ import {
   View,
   Button
 } from 'react-native';
-import { Navigation } from 'react-native-navigation';
 const _ = require('lodash');
 
-const JsPerf = require('./perf/js/JsPerf');
-const RenderPerf = require('./perf/react/RenderPerf');
+const JsPerf = require('./perf/JsPerf');
+const RenderPerf = require('./perf/RenderPerf');
 
 const RENDER_JS = 1;
 const RENDER_PERF = 2;
@@ -81,7 +80,8 @@ const styles = StyleSheet.create({
   }
 });
 
-Navigation.registerComponent('ReactNativePerf', () => ReactNativePerf);
+AppRegistry.registerComponent('ReactNativePerf', () => ReactNativePerf);
+
 Navigation.startSingleScreenApp({
   screen: {
     screen: 'ReactNativePerf',

@@ -33,10 +33,10 @@ module.exports = class JsPerf extends Component {
   }
 
   async start() {
-    await this.benchmark('sunspider', () => require('./sunspider').run());
-    await this.benchmark('jetstream', () => require('./jetstream').run());
-    await this.benchmark('octane2', () => require('./octane2').run());
-    await this.benchmark('sixspeed', () => require('./sixspeed').run());
+    await this.benchmark('sunspider', () => require('./js/sunspider').run());
+    await this.benchmark('jetstream', () => require('./js/jetstream').run());
+    await this.benchmark('octane2', () => require('./js/octane2').run());
+    await this.benchmark('sixspeed', () => require('./js/sixspeed').run());
   }
 
   async benchmark(name, fn) {

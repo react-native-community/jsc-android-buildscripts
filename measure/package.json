@@ -9,7 +9,6 @@
     "react-native": "0.51.0",
     "react": "16.0.0",
     "prop-types": "*",
-    "react-native-navigation": "1.x.x",
     "lodash": "4.x.x"
   }
 }
