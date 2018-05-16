@@ -22,19 +22,16 @@ dependencies {}
 apply plugin: 'maven'
 
 task createAAR(type: Upload) {
+    def DIST_DIR = "${rootDir}/../dist"
+
     project.group = "org.webkit"
     project.version = project.hasProperty("VERSION_NAME") ? project.VERSION_NAME : ""
 
-    def DIST_DIR = "${rootDir}/../dist"
-
     doFirst {
-        delete(DIST_DIR)
-    }
-
-    doLast {
         if (project.version.isEmpty()) {
             throw new RuntimeException("expecting --project-prop VERSION_NAME=??? but was empty")
         }
+        delete(DIST_DIR)
     }
 
     configuration = configurations.archives

@@ -1,5 +1,5 @@
 {
-  "name": "jsc-android",
+  "name": "android-jsc",
   "version": "0.0.1",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
@@ -11,7 +11,6 @@
     "android",
     "jsc"
   ],
-  "private": true,
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/DanielZlotin/jsc-android-buildscripts/issues"
