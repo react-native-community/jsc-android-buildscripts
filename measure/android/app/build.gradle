@@ -1,27 +1,32 @@
 apply plugin: "com.android.application"
 
+ext.react = [
+        jsBundleDirRelease: "$buildDir/intermediates/merged_assets/release/mergeReleaseAssets/out"
+]
+
 apply from: "$rootDir/../node_modules/react-native/react.gradle"
 
 android {
     compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId "com.reactnativeperf"
+        applicationId "com.javascriptcore.profiler"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         ndk {
-            abiFilters "armeabi-v7a", "x86"//, "arm64-v8a", "x86_64"
+            abiFilters = JSC_VERSION.contains("x64") ? ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"] : ["armeabi-v7a", "x86"]
         }
     }
     signingConfigs {
-      release {
-        storeFile file("$rootDir/keystores/release.keystore")
-        storePassword 'jscore'
-        keyAlias 'jscore'
-        keyPassword 'jscore'
-      }
+        release {
+            storeFile file("$rootDir/keystores/release.keystore")
+            storePassword 'jscore'
+            keyAlias 'jscore'
+            keyPassword 'jscore'
+        }
     }
     buildTypes {
         release {
@@ -34,7 +39,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:26.1.0"
+    implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(":react-native-navigation")
+}
+
+// Run this once to be able to run the application with BUCK
+// puts all compile dependencies into folder libs for BUCK to use
+task copyDownloadableDepsToLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
 }

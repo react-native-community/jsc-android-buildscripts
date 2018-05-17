@@ -15,7 +15,7 @@ const RENDER_JS = 1;
 const RENDER_PERF = 2;
 const RENDER_PERF_DEEP = 4;
 
-class ReactNativePerf extends Component {
+class MainScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -80,11 +80,4 @@ const styles = StyleSheet.create({
   }
 });
 
-AppRegistry.registerComponent('ReactNativePerf', () => ReactNativePerf);
-
-Navigation.startSingleScreenApp({
-  screen: {
-    screen: 'ReactNativePerf',
-    title: 'JSCore Perf Measurements'
-  }
-});
+AppRegistry.registerComponent('MainScreen', () => MainScreen);

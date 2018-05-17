@@ -1,9 +1,9 @@
 {
-  "name": "react-native-android-perf-measure",
+  "name": "javascriptcore-profiler",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "cd android && rm -rf build && rm -rf app/build && ./gradlew installRelease"
+    "android": "cd android && rm -rf build && rm -rf app/build && ./gradlew clean installRelease"
   },
   "dependencies": {
     "react-native": "0.51.0",

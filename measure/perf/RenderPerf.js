@@ -11,6 +11,7 @@ const SCALE = 1000;
 
 class RenderPerf extends Component {
   constructor(props) {
+    super(props);
     this.startTime = Date.now();
     this.onLayout = this.onLayout.bind(this);
   }
