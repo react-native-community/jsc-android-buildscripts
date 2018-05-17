@@ -1,9 +1,5 @@
 apply plugin: "com.android.application"
 
-//ext.react = [
-//        jsBundleDirRelease: "$buildDir/intermediates/merged_assets/release/mergeReleaseAssets/out"
-//]
-
 apply from: "$rootDir/../node_modules/react-native/react.gradle"
 
 android {
