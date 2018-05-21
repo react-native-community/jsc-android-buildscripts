@@ -7,7 +7,6 @@ import {
   Button
 } from 'react-native';
 const _ = require('lodash');
-
 const JSProfile = require('./suites/JSProfile');
 const RenderProfile = require('./suites/RenderProfile');
 
@@ -25,7 +24,14 @@ class MainScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={{
+        flex: 1,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 32,
+        paddingHorizontal: 16
+      }}>
         {this.renderButtonsOrMeasure()}
       </View>
     );
@@ -42,10 +48,16 @@ class MainScreen extends Component {
 
   renderBtns() {
     return (
-      <View style={styles.container}>
-        <Button uppercase={false} title="Profile JavaScript" onPress={() => this.setState({ render: RENDER_JS })} />
-        <Button uppercase={false} title="Profile Render Flat" onPress={() => this.setState({ render: RENDER_PERF })} />
-        <Button uppercase={false} title="Profile Render Deep" onPress={() => this.setState({ render: RENDER_PERF_DEEP })} />
+      <View >
+        <View style={{ margin: 16 }}>
+          <Button title="Profile JavaScript" onPress={() => this.setState({ render: RENDER_JS })} />
+        </View>
+        <View style={{ margin: 16 }}>
+          <Button title="Profile Render Flat" onPress={() => this.setState({ render: RENDER_PERF })} />
+        </View>
+        <View style={{ margin: 16 }}>
+          <Button title="Profile Render Deep" onPress={() => this.setState({ render: RENDER_PERF_DEEP })} />
+        </View>
       </View>
     );
   }
@@ -62,17 +74,5 @@ class MainScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignSelf: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-    justifyContent: 'space-between',
-    paddingVertical: 50,
-    paddingHorizontal: 10
-  }
-});
 
 AppRegistry.registerComponent('MainScreen', () => MainScreen);
