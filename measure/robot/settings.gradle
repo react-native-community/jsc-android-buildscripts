@@ -1,0 +1,2 @@
+rootProject.name = "JavaScriptCore Robot"
+include ':app'
