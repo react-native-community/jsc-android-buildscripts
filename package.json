@@ -1,6 +1,6 @@
 {
   "name": "android-jsc",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
@@ -16,6 +16,9 @@
     "url": "https://github.com/DanielZlotin/jsc-android-buildscripts/issues"
   },
   "homepage": "https://github.com/DanielZlotin/jsc-android-buildscripts#readme",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "install": "./scripts/install.sh",
     "prep": "./scripts/prep.sh",
