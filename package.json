@@ -20,7 +20,7 @@
     "/dist"
   ],
   "scripts": {
-    "install": "./scripts/install.sh",
+    "download": "./scripts/install.sh",
     "prep": "./scripts/prep.sh",
     "start": "./scripts/start.sh"
   },

@@ -22,9 +22,9 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 1. Clone this repo
 1. Update the config section under `package.json` to the desired build configuration
-1. `npm install`: downloads all needed sources
-1. `npm run prep`: copies downloaded sources and prepares for compilation
-1. `npm run start`: builds jsc (this might take some time...)
+2. `npm run download`: downloads all needed sources
+3. `npm run prep`: copies downloaded sources and prepares for compilation
+4. `npm run start`: builds jsc (this might take some time...)
 
 The zipfile containing the android-jsc AAR will be available at `/dist`.
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
