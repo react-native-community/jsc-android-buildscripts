@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 const _ = require('lodash');
 
-const JsPerf = require('./perf/JsPerf');
-const RenderPerf = require('./perf/RenderPerf');
+const JSProfile = require('./suites/JSProfile');
+const RenderProfile = require('./suites/RenderProfile');
 
 const RENDER_JS = 1;
 const RENDER_PERF = 2;
@@ -26,17 +26,16 @@ class MainScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Select A Test:</Text>
-        {this.renderPerf()}
+        {this.renderButtonsOrMeasure()}
       </View>
     );
   }
 
-  renderPerf() {
+  renderButtonsOrMeasure() {
     switch (this.state.render) {
-      case RENDER_JS: return this.startJsPerf();
-      case RENDER_PERF: return this.startRenderPerf();
-      case RENDER_PERF_DEEP: return this.startRenderPerf(true);
+      case RENDER_JS: return this.startJsProfile();
+      case RENDER_PERF: return this.startRenderProfile();
+      case RENDER_PERF_DEEP: return this.startRenderProfile(true);
       default: return this.renderBtns();
     }
   }
@@ -44,24 +43,22 @@ class MainScreen extends Component {
   renderBtns() {
     return (
       <View style={styles.container}>
-        <Button title="JsPerf" onPress={() => this.setState({ render: RENDER_JS })} />
-        <View style={{ margin: 10 }}>
-          <Button title="RenderPerf" onPress={() => this.setState({ render: RENDER_PERF })} />
-        </View>
-        <Button title="RenderPerfDeep" onPress={() => this.setState({ render: RENDER_PERF_DEEP })} />
+        <Button uppercase={false} title="Profile JavaScript" onPress={() => this.setState({ render: RENDER_JS })} />
+        <Button uppercase={false} title="Profile Render Flat" onPress={() => this.setState({ render: RENDER_PERF })} />
+        <Button uppercase={false} title="Profile Render Deep" onPress={() => this.setState({ render: RENDER_PERF_DEEP })} />
       </View>
     );
   }
 
-  startJsPerf() {
+  startJsProfile() {
     return (
-      <JsPerf />
+      <JSProfile />
     );
   }
 
-  startRenderPerf(deep = false) {
+  startRenderProfile(deep = false) {
     return (
-      <RenderPerf deep />
+      <RenderProfile deep={deep} />
     );
   }
 }
@@ -69,14 +66,12 @@ class MainScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignSelf: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    justifyContent: 'center'
-  },
-  title: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10
+    justifyContent: 'space-between',
+    paddingVertical: 50,
+    paddingHorizontal: 10
   }
 });
 

@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 const SCALE = 1000;
 
-class RenderPerf extends Component {
+module.exports = class RenderProfile extends Component {
   constructor(props) {
     super(props);
     this.startTime = Date.now();
@@ -19,7 +19,7 @@ class RenderPerf extends Component {
   render() {
     return (
       <View style={styles.container} onLayout={this.onLayout}>
-        <Text style={styles.welcome}>RenderPerf {this.props.deep ? 'deep' : 'flat'} test</Text>
+        <Text style={styles.title}>{this.props.deep ? 'Deep' : 'Flat'} Render Test</Text>
         {this.props.deep ? this.renderDeep(SCALE) : this.renderLots(SCALE)}
       </View>
     );
@@ -29,7 +29,7 @@ class RenderPerf extends Component {
     const views = [];
     _.times(count, (i) => {
       views.push((
-        <Text style={styles.instructions} key={i}>Helloooooo</Text>
+        <Text style={styles.text} key={i}>Hello</Text>
       ));
     });
 
@@ -43,7 +43,7 @@ class RenderPerf extends Component {
   renderDeep(i) {
     if (i == 0) {
       return (
-        <Text style={styles.instructions}>Helloooooo</Text>
+        <Text style={styles.text}>Hello</Text>
       );
     } else {
       return (
@@ -56,7 +56,7 @@ class RenderPerf extends Component {
 
   onLayout(params) {
     if (params.nativeEvent.layout.width) {
-      alert(`onLayout: ${Date.now() - this.startTime}`);
+      alert(`Benchmark Result: ${Date.now() - this.startTime}`);
     }
   }
 }
@@ -68,16 +68,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
+  title: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
+  text: {
     textAlign: 'center',
     color: '#333333',
     marginBottom: 1,
   },
 });
-
-module.exports = RenderPerf;

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 const _ = require('lodash');
 
-module.exports = class JsPerf extends Component {
+module.exports = class JSProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,20 +23,17 @@ module.exports = class JsPerf extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>JsPerf!</Text>
-
-        <View style={styles.instructions} />
-
-        <Text style={styles.welcome}>benchmarks results: {this.state.txt}</Text>
+        <Text style={styles.text}>JavaScript Synthetic Tests</Text>
+        <Text style={styles.text}>Benchmarks Results: {this.state.txt}</Text>
       </View>
     );
   }
 
   async start() {
-    await this.benchmark('sunspider', () => require('./js/sunspider').run());
-    await this.benchmark('jetstream', () => require('./js/jetstream').run());
-    await this.benchmark('octane2', () => require('./js/octane2').run());
-    await this.benchmark('sixspeed', () => require('./js/sixspeed').run());
+    await this.benchmark('Sunspider', () => require('./js/sunspider').run());
+    await this.benchmark('Jetstream HashMap', () => require('./js/jetstream').run());
+    await this.benchmark('Octane2', () => require('./js/octane2').run());
+    await this.benchmark('SixSpeed', () => require('./js/sixspeed').run());
   }
 
   async benchmark(name, fn) {
@@ -60,14 +57,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
+  text: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 30,
-  },
+    margin: 30,
+  }
 });
