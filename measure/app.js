@@ -22,10 +22,6 @@ class MainScreen extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log(`JavaScriptCoreProfiler:MainScreenDidMount:${Date.now()}`);
-  }
-
   render() {
     return (
       <View style={{

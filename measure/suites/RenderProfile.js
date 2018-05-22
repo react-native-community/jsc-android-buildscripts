@@ -29,7 +29,7 @@ module.exports = class RenderProfile extends Component {
     const views = [];
     _.times(count, (i) => {
       views.push((
-        <Text style={styles.text} key={i}>Hello</Text>
+        <Text style={styles.text} key={i}>DONE</Text>
       ));
     });
 
@@ -43,7 +43,7 @@ module.exports = class RenderProfile extends Component {
   renderDeep(i) {
     if (i == 0) {
       return (
-        <Text style={styles.text}>Hello</Text>
+        <Text style={styles.text}>DONE</Text>
       );
     } else {
       return (
@@ -57,7 +57,7 @@ module.exports = class RenderProfile extends Component {
   onLayout(params) {
     if (params.nativeEvent.layout.width) {
       const result = Date.now() - this.startTime;
-      alert(`Benchmark Result: ${result}`);
+      alert(`DONE: ${result}`);
       console.log(`JavaScriptCoreProfiler:Render${this.props.deep ? 'Deep' : 'Flat'}Result:${result}`)
     }
   }

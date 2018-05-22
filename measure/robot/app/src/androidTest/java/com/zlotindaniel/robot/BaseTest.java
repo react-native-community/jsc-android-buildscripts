@@ -8,6 +8,7 @@ import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.Until;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +27,10 @@ public abstract class BaseTest {
 		device().wakeUp();
 	}
 
+	@After
 	public void afterEach() throws Exception {
 		device().executeShellCommand("am force-stop " + PACKAGE_NAME);
+		device().executeShellCommand("am kill " + PACKAGE_NAME);
 	}
 
 	public UiDevice device() {
@@ -40,7 +43,6 @@ public abstract class BaseTest {
 
 	public void startJavaScriptCoreProfilerApp() throws Exception {
 		device().executeShellCommand("am start -n " + PACKAGE_NAME + "/.MainActivity");
-		device().waitForIdle();
 		assertExists(By.pkg(PACKAGE_NAME).depth(0));
 	}
 
@@ -53,5 +55,10 @@ public abstract class BaseTest {
 		assertThat(device().findObject(selector).getVisibleCenter().y)
 				.isPositive()
 				.isLessThan(device().getDisplayHeight());
+	}
+
+	public void click(String text) {
+		assertExists(By.text(text.toUpperCase()));
+		device().findObject(By.text(text.toUpperCase())).click();
 	}
 }

@@ -1,7 +1,6 @@
 package com.javascriptcore.profiler;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -14,11 +13,11 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 	public static final String TAG = "JavaScriptCoreProfiler";
+	public static final long appStartTime = System.currentTimeMillis();
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.d(TAG, TAG + ":ApplicationOnCreate:" + System.currentTimeMillis());
 		SoLoader.init(this, false);
 	}
 
