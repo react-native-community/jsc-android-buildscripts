@@ -25,8 +25,8 @@ public class MainActivity extends ReactActivity {
 				@Override
 				public boolean onPreDraw() {
 					if (((ReactRootView) view).getChildCount() > 0) {
-						applicationLoadedAndRendered();
 						view.getViewTreeObserver().removeOnPreDrawListener(this);
+						applicationLoadedAndRendered();
 					}
 					return true;
 				}
