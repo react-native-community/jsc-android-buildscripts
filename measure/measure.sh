@@ -25,17 +25,17 @@ killProfiler() {
 
 clickOnJsTest() {
   adb shell input tap 720 1008
-  sleep 2
+  sleep 10
 }
 
 clickOnFlatRenderTest() {
   adb shell input tap 720 1240
-  sleep 2
+  sleep 5
 }
 
 clickOnDeepRenderTest() {
   adb shell input tap 720 1470
-  sleep 2
+  sleep 5
 }
 
 installProfiler
