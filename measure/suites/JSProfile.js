@@ -12,7 +12,11 @@ module.exports = class JSProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      txt: ''
+      sunspider: '...',
+      jetstream: '...',
+      octane2: '...',
+      sixspeed: '...',
+      done: false
     };
   }
 
@@ -24,16 +28,22 @@ module.exports = class JSProfile extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>JavaScript Synthetic Tests</Text>
-        <Text style={styles.text}>Benchmarks Results: {this.state.txt}</Text>
+        <Text style={styles.text}>Benchmarks Results:</Text>
+        <Text style={styles.text}>Sunspider: {this.state.sunspider}</Text>
+        <Text style={styles.text}>Jetstream HashMap: {this.state.jetstream}</Text>
+        <Text style={styles.text}>Octane2: {this.state.octane2}</Text>
+        <Text style={styles.text}>SixSpeed: {this.state.sixspeed}</Text>
+        <Text style={styles.text}>{this.state.done ? 'DONE' : ''}</Text>
       </View>
     );
   }
 
   async start() {
-    await this.benchmark('Sunspider', () => require('./js/sunspider').run());
-    await this.benchmark('Jetstream HashMap', () => require('./js/jetstream').run());
-    await this.benchmark('Octane2', () => require('./js/octane2').run());
-    await this.benchmark('SixSpeed', () => require('./js/sixspeed').run());
+    await this.benchmark('sunspider', () => require('./js/sunspider').run());
+    await this.benchmark('jetstream', () => require('./js/jetstream').run());
+    await this.benchmark('octane2', () => require('./js/octane2').run());
+    await this.benchmark('sixspeed', () => require('./js/sixspeed').run());
+    this.setState({ done: true });
   }
 
   async benchmark(name, fn) {
@@ -42,7 +52,11 @@ module.exports = class JSProfile extends Component {
       setTimeout(() => {
         fn();
         setTimeout(() => {
-          this.setState({ txt: `${this.state.txt}\n${name}: ${Date.now() - start}` });
+          const result = Date.now() - start;
+          console.log(`JavaScriptCoreProfiler:${name}:${result}`);
+          this.setState({
+            [name]: result.toString()
+          });
           r();
         }, 0);
       }, 0);
@@ -60,6 +74,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 30,
+    margin: 16,
   }
 });

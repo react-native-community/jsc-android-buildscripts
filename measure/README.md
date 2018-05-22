@@ -7,8 +7,8 @@ A simple react native app with some measurements of the performance of the andro
 1. Compile the jsc locally (from root project, so that the compiled result will be at `/dist`)
 1. Connect a physical device
 1. `npm i` from within `/measure`
-1. `npm run android`. This will unzip the compiled jsc into the android dir, and use it to compile a release version of this app
-1. Inside the app select one of the tests for it to execute. To run a different test close the app and remove it from recent apps to release all memory.
+2. `npm run start`. This will compile a release version of the profiler app with the jsc from `/dist` and start measurements automatically.
+- You can run the tests manually: inside the app select one of the tests for it to execute. To run a different test close the app and remove it from recent apps to release all memory.
 
 ## Measurements
 

@@ -56,7 +56,9 @@ module.exports = class RenderProfile extends Component {
 
   onLayout(params) {
     if (params.nativeEvent.layout.width) {
-      alert(`Benchmark Result: ${Date.now() - this.startTime}`);
+      const result = Date.now() - this.startTime;
+      alert(`Benchmark Result: ${result}`);
+      console.log(`JavaScriptCoreProfiler:Render${this.props.deep ? 'Deep' : 'Flat'}Result:${result}`)
     }
   }
 }

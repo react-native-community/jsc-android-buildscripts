@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "cd android && rm -rf build && rm -rf app/build && ./gradlew clean installRelease"
+    "start": "./measure.sh"
   },
   "dependencies": {
     "react-native": "0.51.0",
