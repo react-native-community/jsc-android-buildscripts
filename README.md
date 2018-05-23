@@ -55,7 +55,7 @@ dependencies {
 
 then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
 
-2. Modify `andorid/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
+2. Modify `android/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
 ```diff
 allprojects {
     repositories {
