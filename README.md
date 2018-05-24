@@ -89,7 +89,7 @@ See **[Measurements](/measure)** page that contains synthetic perf test results 
 ## Resources
 - [WebkitGTK Sources](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
 - [ICU Sources](https://android.googlesource.com/platform/external/icu/)
-- [Info about Webkit Revisions](https://trac.webkit.org/)
+- [Info about Webkit Revisions](https://trac.webkit.org/browser/webkit/releases/WebKitGTK)
 - [Info about JSC version used on iOS](https://opensource.apple.com/release/ios-110.html)
 
 ## Credits
