@@ -1,0 +1,14 @@
+{
+  "name": "javascriptcore-profiler",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "./scripts/measure.sh"
+  },
+  "dependencies": {
+    "react-native": "0.51.0",
+    "react": "16.0.0",
+    "prop-types": "*",
+    "lodash": "4.x.x"
+  }
+}

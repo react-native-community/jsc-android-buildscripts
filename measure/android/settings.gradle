@@ -1,0 +1,3 @@
+rootProject.name = 'JavaScriptCore Profiler'
+
+include ':app'
