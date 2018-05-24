@@ -15,8 +15,7 @@ module.exports = class JSProfile extends Component {
       sunspider: '...',
       jetstream: '...',
       octane2: '...',
-      sixspeed: '...',
-      done: false
+      sixspeed: '...'
     };
   }
 
@@ -33,7 +32,6 @@ module.exports = class JSProfile extends Component {
         <Text style={styles.text}>Jetstream HashMap: {this.state.jetstream}</Text>
         <Text style={styles.text}>Octane2: {this.state.octane2}</Text>
         <Text style={styles.text}>SixSpeed: {this.state.sixspeed}</Text>
-        <Text style={styles.text}>{this.state.done ? 'DONE' : ''}</Text>
       </View>
     );
   }
@@ -43,7 +41,7 @@ module.exports = class JSProfile extends Component {
     await this.benchmark('jetstream', () => require('./js/jetstream').run());
     await this.benchmark('octane2', () => require('./js/octane2').run());
     await this.benchmark('sixspeed', () => require('./js/sixspeed').run());
-    this.setState({ done: true });
+    console.log(`JavaScriptCoreProfiler:JSProfile:Done`);
   }
 
   async benchmark(name, fn) {

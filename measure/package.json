@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "./measure.sh"
+    "start": "./scripts/measure.sh"
   },
   "dependencies": {
     "react-native": "0.51.0",
