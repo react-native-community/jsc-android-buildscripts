@@ -29,7 +29,81 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 The zipfile containing the android-jsc AAR will be available at `/dist`.
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
 
-- **[Measurements](/measure)**
-- WebkitGTK Sources can be found [here](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
-- ICU Sources can be found [here](https://android.googlesource.com/platform/external/icu/)
-- Revision information can be found [here](https://trac.webkit.org/)
+## Distribution
+
+JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
+The library is packaged as a local Maven repository containing AAR files that include the binaries.
+Please refer to the section below in order to learn how your app can consume this format.
+
+## How to use it with my React Native app
+
+Follow steps below in order for your React Native app to use new version of JSC VM on android:
+
+1. Add `jsc-android` to the "dependencies" section in your `package.json`:
+```diff
+dependencies {
++  "jsc-android": "^216113.0.0",
+```
+
+then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
+
+2. Modify `android/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
+```diff
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
++       maven {
++           // Local Maven repo containing AARs with JSC library built for Android
++           url "$rootDir/../node_modules/jsc-android/android"
++       }
+    }
+}
+```
+
+3. Update your app's `build.gradle` file located in `android/app/build.gradle` to force app builds to use new version of the JSC library as opposed to the version specified in [react-native gradle module as a dependency](https://github.com/facebook/react-native/blob/e8df8d9fd579ff14224cacdb816f9ff07eef978d/ReactAndroid/build.gradle#L289):
+
+```diff
+}
+
++configurations.all {
++    resolutionStrategy {
++        force 'org.webkit:android-jsc:r216113'
++    }
++}
+
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
+```
+
+4. You're done, rebuild your app and enjoy updated version of JSC on android!
+
+## Testing
+
+See **[Measurements](/measure)** page that contains synthetic perf test results for the most notable versions of JSC we have tried.
+
+## Resources
+- [WebkitGTK Sources](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
+- [ICU Sources](https://android.googlesource.com/platform/external/icu/)
+- [Info about Webkit Revisions](https://trac.webkit.org/)
+- [Info about JSC version used on iOS](https://opensource.apple.com/release/ios-110.html)
+
+## Credits
+
+Check [the list of contributors here](https://github.com/react-community/jsc-android-buildscripts/graphs/contributors). This project is supported by:
+
+
+[![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 "Expo.io")](https://expo.io)
+[Expo.io](https://expo.io)
+
+
+[![swm](https://avatars1.githubusercontent.com/u/6952717?v=3&s=100 "Software Mansion")](https://swmansion.com)
+[Software Mansion](https://swmansion.com)
+
+
+[![wix](https://avatars3.githubusercontent.com/u/686511?s=200&v=4&s=100 "Wix")](https://www.wix.engineering)
+[Wix](https://www.wix.engineering)
