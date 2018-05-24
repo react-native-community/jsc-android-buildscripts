@@ -59,5 +59,6 @@ launchProfiler
 clickOnDeepRenderTest
 killProfiler
 
-RESULTS=$(adb logcat -d | grep "JavaScriptCoreProfiler")
-printf "\n\n\n\nRESULTS:\n\n${RESULTS}\n\n\n\n"
+TIMINGS=$(adb logcat -d | grep "JavaScriptCoreProfiler")
+SIZE=$(du -h "../dist" | cut -f1 | tail -1)
+printf "\n\n\n\nRESULTS:\n\n${TIMINGS}\n\nSize: ${SIZE}\n\n\n"
