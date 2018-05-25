@@ -4,7 +4,7 @@
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DanielZlotin/jsc-android-buildscripts.git"
+    "url": "git+https://github.com/react-community/jsc-android-buildscripts.git"
   },
   "keywords": [
     "react-native",
@@ -13,9 +13,9 @@
   ],
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/DanielZlotin/jsc-android-buildscripts/issues"
+    "url": "https://github.com/react-community/jsc-android-buildscripts/issues"
   },
-  "homepage": "https://github.com/DanielZlotin/jsc-android-buildscripts#readme",
+  "homepage": "https://github.com/react-community/jsc-android-buildscripts#readme",
   "files": [
     "/dist"
   ],
