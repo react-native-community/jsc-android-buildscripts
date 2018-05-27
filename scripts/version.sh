@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 bitness="x32"
 if $npm_package_config_x64 = "true"
@@ -12,4 +12,5 @@ then
     i18n="i18n"
 fi
 
-echo "${npm_package_config_webkitGTK}-${npm_package_config_android_icu}-${bitness}-${i18n}-${npm_package_config_hint}"
+VERSION="${npm_package_config_webkitGTK}-${npm_package_config_android_icu}-${bitness}-${i18n}-${npm_package_config_hint}"
+echo $VERSION

@@ -22,12 +22,16 @@ A simple react native app with some measurements of the performance of the andro
 - All timings in milliseconds
 - Size in MB
 
+### Results
 
-| Version Name                    | WebkitGTK Date | Launch | Sunspider | Jetstream HashMap | Octane2 | SixSpeed | Render Flat | Render Deep | Size(MB) |
-|---------------------------------|:--------------:|:------:|:---------:|:-----------------:|:-------:|:--------:|:-----------:|:-----------:|:--------:|
-| Stock RN44 (r174650)            |     Oct2014    |    ?   |    550    |        4150       |   2500  |   1400   |     900     |     1400    |     ?    |
-| 2.17.2-r216113.0.2              |     May2017    |    ?   |    480    |        3300       |   1950  |    440   |     850     |     1250    |     ?    |
-| 2.18.2-8.0.0_r34-x32-en-nobabel |     Oct2017    |    ?   |    480    |        3300       |   1850  |    410   |     900     |     1350    |     ?    |
-| 2.18.2-8.0.0_r34-x32-en-nojit   |     Oct2017    |    ?   |    1045   |        9164       |   3856  |    574   |     900     |     1165    |     ?    |
-| 2.18.2-8.0.0_r34-x32-en-tip     |     Oct2017    |    ?   |    480    |        3250       |   1800  |    400   |     850     |     1300    |     ?    |
-| ?                               |                |        |           |                   |         |          |             |             |          |
+| Version Name | Npm Version | Build Date | WebkitGTK Revision | WebkitGTK Date | TTI | SunSpider | Jetstream Hashmap | Octane2 | SixSpeed | Render Flat | Render Deep | Size |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Stock RN44 | - | - | 174650 | 2014-10-13 | TODO | 550 | 4150 | 2500 | 1400 | 900 | 1400 | TODO |
+| 2.17.2-7.1.2_r11-x32-en-swmantion | 216113.0.3 | 2017-11-17 | 216113 | 2017-05-03 | TODO | 480 | 3300 | 1950 | 440 | 850 | 1250 | TODO |
+| 2.17.2-7.1.2_r11-x32-i18n-swmantion | 216113.0.3 | 2017-11-17 | 216113 | 2017-05-03 | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+| 2.18.2-8.0.0_r34-x32-en-nobabel | - | - | 216113 | 2017-10-27 | TODO | 480 | 3300 | 1850 | 410 | 900 | 1350 | TODO |
+| 2.18.2-8.0.0_r34-x32-en-nojit | - | - | 216113 | 2017-10-27 | TODO | 1045 | 9164 | 3856 | 574 | 900 | 1165 | TODO |
+| 2.18.2-8.0.0_r34-x32-en-tip | - | - | 216113 | 2017-10-27 | TODO | 480 | 3250 | 1800 | 400 | 850 | 1300 | TODO |
+| 2.18.2-8.0.0_r34-x32-i18n-tip | - | - | 216113 | 2017-10-27 | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+
+
