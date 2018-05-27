@@ -2,17 +2,23 @@
 
 ext {
     JSC_DIR = "$rootDir/../../dist"
-    JSC_VERSION = file(file(fileTree(dir: JSC_DIR).find { it.name.endsWith(".aar") }).getParent()).getName()
+    def jscAAR = fileTree(dir: JSC_DIR).find { it.name.endsWith(".aar") }
+    JSC_VERSION = jscAAR ? file(file(jscAAR).getParent()).getName() : ""
+    ABI_FILTERS = JSC_VERSION && JSC_VERSION.contains("x64") ? ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"] : ["armeabi-v7a", "x86"]
 }
 
-println "\n\n\t\tUsing JavaScriptCore for Android, version ${(char) 27}[35m${JSC_VERSION}${(char) 27}[0m \n\n"
+if (JSC_VERSION) {
+    println "\n\n\t\tUsing JavaScriptCore for Android, version ${(char) 27}[35m${JSC_VERSION}${(char) 27}[0m \n\n"
 
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            force "org.webkit:android-jsc:${JSC_VERSION}"
+    allprojects {
+        configurations.all {
+            resolutionStrategy {
+                force "org.webkit:android-jsc:${JSC_VERSION}"
+            }
         }
     }
+} else {
+    println "\n\n\t\tUsing Stock JavaScriptCore for Android \n\n"
 }
 
 buildscript {
