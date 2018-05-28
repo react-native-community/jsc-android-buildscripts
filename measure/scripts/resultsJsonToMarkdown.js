@@ -4,9 +4,9 @@ const fs = require('fs');
 const rootDir = process.cwd();
 
 const fields = {
-  name: "Version Name",
   npm: "Npm Version",
   date: "Build Date",
+  config: "Config",
   revision: "WebkitGTK Revision",
   revisionDate: "WebkitGTK Date",
   tti: "TTI",
@@ -52,13 +52,19 @@ function populateWithAllData(table, results) {
 
     table += '|';
     _.forEach(fields, (field, key) => {
-      table += ` ${test[key]} |`
+      const raw = test[key];
+      const value = _.isPlainObject(raw) ? explodeJson(raw) : raw;
+      table += ` ${value} |`
     });
     table += '\n';
 
   });
   table += '\n';
   return table;
+}
+
+function explodeJson(json) {
+  return _.reduce(json, (result, val, key) => result += `${key}:${val}<br/>`, '');
 }
 
 function updateReadme(table, results) {

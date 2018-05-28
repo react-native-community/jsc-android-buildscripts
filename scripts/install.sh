@@ -11,4 +11,4 @@ svn export https://svn.webkit.org/repository/webkit/$SVN_URL/Tools $TARGET_DIR/w
 svn export https://svn.webkit.org/repository/webkit/$SVN_URL/CMakeLists.txt $TARGET_DIR/webkit/CMakeLists.txt
 
 mkdir -p $TARGET_DIR/icu
-curl "https://android.googlesource.com/platform/external/icu/+archive/android-${npm_package_config_android_icu}/icu4c.tar.gz" | tar xzf - -C $TARGET_DIR/icu
+curl "https://android.googlesource.com/platform/external/icu/+archive/android-${npm_package_config_androidICU}/icu4c.tar.gz" | tar xzf - -C $TARGET_DIR/icu
