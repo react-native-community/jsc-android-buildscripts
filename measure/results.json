@@ -103,5 +103,20 @@
     "renderflat": "TODO",
     "renderdeep": "TODO",
     "size": "TODO"
+  },
+  {
+    "name": "2.18.2-8.0.0_r34-x32-i18n-stable",
+    "npm": "-",
+    "date": "-",
+    "revision": "216113",
+    "revisionDate": "2017-10-27",
+    "tti": "TODO",
+    "sunspider": "TODO",
+    "jetstream": "TODO",
+    "octane2": "TODO",
+    "sixspeed": "TODO",
+    "renderflat": "TODO",
+    "renderdeep": "TODO",
+    "size": "TODO"
   }
 ]
