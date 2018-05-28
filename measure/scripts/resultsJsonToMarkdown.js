@@ -50,6 +50,10 @@ function createHeaderLine(table) {
 function populateWithAllData(table, results) {
   _.forEach(results, (test) => {
 
+    if (!_.isEqual(_.keys(fields), _.keys(test))) {
+      throw new Error(`invalid keys in ${JSON.stringify(test, null, 2)}`);
+    }
+
     table += '|';
     _.forEach(fields, (field, key) => {
       const raw = test[key];
