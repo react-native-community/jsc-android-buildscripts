@@ -22,24 +22,26 @@ dependencies {}
 apply plugin: 'maven'
 
 task createAAR(type: Upload) {
-    def DIST_DIR = "${rootDir}/../dist"
+    def distDir = "${rootDir}/../dist"
 
-    project.group = "org.webkit"
-    project.version = project.hasProperty("VERSION_NAME") ? project.VERSION_NAME : ""
+    def revision = project.findProperty("revision")
+    def i18n = project.findProperty("i18n")
 
     doFirst {
-        if (project.version.isEmpty()) {
-            throw new RuntimeException("expecting --project-prop VERSION_NAME=??? but was empty")
-        }
-        delete(DIST_DIR)
+        if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
+        if (!i18n) throw new RuntimeException("expecting --project-prop i18n=??? but was empty")
     }
+
+    project.group = "org.webkit"
+    def artifactName = Boolean.valueOf(i18n) ? "android-jsc-intl" : "android-jsc"
+    project.version = "r${revision}"
 
     configuration = configurations.archives
     repositories.mavenDeployer {
-        repository url: "file://${DIST_DIR}"
+        repository url: "file://${distDir}"
         pom.project {
             name "android-jsc"
-            artifactId "android-jsc"
+            artifactId artifactName
             packaging "aar"
         }
     }

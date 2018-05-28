@@ -21,7 +21,6 @@
   ],
   "scripts": {
     "getRevision": "./scripts/revision.sh",
-    "getVersion": "./scripts/version.sh",
     "download": "./scripts/install.sh",
     "prep": "./scripts/prep.sh",
     "start": "./scripts/start.sh"
