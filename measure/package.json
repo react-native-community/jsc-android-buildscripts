@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./scripts/measure.sh",
+    "start": "node ./scripts/measure",
     "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown"
   },
   "dependencies": {
@@ -11,5 +11,8 @@
     "react": "16.0.0-alpha.6",
     "prop-types": "*",
     "lodash": "4.x.x"
+  },
+  "devDependencies": {
+    "shell-utils": "1.x.x"
   }
 }
