@@ -24,10 +24,10 @@ A simple react native app with some measurements of the performance of the andro
 
 ### Results
 
-| Npm Version | Build Date | Config | WebkitGTK Revision | WebkitGTK Date | TTI | SunSpider | Jetstream Hashmap | Octane2 | SixSpeed | Render Flat | Render Deep | Size |
+| Npm Version | Publish Date | Config | WebkitGTK Revision | WebkitGTK Date | TTI | SunSpider | Jetstream Hashmap | Octane2 | SixSpeed | Render Flat | Render Deep | Size |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| - | - | Stock RN44 | 174650 | 2014-10-13 | TODO | 550 | 4150 | 2500 | 1400 | 900 | 1400 | TODO |
-| 216113.0.3 | 2017-11-17 | 2.17.2-7.1.2_r11-x32-en-swmansion | 216113 | 2017-05-03 | TODO | 480 | 3300 | 1950 | 440 | 850 | 1250 | TODO |
+| - | - | Stock RN44 (x32, non-i18n) | 174650 | 2014-10-13 | 579 | 519 | 4087 | 2545 | 1386 | 844 | 1162 | 1.8/- |
+| 216113.0.3 | 2017-11-17 | webkitGTK:2.17.1<br/>androidICU:7.1.2_r11<br/>x64:false<br/>i18n:false<br/>hint:swmansion<br/> | 216113 | 2017-05-03 | 576 | 455 | 3265 | 1980 | 436 | 854 | 1155 | 4.3/6.5 |
 | 216113.0.3 | 2017-11-17 | 2.17.2-7.1.2_r11-x32-i18n-swmansion | 216113 | 2017-05-03 | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 | - | - | 2.18.2-8.0.0_r34-x32-en-nobabel | 216113 | 2017-10-27 | TODO | 480 | 3300 | 1850 | 410 | 900 | 1350 | TODO |
 | - | - | 2.18.2-8.0.0_r34-x32-en-nojit | 216113 | 2017-10-27 | TODO | 1045 | 9164 | 3856 | 574 | 900 | 1165 | TODO |
