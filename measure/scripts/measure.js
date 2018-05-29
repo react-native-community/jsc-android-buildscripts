@@ -69,7 +69,8 @@ function parseTestValues(resultLines, regex) {
 }
 
 function installProfiler() {
-  exec.execSync(`cd android && ./gradlew clean uninstallRelease installRelease`);
+  const useI18n = _.includes(process.argv, 'i18n') ? '--project-prop i18n=true' : '';
+  exec.execSync(`cd android && ./gradlew clean uninstallRelease installRelease ${useI18n}`);
 }
 
 function clearLogcat() {

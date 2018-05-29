@@ -2,7 +2,7 @@
   {
     "npm": "-",
     "date": "-",
-    "config": "Stock RN44 (x32, non-i18n)",
+    "config": "Stock RN44 (x32 only, non-i18n)",
     "revision": "174650",
     "revisionDate": "2014-10-13",
     "tti": "579",
@@ -20,9 +20,7 @@
     "config": {
       "webkitGTK": "2.17.1",
       "androidICU": "7.1.2_r11",
-      "x64": true,
-      "i18n": false,
-      "hint": "swmansion"
+      "i18n": false
     },
     "revision": "216113",
     "revisionDate": "2017-05-03",
@@ -41,20 +39,18 @@
     "config": {
       "webkitGTK": "2.17.1",
       "androidICU": "7.1.2_r11",
-      "x64": false,
-      "i18n": true,
-      "hint": "swmansion"
+      "i18n": true
     },
     "revision": "216113",
     "revisionDate": "2017-05-03",
-    "tti": "580",
-    "sunspider": "517",
-    "jetstream": "4035",
-    "octane2": "2558",
-    "sixspeed": "1387",
-    "renderflat": "889",
-    "renderdeep": "1171",
-    "size": "1.8/-"
+    "tti": "577",
+    "sunspider": "456",
+    "jetstream": "3244",
+    "octane2": "2006",
+    "sixspeed": "441",
+    "renderflat": "862",
+    "renderdeep": "1112",
+    "size": "4.4/6.6"
   },
   {
     "npm": "-",
@@ -107,9 +103,7 @@
     "config": {
       "webkitGTK": "2.18.2",
       "androidICU": "8.0.0_r34",
-      "x64": false,
-      "i18n": false,
-      "hint": "stable"
+      "i18n": false
     },
     "revision": "216113",
     "revisionDate": "2017-10-27",

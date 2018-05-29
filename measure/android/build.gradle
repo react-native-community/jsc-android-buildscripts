@@ -4,16 +4,24 @@ ext {
     JSC_DIR = "$rootDir/../../dist"
     def jscAAR = fileTree(dir: JSC_DIR).find { it.name.endsWith(".aar") }
     JSC_VERSION = jscAAR ? file(file(jscAAR).getParent()).getName() : ""
+
+    def i18nProp = project.findProperty("i18n")
+    JSC_NAME = Boolean.valueOf(i18nProp) ? "android-jsc-intl" : "android-jsc"
+
 //    ABI_FILTERS = JSC_VERSION && JSC_VERSION.contains("x64") ? ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"] : []
 }
 
 if (JSC_VERSION) {
-    println "\n\n\t\tUsing JavaScriptCore for Android, version ${(char) 27}[35m${JSC_VERSION}${(char) 27}[0m \n\n"
+    println "\n\n\t\tUsing JavaScriptCore for Android, version ${(char) 27}[35m${JSC_NAME}:${JSC_VERSION}${(char) 27}[0m \n\n"
 
     allprojects {
         configurations.all {
             resolutionStrategy {
-                force "org.webkit:android-jsc-intl:${JSC_VERSION}"
+                eachDependency { DependencyResolveDetails details ->
+                    if (details.requested.name == 'android-jsc') {
+                        details.useTarget group: details.requested.group, name: JSC_NAME, version: JSC_VERSION
+                    }
+                }
             }
         }
     }

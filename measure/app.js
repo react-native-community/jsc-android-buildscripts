@@ -33,6 +33,9 @@ class MainScreen extends Component {
         paddingHorizontal: 16
       }}>
         {this.renderButtonsOrMeasure()}
+        <Text>
+          {new Date().toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        </Text>
       </View>
     );
   }

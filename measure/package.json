@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "android": "cd android && ./gradlew installRelease",
     "start": "node ./scripts/measure",
     "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown"
   },
