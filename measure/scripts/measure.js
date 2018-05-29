@@ -42,6 +42,8 @@ function run() {
 
   const resultLines = _.split(resultsStr, '\n');
   parseAndPrintTestResults(resultLines);
+
+  exec.execSync(`find ./android/app/build/intermediates/transforms/mergeJniLibs/release -name libjsc.so | xargs ls -lh`);
 }
 
 function parseAndPrintTestResults(resultLines) {
