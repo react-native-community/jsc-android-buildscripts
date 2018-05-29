@@ -5,7 +5,7 @@ const rootDir = process.cwd();
 
 const fields = {
   npm: "Npm Version",
-  date: "Build Date",
+  date: "Publish Date",
   config: "Config",
   revision: "WebkitGTK Revision",
   revisionDate: "WebkitGTK Date",

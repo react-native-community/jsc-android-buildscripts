@@ -2,17 +2,17 @@
   {
     "npm": "-",
     "date": "-",
-    "config": "Stock RN44",
+    "config": "Stock RN44 (x32, non-i18n)",
     "revision": "174650",
     "revisionDate": "2014-10-13",
-    "tti": "717",
-    "sunspider": "550",
-    "jetstream": "4150",
-    "octane2": "2500",
-    "sixspeed": "1400",
-    "renderflat": "900",
-    "renderdeep": "1400",
-    "size": "TODO"
+    "tti": "579",
+    "sunspider": "519",
+    "jetstream": "4087",
+    "octane2": "2545",
+    "sixspeed": "1386",
+    "renderflat": "844",
+    "renderdeep": "1162",
+    "size": "1.8Mb"
   },
   {
     "npm": "216113.0.3",

@@ -5,14 +5,14 @@ const PACKAGE_NAME = 'com.javascriptcore.profiler';
 const ACTIVITY_NAME = 'MainActivity';
 const LOGCAT_TAG = 'JavaScriptCoreProfiler';
 
-const tests = {
-  TTI: /ApplicationLoadedAndRendered:(\d+)/,
-  Sunspider: /sunspider:(\d+)/,
-  Jetstream: /jetstream:(\d+)/,
-  Octane2: /octane2:(\d+)/,
-  SixSpeed: /sixspeed:(\d+)/,
-  RenderFlat: /RenderFlatResult:(\d+)/,
-  RenderDeep: /RenderDeepResult:(\d+)/
+const TESTS = {
+  tti: /ApplicationLoadedAndRendered:(\d+)/,
+  sunspider: /sunspider:(\d+)/,
+  jetstream: /jetstream:(\d+)/,
+  octane2: /octane2:(\d+)/,
+  sixspeed: /sixspeed:(\d+)/,
+  renderflat: /RenderFlatResult:(\d+)/,
+  renderdeep: /RenderDeepResult:(\d+)/
 };
 
 run();
@@ -41,18 +41,21 @@ function run() {
   })
 
   const resultLines = _.split(resultsStr, '\n');
-  printTestsAverages(resultLines);
+  parseAndPrintTestResults(resultLines);
+}
+
+function parseAndPrintTestResults(resultLines) {
+  console.log('\n\n\nTest Results:\n\n\n');
+  _.forEach(TESTS, (test, name) => {
+    const testValues = parseTestValues(resultLines, test);
+    const testAverage = _.round(_.mean(testValues));
+    console.log(`"${name}": "${testAverage}",`);
+  });
+  console.log('\n\n\n');
 }
 
 function readLogcatFilteredOutput() {
   return exec.execSyncRead(`adb logcat -d | grep "${LOGCAT_TAG}"`, true);
-}
-
-function printTestsAverages(resultLines) {
-  _.forEach(tests, (test, name) => {
-    const testAverage = _.round(_.mean(parseTestValues(resultLines, test)));
-    console.log(`${name}: ${testAverage}`);
-  });
 }
 
 function parseTestValues(resultLines, regex) {
