@@ -20,7 +20,7 @@
     "config": {
       "webkitGTK": "2.17.1",
       "androidICU": "7.1.2_r11",
-      "x64": false,
+      "x64": true,
       "i18n": false,
       "hint": "swmansion"
     },
@@ -38,17 +38,23 @@
   {
     "npm": "216113.0.3",
     "date": "2017-11-17",
-    "config": "2.17.2-7.1.2_r11-x32-i18n-swmansion",
+    "config": {
+      "webkitGTK": "2.17.1",
+      "androidICU": "7.1.2_r11",
+      "x64": false,
+      "i18n": true,
+      "hint": "swmansion"
+    },
     "revision": "216113",
     "revisionDate": "2017-05-03",
-    "tti": "TODO",
-    "sunspider": "TODO",
-    "jetstream": "TODO",
-    "octane2": "TODO",
-    "sixspeed": "TODO",
-    "renderflat": "TODO",
-    "renderdeep": "TODO",
-    "size": "TODO"
+    "tti": "580",
+    "sunspider": "517",
+    "jetstream": "4035",
+    "octane2": "2558",
+    "sixspeed": "1387",
+    "renderflat": "889",
+    "renderdeep": "1171",
+    "size": "1.8/-"
   },
   {
     "npm": "-",
