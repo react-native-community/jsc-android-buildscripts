@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  ToastAndroid
 } from 'react-native';
 const _ = require('lodash');
 const JSProfile = require('./suites/JSProfile');
@@ -22,6 +23,16 @@ class MainScreen extends Component {
     };
   }
 
+  componentDidMount() {
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date();
+    const he = date.toLocaleDateString('he', opts);
+    const ja = date.toLocaleDateString('ja', opts);
+    const de = date.toLocaleDateString('de', opts);
+    const ar = date.toLocaleDateString('ar', opts);
+    setTimeout(() => ToastAndroid.show(`Different Locales:\n${he}\n${ja}\n${de}\n${ar}`, ToastAndroid.LONG), 1000);
+  }
+
   render() {
     return (
       <View style={{
@@ -33,9 +44,6 @@ class MainScreen extends Component {
         paddingHorizontal: 16
       }}>
         {this.renderButtonsOrMeasure()}
-        <Text>
-          {new Date().toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-        </Text>
       </View>
     );
   }
