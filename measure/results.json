@@ -55,24 +55,34 @@
   {
     "npm": "-",
     "date": "-",
-    "config": "2.18.2-8.0.0_r34-x32-en-nobabel",
+    "config": {
+      "webkitGTK": "2.17.1",
+      "androidICU": "7.1.2_r11",
+      "i18n": false,
+      "env": "nobabel"
+    },
     "revision": "216113",
-    "revisionDate": "2017-10-27",
-    "tti": "TODO",
+    "revisionDate": "2017-05-03",
+    "tti": "560",
     "sunspider": "480",
     "jetstream": "3300",
     "octane2": "1850",
     "sixspeed": "410",
     "renderflat": "900",
     "renderdeep": "1350",
-    "size": "TODO"
+    "size": "4.3/6.5"
   },
   {
     "npm": "-",
     "date": "-",
-    "config": "2.18.2-8.0.0_r34-x32-en-nojit",
+    "config": {
+      "webkitGTK": "2.17.1",
+      "androidICU": "7.1.2_r11",
+      "i18n": false,
+      "env": "nojit"
+    },
     "revision": "216113",
-    "revisionDate": "2017-10-27",
+    "revisionDate": "2017-05-03",
     "tti": "TODO",
     "sunspider": "1045",
     "jetstream": "9164",
@@ -80,7 +90,7 @@
     "sixspeed": "574",
     "renderflat": "900",
     "renderdeep": "1165",
-    "size": "TODO"
+    "size": "4.3/6.5"
   },
   {
     "npm": "-",
