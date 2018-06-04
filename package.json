@@ -28,6 +28,6 @@
   "config": {
     "webkitGTK": "2.18.2",
     "androidICU": "8.0.0_r34",
-    "i18n": false
+    "i18n": true
   }
 }
