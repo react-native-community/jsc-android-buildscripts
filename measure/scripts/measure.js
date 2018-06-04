@@ -51,7 +51,7 @@ function parseAndPrintTestResults(resultLines) {
   _.forEach(TESTS, (test, name) => {
     const testValues = parseTestValues(resultLines, test);
     const testAverage = _.round(_.mean(testValues));
-    console.log(`"${name}": "${testAverage}"`);
+    console.log(`"${name}": "${testAverage},"`);
   });
   console.log('\n\n\n');
 }
