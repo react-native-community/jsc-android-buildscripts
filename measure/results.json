@@ -31,7 +31,7 @@
     "sixspeed": "426",
     "renderflat": "893",
     "renderdeep": "1084",
-    "size": "4.3/6.5"
+    "size": "TODO"
   },
   {
     "npm": "216113.0.3",
@@ -50,7 +50,7 @@
     "sixspeed": "431",
     "renderflat": "878",
     "renderdeep": "1208",
-    "size": "4.4/6.6"
+    "size": "TODO"
   },
   {
     "npm": "-",
@@ -70,7 +70,7 @@
     "sixspeed": "410",
     "renderflat": "900",
     "renderdeep": "1350",
-    "size": "4.3/6.5"
+    "size": "TODO"
   },
   {
     "npm": "-",
@@ -83,14 +83,14 @@
     },
     "revision": "216113",
     "revisionDate": "2017-05-03",
-    "tti": "TODO",
+    "tti": "563",
     "sunspider": "1045",
     "jetstream": "9164",
     "octane2": "3856",
     "sixspeed": "574",
     "renderflat": "900",
     "renderdeep": "1165",
-    "size": "4.3/6.5"
+    "size": "7.0/?"
   },
   {
     "npm": "-",

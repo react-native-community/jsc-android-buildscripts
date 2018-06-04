@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 ROOTDIR=$PWD
 REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
@@ -14,5 +14,10 @@ cd $ROOTDIR/lib
 ./gradlew clean createAAR --project-prop revision="$REVISION" --project-prop i18n="$npm_package_config_i18n"
 cd $ROOTDIR
 
-printf "\n\n\n\n\n\t\t\tCompiled Version: \x1B[32m$REVISION\x1B[0m\n\n\n\nconfig:\n$CONFIG\n\ninfo:\n$INFO\n\n"
+SIZE=$(du -ah $ROOTDIR/build/compiled)
+
+printf "\n\n\n\n\n\t\t\tCompiled Version: \x1B[32m$REVISION\x1B[0m\n\n\n"
+printf "Config:\t$CONFIG\n\n"
+printf "Info:\t$INFO\n\n"
+printf "Size:\t$SIZE\n\n"
 say -v Carmit "I am not slacking off, my code's compiling."

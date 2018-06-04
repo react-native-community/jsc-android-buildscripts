@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 SCRIPT_DIR=$(cd `dirname $0`; pwd)
 export ANDROID_API=21
@@ -13,14 +13,14 @@ compile_arch() {
 }
 
 compile() {
-  for arch in arm x86
+  for arch in arm #x86
   do
     export JSC_ARCH=$arch
     export ENABLE_COMPAT=1
     compile_arch
   done
 
-  for arch in arm64 x86_64
+  for arch in arm64 #x86_64
   do
     export JSC_ARCH=$arch
     export ENABLE_COMPAT=0

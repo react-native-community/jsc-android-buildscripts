@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 ROOTDIR=$PWD
 TARGETDIR=$ROOTDIR/build/target
