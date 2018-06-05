@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "android": "cd android && ./gradlew installRelease",
+    "android": "cd android && ./gradlew clean uninstallRelease installRelease",
     "androidi18n": "npm run android -- --project-prop i18n=true",
     "start": "node ./scripts/measure",
     "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown"
