@@ -93,8 +93,8 @@
     "size": "5.9/8.8"
   },
   {
-    "npm": "-",
-    "date": "-",
+    "npm": "224109.0.0",
+    "date": "2018-06-04",
     "config": {
       "webkitGTK": "2.18.2",
       "androidICU": "8.0.0_r34",
@@ -109,11 +109,11 @@
     "sixspeed": "423",
     "renderflat": "899",
     "renderdeep": "1182",
-    "size": "7.7/11"
+    "size": "6.1/9.3"
   },
   {
-    "npm": "-",
-    "date": "-",
+    "npm": "224109.0.0",
+    "date": "2018-06-04",
     "config": {
       "webkitGTK": "2.18.2",
       "androidICU": "8.0.0_r34",
@@ -128,6 +128,6 @@
     "sixspeed": "415",
     "renderflat": "911",
     "renderdeep": "1094",
-    "size": "14/18"
+    "size": "13/16"
   }
 ]
