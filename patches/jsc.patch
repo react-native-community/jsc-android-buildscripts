@@ -1,132 +1,8 @@
-diff -aur download/webkit/CMakeLists.txt target/webkit/CMakeLists.txt
---- download/webkit/CMakeLists.txt	2017-12-22 19:18:43.000000000 +0200
-+++ target/webkit/CMakeLists.txt	2018-06-14 15:41:59.000000000 +0300
-@@ -170,13 +170,13 @@
-     add_subdirectory(Tools)
- endif ()
- 
--if ("${PORT}" STREQUAL "GTK" OR "${PORT}" STREQUAL "WPE")
--    if (DEVELOPER_MODE)
--        add_subdirectory(PerformanceTests)
--    endif ()
--else ()
--    add_subdirectory(PerformanceTests)
--endif ()
-+#if ("${PORT}" STREQUAL "GTK" OR "${PORT}" STREQUAL "WPE")
-+#    if (DEVELOPER_MODE)
-+#        add_subdirectory(PerformanceTests)
-+#    endif ()
-+#else ()
-+#    add_subdirectory(PerformanceTests)
-+#endif ()
- 
- # -----------------------------------------------------------------------------
- # Print the features list last, for maximum visibility.
-diff -aur download/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
---- download/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-06-11 12:03:52.000000000 +0300
-+++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-06-14 15:41:18.000000000 +0300
-@@ -1155,7 +1155,7 @@
- )
- target_include_directories(LLIntOffsetsExtractor SYSTEM PRIVATE ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
- 
--add_subdirectory(shell)
-+# add_subdirectory(shell)
- 
- WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
- WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
-@@ -1168,6 +1168,7 @@
-         install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
-     endif ()
- endif ()
-+set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME jsc)
- 
- # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
- 
-diff -aur download/webkit/Source/WTF/wtf/StackTrace.cpp target/webkit/Source/WTF/wtf/StackTrace.cpp
---- download/webkit/Source/WTF/wtf/StackTrace.cpp	2017-07-14 19:03:47.000000000 +0300
-+++ target/webkit/Source/WTF/wtf/StackTrace.cpp	2018-06-14 15:41:18.000000000 +0300
-@@ -30,10 +30,6 @@
- #include <wtf/Assertions.h>
- #include <wtf/PrintStream.h>
- 
--#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
--#include <execinfo.h>
--#endif
--
- #if HAVE(DLADDR)
- #include <cxxabi.h>
- #include <dlfcn.h>
-diff -aur download/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
---- download/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 06:08:27.000000000 +0200
-+++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2018-06-14 15:41:18.000000000 +0300
-@@ -28,12 +28,13 @@
- 
- #include "config.h"
- #include "Collator.h"
-+#include <StringView.h>
- 
- #if UCONFIG_NO_COLLATION
- 
- namespace WTF {
- 
--int Collator::collate(StringView a, StringView b) const
-+int Collator::collate(StringView a, StringView b)
- {
-     unsigned commonLength = std::min(a.length(), b.length());
-     for (unsigned i = 0; i < commonLength; ++i) {
-@@ -51,7 +52,7 @@
-     return 0;
- }
- 
--int Collator::collateUTF8(const char* a, const char* b) const
-+int Collator::collateUTF8(const char* a, const char* b)
- {
-     return collate(String::fromUTF8(a), String::fromUTF8(b));
- }
-diff -aur download/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp target/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp
---- download/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp	2017-09-08 02:11:21.000000000 +0300
-+++ target/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp	2018-06-14 15:41:18.000000000 +0300
-@@ -24,22 +24,25 @@
- #include <locale.h>
- #include <wtf/Vector.h>
- #include <wtf/text/WTFString.h>
-+#include <sys/system_properties.h>
- 
- namespace WTF {
- 
--// Using pango_language_get_default() here is not an option, because
--// it doesn't support changing the locale in runtime, so it returns
--// always the same value.
- static String platformLanguage()
- {
--    String localeDefault(setlocale(LC_CTYPE, nullptr));
--    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
-+    char buf[2 * (PROP_VALUE_MAX + 1)];
-+    int locale_len = __system_property_get("persist.sys.locale", buf);
-+    if (locale_len == 0) {
-+      int lang_len = __system_property_get("persist.sys.language", buf);
-+      if(lang_len == 0) {
-         return ASCIILiteral("en-US");
--
--    String normalizedDefault = localeDefault;
--    normalizedDefault.replace('_', '-');
--    normalizedDefault.truncate(normalizedDefault.find('.'));
--    return normalizedDefault;
-+      }
-+      int country_len = __system_property_get("persist.sys.country", buf + lang_len + 1);
-+      if(country_len != 0) {
-+        buf[lang_len] = '-';
-+      }
-+    }
-+    return String(buf);
- }
- 
- Vector<String> platformUserPreferredLanguages()
-diff -aur download/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
---- download/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp	2018-02-01 07:36:40.000000000 +0200
-+++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp	2018-06-14 15:41:18.000000000 +0300
-@@ -88,13 +88,8 @@
- 
+diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
+--- target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp      2017-02-03 22:59:08.000000000 +0100
++++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp  2017-08-02 10:07:11.000383124 +0200
+@@ -84,13 +84,8 @@
+
  void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
  {
 -    void* result;
@@ -139,11 +15,11 @@ diff -aur download/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Sou
 +    BCRASH();
 +    return nullptr;
  }
- 
+
  void* DebugHeap::realloc(void* object, size_t size)
-diff -aur download/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
---- download/webkit/Source/cmake/FindICU.cmake	2016-11-30 20:45:57.000000000 +0200
-+++ target/webkit/Source/cmake/FindICU.cmake	2018-06-14 15:41:18.000000000 +0300
+diff -aur target-org/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/FindICU.cmake
+--- target-org/webkit/Source/cmake/FindICU.cmake	2016-11-30 19:45:57.000000000 +0100
++++ target/webkit/Source/cmake/FindICU.cmake	2017-07-11 11:34:55.962374878 +0200
 @@ -25,7 +25,7 @@
  # Look for the library.
  find_library(
@@ -171,22 +47,10 @@ diff -aur download/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmake/
          HINTS ${PC_ICU_I18N_LIBRARY_DIRS}
                ${PC_ICU_I18N_LIBDIR}
                ${WEBKIT_LIBRARIES_LINK_DIR}
-diff -aur download/webkit/Source/cmake/OptionsCommon.cmake target/webkit/Source/cmake/OptionsCommon.cmake
---- download/webkit/Source/cmake/OptionsCommon.cmake	2018-05-10 02:58:49.000000000 +0300
-+++ target/webkit/Source/cmake/OptionsCommon.cmake	2018-06-14 15:41:18.000000000 +0300
-@@ -141,7 +141,7 @@
- 
- # Check for headers
- _HAVE_CHECK_INCLUDE(HAVE_ERRNO_H errno.h)
--_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
-+#_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
- _HAVE_CHECK_INCLUDE(HAVE_MMAP sys/mman.h)
- _HAVE_CHECK_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
- _HAVE_CHECK_INCLUDE(HAVE_STRINGS_H strings.h)
-diff -aur download/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
---- download/webkit/Source/cmake/OptionsJSCOnly.cmake	2018-06-11 12:03:46.000000000 +0300
-+++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2018-06-14 15:41:18.000000000 +0300
-@@ -35,12 +35,11 @@
+diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
+--- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-04-17 15:51:21.000000000 +0200
++++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-07-11 11:34:55.962374878 +0200
+@@ -34,12 +34,11 @@
  set(ENABLE_WEBCORE OFF)
  set(ENABLE_WEBKIT_LEGACY OFF)
  set(ENABLE_WEBKIT OFF)
@@ -201,6 +65,122 @@ diff -aur download/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source
 +set(ENABLE_DFG_JIT OFF)
 +set(ENABLE_FTL_JIT OFF)
 +set(ENABLE_JIT ON)
- 
+
  if (WTF_CPU_X86 OR WTF_CPU_X86_64)
      SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
+--- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.000000000 +0200
++++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-07-11 11:34:55.962374878 +0200
+@@ -1543,7 +1543,7 @@
+
+ target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
+
+-add_subdirectory(shell)
++# add_subdirectory(shell)
+
+ WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
+ WEBKIT_FRAMEWORK(JavaScriptCore)
+@@ -1555,6 +1555,7 @@
+         install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
+     endif ()
+ endif ()
++set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME jsc)
+
+ # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
+
+diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
+--- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2016-10-08 05:31:15.000000000 +0200
++++ target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-11 11:34:55.962374878 +0200
+@@ -24,24 +24,29 @@
+ #include <locale.h>
+ #include <wtf/Vector.h>
+ #include <wtf/text/WTFString.h>
++#include <sys/system_properties.h>
+
+ namespace WTF {
+
+ void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
+
+-// Using pango_language_get_default() here is not an option, because
+-// it doesn't support changing the locale in runtime, so it returns
+-// always the same value.
+ static String platformLanguage()
+ {
+-    String localeDefault(setlocale(LC_CTYPE, nullptr));
+-    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
++    char buf[2 * (PROP_VALUE_MAX + 1)];
++
++    int locale_len = __system_property_get("persist.sys.locale", buf);
++    if (locale_len == 0) {
++      int lang_len = __system_property_get("persist.sys.language", buf);
++      if(lang_len == 0) {
+         return ASCIILiteral("en-US");
++      }
++      int country_len = __system_property_get("persist.sys.country", buf + lang_len + 1);
++      if(country_len != 0) {
++        buf[lang_len] = '-';
++      }
++    }
+
+-    String normalizedDefault = localeDefault;
+-    normalizedDefault.replace('_', '-');
+-    normalizedDefault.truncate(normalizedDefault.find('.'));
+-    return normalizedDefault;
++    return String(buf);
+ }
+
+ Vector<String> platformUserPreferredLanguages()
+diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp target/webkit/Source/WTF/wtf/StackTrace.cpp
+--- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-04-25 04:53:49.000000000 +0200
++++ target/webkit/Source/WTF/wtf/StackTrace.cpp	2017-07-11 11:34:55.962374878 +0200
+@@ -30,10 +30,6 @@
+ #include <wtf/Assertions.h>
+ #include <wtf/PrintStream.h>
+
+-#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
+-#include <execinfo.h>
+-#endif
+-
+ #if HAVE(DLADDR)
+ #include <cxxabi.h>
+ #include <dlfcn.h>
+diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
+--- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.000000000 +0100
++++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-07-11 11:36:01.845264855 +0200
+@@ -28,12 +28,13 @@
+
+ #include "config.h"
+ #include "Collator.h"
++#include <StringView.h>
+
+ #if UCONFIG_NO_COLLATION
+
+ namespace WTF {
+
+-int Collator::collate(StringView a, StringView b) const
++int Collator::collate(StringView a, StringView b)
+ {
+     unsigned commonLength = std::min(a.length(), b.length());
+     for (unsigned i = 0; i < commonLength; ++i) {
+@@ -51,7 +52,7 @@
+     return 0;
+ }
+
+-int Collator::collateUTF8(const char* a, const char* b) const
++int Collator::collateUTF8(const char* a, const char* b)
+ {
+     return collate(String::fromUTF8(a), String::fromUTF8(b));
+ }
+diff -aur org/target/webkit/Source/cmake/OptionsCommon.cmake target/webkit/Source/cmake/OptionsCommon.cmake
+--- target-org/webkit/Source/cmake/OptionsCommon.cmake      2017-11-15 16:28:52.120093206 +0100
++++ target/webkit/Source/cmake/OptionsCommon.cmake  2017-04-09 02:50:32.875166000 +0200
+@@ -255,7 +255,7 @@
+
+ # Check for headers
+ _HAVE_CHECK_INCLUDE(HAVE_ERRNO_H errno.h)
+-_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
++#_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
+ _HAVE_CHECK_INCLUDE(HAVE_MMAP sys/mman.h)
+ _HAVE_CHECK_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
+ _HAVE_CHECK_INCLUDE(HAVE_STRINGS_H strings.h)
+

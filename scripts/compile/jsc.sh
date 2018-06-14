@@ -6,6 +6,11 @@ source $SCRIPT_DIR/common.sh
 CMAKE_FOLDER=$(cd $ANDROID_HOME/cmake && ls -1 | sort -r | head -1)
 PATH=$TOOLCHAIN_DIR/bin:$ANDROID_HOME/cmake/$CMAKE_FOLDER/bin/:$PATH
 
+# conditional patch
+if ! [[ $ENABLE_INTL ]]; then
+  patch -d $TARGETDIR -N -p1 < $ROOTDIR/patches/intl/icu-disabled.patch
+fi
+
 rm -rf $TARGETDIR/webkit/$CROSS_COMPILE_PLATFORM-${FLAVOR}
 rm -rf $TARGETDIR/webkit/WebKitBuild
 cd $TARGETDIR/webkit/Tools/Scripts
@@ -56,3 +61,9 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
 cp $TARGETDIR/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
 mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 cp $TOOLCHAIN_LINK_DIR/libc++_shared.so $INSTALL_DIR
+
+# conditional patch undo
+cd $ROOTDIR
+if ! [[ $ENABLE_INTL ]]; then
+  patch -d $TARGETDIR -p1 -R < $ROOTDIR/patches/intl/icu-disabled.patch
+fi
