@@ -27,7 +27,7 @@
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.20.3",
+    "webkitGTK": "2.18.2",
     "androidICU": "8.0.0_r34",
     "i18n": false
   }
