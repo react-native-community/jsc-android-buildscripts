@@ -20,14 +20,15 @@
     "/dist"
   ],
   "scripts": {
+    "clean": "rm -rf dist; rm -rf build",
     "info": "./scripts/info.sh",
     "download": "./scripts/download.sh",
     "prep": "./scripts/prep.sh",
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.18.2",
+    "webkitGTK": "2.20.3",
     "androidICU": "8.0.0_r34",
-    "i18n": true
+    "i18n": false
   }
 }
