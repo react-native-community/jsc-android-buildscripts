@@ -19,3 +19,4 @@ cd $ROOTDIR
 
 echo "=============== patch jsc ====================="
 patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
+echo "rejects: $(find $ROOTDIR/build/target | grep \.orig || true)"
