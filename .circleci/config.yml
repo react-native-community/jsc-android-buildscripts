@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     working_directory: ~/jsc-android-buildscripts
-      - image: gengjiawen/android-ndk
+      - image: gengjiawen/jsc-android-buildscripts
     steps:
       - checkout
       - restore_cache:
