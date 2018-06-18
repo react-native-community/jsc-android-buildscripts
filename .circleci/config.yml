@@ -20,7 +20,12 @@ jobs:
       - run: npm run download
       - run: npm run prep
       - run: npm run start
-      - run: cd measure/android && ./gradlew assembleRelease
+      - run:
+          name: Build Android
+          command: |
+            cd measure
+            npm install
+            cd android && ./gradlew assembleRelease
 
 workflows:
   version: 2
