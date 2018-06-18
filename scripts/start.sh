@@ -13,4 +13,4 @@ cd $ROOTDIR/lib
 cd $ROOTDIR
 
 npm run info
-say -v Carmit "I am not slacking off, my code's compiling."
+echo "I am not slacking off, my code is compiling."
