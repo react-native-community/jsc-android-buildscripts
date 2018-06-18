@@ -15,9 +15,9 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm download
-      - run: npm prepair
-      - run: npm start
+      - run: npm run download
+      - run: npm run prepair
+      - run: npm run start
       - run: cd measure/android && ./gradlew assembleRelease
 
 workflows:
