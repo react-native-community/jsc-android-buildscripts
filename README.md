@@ -9,7 +9,6 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 * Homebrew (https://brew.sh/)
 * GNU coreutils `brew install coreutils`
 * Node `brew install node`
-* Gradle: `brew install gradle`
 * Java 8: `brew tap caskroom/versions && brew cask install java8`
 * Android SDK: `brew cask install android-sdk`
   * Run `sdkmanager --list` and install all platforms, tools, cmake, ndk (android images are not needed)
