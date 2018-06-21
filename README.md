@@ -79,7 +79,18 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
 ```
 
-4. You're done, rebuild your app and enjoy updated version of JSC on android!
+4. Make sure your app's `build.gradle` uses a minimum sdk version of 21
+
+```diff
+defaultConfig {
+    applicationId "com.myApp"
+-    minSdkVersion 16
++    minSdkVersion 21
+    targetSdkVersion 22
+    versionCode 1
+```
+
+5. You're done, rebuild your app and enjoy updated version of JSC on android!
 
 ## Testing
 
