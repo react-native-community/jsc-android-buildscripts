@@ -1,8 +1,7 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 ROOTDIR=$PWD
-REVISION=$($ROOTDIR/scripts/revision.sh)
-CONFIG=$(node -e "console.log(require('./package.json').config)")
+REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
 
 # compile
 rm -rf $ROOTDIR/build/compiled
@@ -13,5 +12,5 @@ cd $ROOTDIR/lib
 ./gradlew clean createAAR --project-prop revision="$REVISION" --project-prop i18n="$npm_package_config_i18n"
 cd $ROOTDIR
 
-printf "\n\n\n\n\n\t\t\tCompiled Version: \x1B[32m$REVISION\x1B[0m\n\n\n\nconfig:\n$CONFIG\n\n\n\n"
-say -v Carmit "I am not slacking off, my code's compiling."
+npm run info
+echo "I am not slacking off, my code is compiling."

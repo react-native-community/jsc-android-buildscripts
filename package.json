@@ -1,6 +1,6 @@
 {
   "name": "jsc-android",
-  "version": "216113.0.3",
+  "version": "224109.0.0",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
@@ -20,16 +20,15 @@
     "/dist"
   ],
   "scripts": {
-    "getRevision": "./scripts/revision.sh",
-    "download": "./scripts/install.sh",
+    "clean": "rm -rf dist; rm -rf build",
+    "info": "./scripts/info.sh",
+    "download": "./scripts/download.sh",
     "prep": "./scripts/prep.sh",
     "start": "./scripts/start.sh"
   },
   "config": {
     "webkitGTK": "2.18.2",
-    "android_icu": "8.0.0_r34",
-    "x64": false,
-    "i18n": false,
-    "hint": "stable"
+    "androidICU": "8.0.0_r34",
+    "i18n": false
   }
 }

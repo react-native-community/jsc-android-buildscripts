@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 SCRIPT_DIR=$(cd `dirname $0`; pwd)
 export ANDROID_API=21
@@ -20,15 +20,12 @@ compile() {
     compile_arch
   done
 
-  if ${npm_package_config_x64}
-  then
-    for arch in arm64 x86_64
-    do
-      export JSC_ARCH=$arch
-      export ENABLE_COMPAT=0
-      compile_arch
-    done
-  fi
+  for arch in arm64 x86_64
+  do
+    export JSC_ARCH=$arch
+    export ENABLE_COMPAT=0
+    compile_arch
+  done
 }
 
 if ${npm_package_config_i18n}

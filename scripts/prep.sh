@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 ROOTDIR=$PWD
 TARGETDIR=$ROOTDIR/build/target
@@ -19,3 +19,4 @@ cd $ROOTDIR
 
 echo "=============== patch jsc ====================="
 patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
+echo "orig: $(find $ROOTDIR/build/target | grep \.orig || true)"

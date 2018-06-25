@@ -3,13 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./scripts/measure.sh",
-    "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown"
+    "android": "cd android && ./gradlew clean uninstallRelease installRelease",
+    "androidi18n": "npm run android -- --project-prop i18n=true",
+    "start": "node ./scripts/measure",
+    "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown",
+    "downloadPublishedVersion": "node ./scripts/downloadPublishedVersion"
   },
   "dependencies": {
     "react-native": "0.55.4",
     "react": "16.3.1",
     "prop-types": "*",
     "lodash": "4.x.x"
+  },
+  "devDependencies": {
+    "shell-utils": "1.x.x"
   }
 }

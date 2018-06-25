@@ -9,7 +9,6 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 * Homebrew (https://brew.sh/)
 * GNU coreutils `brew install coreutils`
 * Node `brew install node`
-* Gradle: `brew install gradle`
 * Java 8: `brew tap caskroom/versions && brew cask install java8`
 * Android SDK: `brew cask install android-sdk`
   * Run `sdkmanager --list` and install all platforms, tools, cmake, ndk (android images are not needed)
@@ -42,7 +41,7 @@ Follow steps below in order for your React Native app to use new version of JSC 
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
-+  "jsc-android": "^216113.0.0",
++  "jsc-android": "224109.x.x",
 ```
 
 then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
@@ -59,7 +58,7 @@ allprojects {
         }
 +       maven {
 +           // Local Maven repo containing AARs with JSC library built for Android
-+           url "$rootDir/../node_modules/jsc-android/android"
++           url "$rootDir/../node_modules/jsc-android/dist"
 +       }
     }
 }
@@ -72,7 +71,7 @@ allprojects {
 
 +configurations.all {
 +    resolutionStrategy {
-+        force 'org.webkit:android-jsc:r216113'
++        force 'org.webkit:android-jsc:r224109'
 +    }
 +}
 
@@ -80,7 +79,18 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
 ```
 
-4. You're done, rebuild your app and enjoy updated version of JSC on android!
+4. Make sure your app's `build.gradle` uses a minimum sdk version of 21
+
+```diff
+defaultConfig {
+    applicationId "com.myApp"
+-    minSdkVersion 16
++    minSdkVersion 21
+    targetSdkVersion 22
+    versionCode 1
+```
+
+5. You're done, rebuild your app and enjoy updated version of JSC on android!
 
 ## Testing
 
