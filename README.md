@@ -1,3 +1,5 @@
+[![Build Status](https://jenkins-oss.wixpress.com/job/jsc-android-master/badge/icon)](https://jenkins-oss.wixpress.com/job/jsc-android-master/)
+
 # JSC build scripts for Android
 
 The aim of this project is to provide maintainable build scripts for the [JavaScriptCore](https://www.webkit.org) JavaScript engine and allow the [React Native](https://github.com/facebook/react-native) project to incorporate up-to-date releases of JSC into the framework on Android.
