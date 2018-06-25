@@ -1,4 +1,4 @@
-![Build Status](https://jenkins-oss.wixpress.com/buildStatus/icon?job=jsc-android-master)
+[![Build Status](https://jenkins-oss.wixpress.com/buildStatus/icon?job=jsc-android-master)](https://jenkins-oss.wixpress.com/job/jsc-android-master/)
 
 # JSC build scripts for Android
 
