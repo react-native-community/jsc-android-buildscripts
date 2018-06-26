@@ -1,4 +1,5 @@
-[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android) [![Build Status](https://jenkins-oss.wixpress.com/buildStatus/icon?job=jsc-android-master)](https://jenkins-oss.wixpress.com/job/jsc-android-master/)
+[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android) 
+[![Build Status](https://jenkins-oss.wixpress.com/job/jsc-android-master/badge/icon)](https://jenkins-oss.wixpress.com/job/jsc-android-master/)
 
 # JSC build scripts for Android
 
