@@ -94,6 +94,23 @@ defaultConfig {
 
 5. You're done, rebuild your app and enjoy updated version of JSC on android!
 
+### International variant
+International variant includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. Note that this variant is about 6MiB larger per architecture than default.
+
+To use this variant instead replace the third installation step with:
+
+```diff
++configurations.all {
++    resolutionStrategy {
++        eachDependency { DependencyResolveDetails details ->
++            if (details.requested.name == 'android-jsc') {
++                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
++            }
++        }
++    }
++}
+```
+
 ## Testing
 
 See **[Measurements](/measure)** page that contains synthetic perf test results for the most notable versions of JSC we have tried.
