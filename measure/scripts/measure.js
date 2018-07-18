@@ -20,11 +20,11 @@ const TESTS = {
 run();
 
 function run() {
+  let resultsStr = '';
   installProfiler();
 
-  let resultsStr = '';
-
-  _.times(TIMES, () => {
+  _.times(TIMES, (i) => {
+    console.log(`test #${i}:`);
     clearLogcat();
 
     launchProfiler();
@@ -84,25 +84,31 @@ function waitForLogcatMsg(msg) {
 }
 
 function launchProfiler() {
-  exec.execSyncSilent(`adb shell am start-activity -W "${PACKAGE_NAME}/.${ACTIVITY_NAME}" && sleep 1`);
+  console.log(`launching...`);
+  exec.execSyncSilent(`adb shell am start-activity -W "${PACKAGE_NAME}/.${ACTIVITY_NAME}" && sleep 2`);
 }
 
 function killProfiler() {
+  console.log(`killing`);
   exec.execSyncSilent(`adb shell am force-stop ${PACKAGE_NAME}`);
   exec.execSyncSilent(`adb shell am kill ${PACKAGE_NAME}`);
+  exec.execSyncSilent(`sleep 2`);
 }
 
 function clickOnJsTest() {
+  console.log(`js test`);
   exec.execSyncSilent(`adb shell input tap 720 1008`); // TODO replace with non-magical values
   waitForLogcatMsg(`${LOGCAT_TAG}:JSProfile:Done`);
 }
 
 function clickOnFlatRenderTest() {
+  console.log(`flat render test`);
   exec.execSyncSilent(`adb shell input tap 720 1240`); // TODO replace with non-magical values
   waitForLogcatMsg(`${LOGCAT_TAG}:RenderFlatResult:`);
 }
 
 function clickOnDeepRenderTest() {
+  console.log(`deep render test`);
   exec.execSyncSilent(`adb shell input tap 720 1470`);// TODO replace with non-magical values
   waitForLogcatMsg(`${LOGCAT_TAG}:RenderDeepResult:`);
 }

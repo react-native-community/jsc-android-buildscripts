@@ -129,5 +129,25 @@
     "renderflat": "911",
     "renderdeep": "1094",
     "size": "13/16"
+  },
+  {
+    "npm": "224109.0.0",
+    "date": "2018-06-04",
+    "config": {
+      "webkitGTK": "2.18.2",
+      "androidICU": "8.0.0_r34",
+      "i18n": false,
+      "env": "react-native@0.51 x64"
+    },
+    "revision": "224109",
+    "revisionDate": "2017-10-27",
+    "tti": "517",
+    "sunspider": "423",
+    "jetstream": "2739",
+    "octane2": "1486",
+    "sixspeed": "343",
+    "renderflat": "1154",
+    "renderdeep": "1304",
+    "size": "13/16"
   }
 ]
