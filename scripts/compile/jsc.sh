@@ -58,9 +58,3 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
 cp $TARGETDIR/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR
 mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
 cp $TOOLCHAIN_LINK_DIR/libc++_shared.so $INSTALL_DIR
-
-# conditional patch undo
-cd $ROOTDIR
-if ! [[ $ENABLE_INTL ]]; then
-  patch -d $TARGETDIR -p1 -R < $ROOTDIR/patches/intl/icu-disabled.patch
-fi
