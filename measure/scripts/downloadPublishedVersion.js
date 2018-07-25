@@ -8,6 +8,9 @@ const distDir = `${scriptDir}/../../dist`;
 run();
 
 function run() {
+  if (!version) {
+    throw new Error(`usage: npm run downloadPublishedVersion 224109`)
+  }
   const url = exec.execSyncRead(`npm view jsc-android@${version} dist.tarball`);
   exec.execSync(`curl ${url} | tar -xf -`);
   exec.execSync(`rm -rf ${distDir}`);
