@@ -17,6 +17,13 @@ const TESTS = {
   renderdeep: /RenderDeepResult:(\d+)/
 };
 
+const density = getDensity();
+console.log(`Device density: ${density}`);
+const scale = density / 120;
+const [width, height] = getScreenSize();
+console.log(`Device width: ${width}`);
+console.log(`Device height: ${height}`);
+
 run();
 
 function run() {
@@ -97,18 +104,33 @@ function killProfiler() {
 
 function clickOnJsTest() {
   console.log(`js test`);
-  exec.execSyncSilent(`adb shell input tap 720 1008`); // TODO replace with non-magical values
+  const x = width / 2;
+  const y = height / 2 - (60 * scale)
+  exec.execSyncSilent(`adb shell input tap ${x} ${y}`);
   waitForLogcatMsg(`${LOGCAT_TAG}:JSProfile:Done`);
 }
 
 function clickOnFlatRenderTest() {
   console.log(`flat render test`);
-  exec.execSyncSilent(`adb shell input tap 720 1240`); // TODO replace with non-magical values
+  const x = width / 2;
+  const y = height / 2;
+  exec.execSyncSilent(`adb shell input tap ${x} ${y}`);
   waitForLogcatMsg(`${LOGCAT_TAG}:RenderFlatResult:`);
 }
 
 function clickOnDeepRenderTest() {
   console.log(`deep render test`);
-  exec.execSyncSilent(`adb shell input tap 720 1470`);// TODO replace with non-magical values
+  const x = width / 2;
+  const y = height / 2 + (40 * scale);
+  exec.execSyncSilent(`adb shell input tap ${x} ${y}`);
   waitForLogcatMsg(`${LOGCAT_TAG}:RenderDeepResult:`);
+}
+
+function getDensity() {
+  return exec.execSyncRead(`adb shell wm density | grep -Eo "[0-9]+"`, true)
+}
+
+function getScreenSize() {
+  const size = exec.execSyncRead(`adb shell wm size | grep -Eo "\\d+x\\d+"`, true);
+  return size.split('x');
 }
