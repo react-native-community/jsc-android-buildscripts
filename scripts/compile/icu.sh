@@ -42,3 +42,8 @@ $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     --with-data-packaging=static
 
 make -j5
+
+if ! [[ $ENABLE_INTL ]]; then
+  rm lib/libicui18n_jsc.a
+  cp stubdata/libicudata_jsc.a lib/
+fi
