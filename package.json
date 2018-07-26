@@ -28,7 +28,7 @@
   },
   "config": {
     "webkitGTK": "2.18.2",
-    "androidICU": "8.0.0_r34",
+    "chromiumICUCommit": "b34251f8b762f8e2112a89c587855ca4297fed96",
     "i18n": false
   }
 }

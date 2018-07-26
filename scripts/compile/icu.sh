@@ -20,7 +20,8 @@ PATH=$TOOLCHAIN_DIR/bin:$PATH
 
 $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     --host=$CROSS_COMPILE_PLATFORM \
-    --enable-shared=yes \
+    --enable-static=yes \
+    --enable-shared=no \
     --enable-extras=no \
     --enable-strict=no \
     --enable-icuio=no \
@@ -30,7 +31,7 @@ $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     --enable-tests=no \
     --enable-samples=no \
     --enable-dyload=no \
-    -with-cross-build=$CROSS_BUILD_DIR \
+    --with-cross-build=$CROSS_BUILD_DIR \
     CFLAGS="$ICU_CFLAGS" \
     CXXFLAGS="$ICU_CXXFLAGS" \
     LDFLAGS="$ICU_LDFLAGS" \
@@ -38,17 +39,11 @@ $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     CXX=$CROSS_COMPILE_PLATFORM-clang++ \
     AR=$CROSS_COMPILE_PLATFORM-ar \
     RINLIB=$CROSS_COMPILE_PLATFORM-ranlib \
-    --with-data-packaging=library
+    --with-data-packaging=static
 
 make -j5
 
-if [[ $ENABLE_INTL ]]; then
-    cp lib/libicudata_jsc.so $INSTALL_DIR/libicudata_jsc.so
-    cp lib/libicui18n_jsc.so.$ICU_VERSION $INSTALL_DIR/libicui18n_jsc.so
-else
-    rm lib/libicui18n_jsc.so*
-    cp stubdata/libicudata_jsc.so.$ICU_VERSION lib/
-    cp stubdata/libicudata_jsc.so.$ICU_VERSION $INSTALL_DIR/libicudata_jsc.so
+if ! [[ $ENABLE_INTL ]]; then
+  rm lib/libicui18n_jsc.a
+  cp stubdata/libicudata_jsc.a lib/
 fi
-
-cp lib/libicuuc_jsc.so.$ICU_VERSION $INSTALL_DIR/libicuuc_jsc.so

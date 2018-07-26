@@ -44,15 +44,19 @@ diff -aur target-org/icu/source/data/Makefile.in target/icu/source/data/Makefile
  
  # This allows all the data to be in one directory
  ifeq ($(PKGDATA_MODE),dll)
-@@ -448,6 +448,11 @@
- MISC_FILES_LIST=$(DAT_FILES_SHORT) $(CNV_FILES_SHORT) $(CNV_FILES_SHORT_SPECIAL) $(CURR_FILES_SHORT) $(RBNF_FILES_SHORT) $(RBNF_INDEX_RES_SHORT) $(TRANSLIT_FILES_SHORT) $(SPREP_FILES_SHORT) $(CFU_FILES_SHORT)
- UNI_CORE_DATA=pnames.icu uprops.icu ucase.icu ubidi.icu nfc.nrm
- UNI_CORE_TARGET_DATA=$(UNI_CORE_DATA:%=$(BUILDDIR)/%)
-+BRK_FILES_LIST=""
-+LOCALE_FILES_LIST=$(RES_FILES_SHORT) 
-+MISC_FILES_LIST=coll/ucadata.icu
-+
-+
+diff -aur target-org/icu/source/i18n/digitlst.cpp target/icu/source/i18n/digitlst.cpp
+--- target-org/icu/source/i18n/digitlst.cpp	2018-07-23 11:20:13.000000000 +0200
++++ target/icu/source/i18n/digitlst.cpp	2018-07-23 15:29:24.729402639 +0200
+@@ -61,11 +61,7 @@
+ #endif
  
- ifneq ($(INCLUDE_UNI_CORE_DATA),)
- MISC_FILES_LIST+=$(UNI_CORE_DATA)
+ #if U_USE_STRTOD_L
+-# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN
+-#   include <locale.h>
+-# else
+-#   include <xlocale.h>
+-# endif
++# include <locale.h>
+ #endif
+ 
+ // ***************************************************************************
