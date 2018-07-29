@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const exec = require('shell-utils').exec;
 
-const version = process.argv.splice(process.execArgv.length + 2)[0];
+let version = process.argv.splice(process.execArgv.length + 2)[0];
 const scriptDir = __dirname;
 const distDir = `${scriptDir}/../../dist`;
 
@@ -9,7 +9,7 @@ run();
 
 function run() {
   if (!version) {
-    throw new Error(`usage: npm run downloadPublishedVersion 224109`)
+    version = require('../../package.json').version;
   }
   const url = exec.execSyncRead(`npm view jsc-android@${version} dist.tarball`);
   exec.execSync(`curl ${url} | tar -xf -`);
