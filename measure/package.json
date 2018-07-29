@@ -6,6 +6,7 @@
     "android": "cd android && ./gradlew clean uninstallRelease installRelease",
     "androidi18n": "npm run android -- --project-prop i18n=true",
     "start": "node ./scripts/measure",
+    "starti18n": "npm run start -- i18n",
     "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown",
     "downloadPublishedVersion": "node ./scripts/downloadPublishedVersion"
   },
