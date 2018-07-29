@@ -9,6 +9,7 @@ cp -Rf $ROOTDIR/build/download $TARGETDIR
 
 echo "=============== patch and make icu into target/icu/host ====================="
 ICU_VERSION_MAJOR="$(awk '/ICU_VERSION_MAJOR_NUM/ {print $3}' $TARGETDIR/icu/source/common/unicode/uvernum.h)"
+echo "ICU version: ${ICU_VERSION_MAJOR}"
 patch -d $TARGETDIR -p1 < $ROOTDIR/patches/icu.patch
 
 # use compiled .dat archive from Android Chromium
