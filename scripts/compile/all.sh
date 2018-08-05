@@ -4,11 +4,11 @@ SCRIPT_DIR=$(cd `dirname $0`; pwd)
 export ANDROID_API=21
 
 compile_arch() {
-  printf "\n\n\n=================== compiling toolchain for $JSC_ARCH ===================\n\n\n"
+  printf "\n\n\n\t\t=================== compiling toolchain for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/toolchain.sh
-  printf "\n\n\n=================== compiling icu for $JSC_ARCH ===================\n\n\n"
+  printf "\n\n\n\t\t=================== compiling icu for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/icu.sh
-  printf "\n\n\n=================== compiling jsc for $JSC_ARCH ===================n\n\n"
+  printf "\n\n\n\t\t=================== compiling jsc for $JSC_ARCH $FLAVOR ===================n\n\n"
   $SCRIPT_DIR/jsc.sh
 }
 
@@ -28,7 +28,7 @@ compile() {
   done
 }
 
-if ${npm_package_config_i18n}
+if ${I18N}
 then
   export FLAVOR=intl
   export ENABLE_INTL=1

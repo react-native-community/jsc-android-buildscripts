@@ -23,12 +23,10 @@
     "clean": "rm -rf dist; rm -rf build",
     "info": "./scripts/info.sh",
     "download": "./scripts/download.sh",
-    "prep": "./scripts/prep.sh",
     "start": "./scripts/start.sh"
   },
   "config": {
     "webkitGTK": "2.18.2",
-    "chromiumICUCommit": "b34251f8b762f8e2112a89c587855ca4297fed96",
-    "i18n": false
+    "chromiumICUCommit": "b34251f8b762f8e2112a89c587855ca4297fed96"
   }
 }
