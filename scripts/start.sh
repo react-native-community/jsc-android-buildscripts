@@ -5,6 +5,7 @@ TARGETDIR=$ROOTDIR/build/target
 REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
 
 prep() {
+  echo -e '\033]2;'prep'\007'
   printf "\n\n\t\t===================== copy downloaded sources =====================\n\n"
   rm -rf $TARGETDIR
   cp -Rf $ROOTDIR/build/download $TARGETDIR
