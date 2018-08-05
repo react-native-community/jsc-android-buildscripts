@@ -30,7 +30,7 @@ prep() {
   patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
 
   # disable i18n for non-i18n build
-  if ${I18N}
+  if [[ "$I18N" = false ]]
   then
     patch -d $TARGETDIR -N -p1 < $ROOTDIR/patches/intl/icu-disabled.patch
   fi
@@ -38,7 +38,7 @@ prep() {
   #remove icu headers from WTF, so it won't use them instead of the ones from icu/host/common
   rm -rf "$TARGETDIR"/webkit/Source/WTF/icu
 
-  printf "orig: $(find $ROOTDIR/build/target | grep \.orig || true)\n"
+  echo "orig: $(find $ROOTDIR/build/target | grep \.orig)"
 }
 
 compile() {
