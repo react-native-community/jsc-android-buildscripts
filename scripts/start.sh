@@ -3,16 +3,15 @@
 ROOTDIR=$PWD
 TARGETDIR=$ROOTDIR/build/target
 REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
-printf $REVISION
 
 prep() {
-  printf "\t\t=============== copy downloaded sources ====================="
+  printf "\n\n\t\t===================== copy downloaded sources =====================\n\n"
   rm -rf $TARGETDIR
   cp -Rf $ROOTDIR/build/download $TARGETDIR
 
-  printf "\t\t=============== patch and make icu into target/icu/host ====================="
+  printf "\n\n\t\t===================== patch and make icu into target/icu/host =====================\n\n"
   ICU_VERSION_MAJOR="$(awk '/ICU_VERSION_MAJOR_NUM/ {print $3}' $TARGETDIR/icu/source/common/unicode/uvernum.h)"
-  printf "ICU version: ${ICU_VERSION_MAJOR}"
+  printf "ICU version: ${ICU_VERSION_MAJOR}\n"
   patch -d $TARGETDIR -p1 < $ROOTDIR/patches/icu.patch
 
   # use compiled .dat archive from Android Chromium
@@ -26,7 +25,7 @@ prep() {
   make -j5
   cd $ROOTDIR
 
-  printf "\t\t=============== patch jsc ====================="
+  printf "\n\n\t\t===================== patch jsc =====================\n\n"
   patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
 
   # disable i18n for non-i18n build
@@ -38,17 +37,17 @@ prep() {
   #remove icu headers from WTF, so it won't use them instead of the ones from icu/host/common
   rm -rf "$TARGETDIR"/webkit/Source/WTF/icu
 
-  printf "orig: $(find $ROOTDIR/build/target | grep \.orig || true)"
+  printf "orig: $(find $ROOTDIR/build/target | grep \.orig || true)\n"
 }
 
 compile() {
-  printf "\t\t=============== compile jsc ====================="
+  printf "\n\n\t\t===================== compile jsc =====================\n\n"
   rm -rf $ROOTDIR/build/compiled
   $ROOTDIR/scripts/compile/all.sh
 }
 
 createAAR() {
-  printf "\t\t=============== create aar ====================="
+  printf "\n\n\t\t===================== create aar =====================\n\n"
   cd $ROOTDIR/lib
   ./gradlew clean createAAR --project-prop revision="$REVISION" --project-prop i18n="${I18N}"
   cd $ROOTDIR
