@@ -1,3 +1,27 @@
+diff -aur target-org/webkit/CMakeLists.txt target/webkit/CMakeLists.txt
+--- target-org/webkit/CMakeLists.txt	2017-12-22 19:18:43.000000000 +0200
++++ target/webkit/CMakeLists.txt	2018-06-14 15:41:59.000000000 +0300
+@@ -170,13 +170,13 @@
+     add_subdirectory(Tools)
+ endif ()
+ 
+-if ("${PORT}" STREQUAL "GTK" OR "${PORT}" STREQUAL "WPE")
+-    if (DEVELOPER_MODE)
+-        add_subdirectory(PerformanceTests)
+-    endif ()
+-else ()
+-    add_subdirectory(PerformanceTests)
+-endif ()
++#if ("${PORT}" STREQUAL "GTK" OR "${PORT}" STREQUAL "WPE")
++#    if (DEVELOPER_MODE)
++#        add_subdirectory(PerformanceTests)
++#    endif ()
++#else ()
++#    add_subdirectory(PerformanceTests)
++#endif ()
+ 
+ # -----------------------------------------------------------------------------
+ # Print the features list last, for maximum visibility.
 diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
 --- target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp      2017-02-03 22:59:08.000000000 +0100
 +++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp  2017-08-02 10:07:11.000383124 +0200
@@ -88,19 +112,17 @@ diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/S
 
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
 
-diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp
---- target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2016-10-08 05:31:15.000000000 +0200
-+++ target/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp	2017-07-11 11:34:55.962374878 +0200
-@@ -24,24 +24,29 @@
+diff -aur target-org/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp target/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp
+--- target-org/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp	2017-09-08 02:11:21.000000000 +0300
++++ target/webkit/Source/WTF/wtf/unix/LanguageUnix.cpp	2018-06-14 15:41:18.000000000 +0300
+@@ -24,22 +24,25 @@
  #include <locale.h>
  #include <wtf/Vector.h>
  #include <wtf/text/WTFString.h>
 +#include <sys/system_properties.h>
-
+ 
  namespace WTF {
-
- void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
-
+ 
 -// Using pango_language_get_default() here is not an option, because
 -// it doesn't support changing the locale in runtime, so it returns
 -// always the same value.
@@ -109,26 +131,25 @@ diff -aur target-org/webkit/Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cp
 -    String localeDefault(setlocale(LC_CTYPE, nullptr));
 -    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
 +    char buf[2 * (PROP_VALUE_MAX + 1)];
-+
 +    int locale_len = __system_property_get("persist.sys.locale", buf);
 +    if (locale_len == 0) {
 +      int lang_len = __system_property_get("persist.sys.language", buf);
 +      if(lang_len == 0) {
          return ASCIILiteral("en-US");
+-
+-    String normalizedDefault = localeDefault;
+-    normalizedDefault.replace('_', '-');
+-    normalizedDefault.truncate(normalizedDefault.find('.'));
+-    return normalizedDefault;
 +      }
 +      int country_len = __system_property_get("persist.sys.country", buf + lang_len + 1);
 +      if(country_len != 0) {
 +        buf[lang_len] = '-';
 +      }
 +    }
-
--    String normalizedDefault = localeDefault;
--    normalizedDefault.replace('_', '-');
--    normalizedDefault.truncate(normalizedDefault.find('.'));
--    return normalizedDefault;
 +    return String(buf);
  }
-
+ 
  Vector<String> platformUserPreferredLanguages()
 diff -aur target-org/webkit/Source/WTF/wtf/StackTrace.cpp target/webkit/Source/WTF/wtf/StackTrace.cpp
 --- target-org/webkit/Source/WTF/wtf/StackTrace.cpp	2017-04-25 04:53:49.000000000 +0200
