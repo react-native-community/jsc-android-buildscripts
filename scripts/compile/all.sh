@@ -11,8 +11,9 @@ compile_arch() {
   printf "\n\n\n\t\t=================== compiling icu for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/icu.sh
   echo -e '\033]2;'"compiling jsc for $JSC_ARCH $FLAVOR"'\007'
-  printf "\n\n\n\t\t=================== compiling jsc for $JSC_ARCH $FLAVOR ===================n\n\n"
+  printf "\n\n\n\t\t=================== compiling jsc for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/jsc.sh
+  echo "-= Finished compiling for $JSC_ARCH $FLAVOR =-"
 }
 
 compile() {
