@@ -49,7 +49,7 @@ prep() {
 }
 
 compile() {
-  printf "\n\n\t\t===================== compile jsc =====================\n\n"
+  printf "\n\n\t\t===================== starting to compile all archs for i18n="${I18N}" =====================\n\n"
   rm -rf $ROOTDIR/build/compiled
   $ROOTDIR/scripts/compile/all.sh
 }
