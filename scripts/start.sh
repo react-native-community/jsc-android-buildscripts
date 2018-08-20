@@ -61,10 +61,10 @@ createAAR() {
   cd $ROOTDIR
 }
 
-export I18N=false
-prep
-compile
-createAAR
+# export I18N=false
+# prep
+# compile
+# createAAR
 
 export I18N=true
 prep

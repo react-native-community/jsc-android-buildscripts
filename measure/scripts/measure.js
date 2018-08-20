@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const exec = require('shell-utils').exec;
 
-const TIMES = 10;
+const TIMES = 4;
 
 const PACKAGE_NAME = 'com.javascriptcore.profiler';
 const ACTIVITY_NAME = 'MainActivity';

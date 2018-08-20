@@ -137,7 +137,6 @@ COMMON_CFLAGS=" \
 -DPIC \
 -fPIC \
 -fvisibility=hidden \
--DNDEBUG \
 $SWITCH_COMMON_CFLAGS_INTL \
 "
 

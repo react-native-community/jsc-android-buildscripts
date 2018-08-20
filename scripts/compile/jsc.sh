@@ -27,7 +27,7 @@ $JSC_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
 
-$TARGETDIR/webkit/Tools/Scripts/build-webkit \
+CC="$TOOLCHAIN_DIR/bin/aarch64-linux-android-gcc" $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   --jsc-only \
   --release \
   --jit \
@@ -39,7 +39,7 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   --cmakeargs="-DCMAKE_SYSTEM_NAME=Android \
   $SWITCH_BUILD_WEBKIT_CMAKE_ARGS_COMPAT \
   -DCMAKE_SYSTEM_VERSION=$ANDROID_API \
-  -DCMAKE_SYSTEM_PROCESSOR=$ARCH \
+  -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
   -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$TOOLCHAIN_DIR \
   -DWEBKIT_LIBRARIES_INCLUDE_DIR=$TARGETDIR/icu/source/common \
   -DWEBKIT_LIBRARIES_LINK_DIR=$TARGETDIR/icu/${CROSS_COMPILE_PLATFORM}-${FLAVOR}/lib \
