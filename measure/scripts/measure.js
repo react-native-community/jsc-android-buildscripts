@@ -37,16 +37,20 @@ function run() {
     launchProfiler();
     clickOnJsTest();
     killProfiler();
+    resultsStr += readLogcatFilteredOutput() + '\n';
+    clearLogcat();
 
     launchProfiler();
     clickOnFlatRenderTest();
     killProfiler();
+    resultsStr += readLogcatFilteredOutput() + '\n';
+    clearLogcat();
 
     launchProfiler();
     clickOnDeepRenderTest();
     killProfiler();
-
     resultsStr += readLogcatFilteredOutput() + '\n';
+    clearLogcat();
   })
 
   const resultLines = _.split(resultsStr, '\n');
@@ -92,14 +96,14 @@ function waitForLogcatMsg(msg) {
 
 function launchProfiler() {
   console.log(`launching...`);
-  exec.execSyncSilent(`adb shell am start-activity -W "${PACKAGE_NAME}/.${ACTIVITY_NAME}" && sleep 2`);
+  exec.execSyncSilent(`adb shell am start-activity -W "${PACKAGE_NAME}/.${ACTIVITY_NAME}"`);
+  waitForLogcatMsg(`${LOGCAT_TAG}:ApplicationLoadedAndRendered`);
 }
 
 function killProfiler() {
   console.log(`killing`);
   exec.execSyncSilent(`adb shell am force-stop ${PACKAGE_NAME}`);
   exec.execSyncSilent(`adb shell am kill ${PACKAGE_NAME}`);
-  exec.execSyncSilent(`sleep 2`);
 }
 
 function clickOnJsTest() {

@@ -56,7 +56,7 @@ diff -aur target-org/icu/source/i18n/digitlst.cpp target/icu/source/i18n/digitls
 -# else
 -#   include <xlocale.h>
 -# endif
-+# include <locale.h>
++# include <xlocale.h>
  #endif
  
  // ***************************************************************************

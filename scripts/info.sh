@@ -1,13 +1,16 @@
 #!/bin/bash -e
 
+URL="https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}"
 ROOTDIR=$PWD
-REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
-INFO=$(svn info "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
+REVISION=$(svn info --show-item last-changed-revision "${URL}")
+INFO=$(svn info "${URL}")
 CONFIG=$(node -e "console.log(require('./package.json').config)")
+APPLE_VERSION=$(svn cat "${URL}/Source/WebCore/Configurations/Version.xcconfig" | grep 'MAJOR_VERSION\s=\|MINOR_VERSION\s=\|TINY_VERSION\s=\|MICRO_VERSION\s=\|NANO_VERSION\s=')
 
 SIZE=$(du -ah $ROOTDIR/build/compiled || true)
 
-printf "\n\n\n\n\n\t\t\tCompiled Version: \x1B[32m$REVISION\x1B[0m\n\n\n"
-printf "Config:\t$CONFIG\n\n"
-printf "Info:\t$INFO\n\n"
-printf "Size:\t$SIZE\n\n"
+printf "\n\n\n\n\n\t\t\tRevision: \x1B[32m$REVISION\x1B[0m\n\n\n"
+printf "Config:\n$CONFIG\n\n"
+printf "Info:\n$INFO\n\n"
+printf "AppleWebkit:\n$APPLE_VERSION\n\n"
+printf "Size:\n$SIZE\n\n"

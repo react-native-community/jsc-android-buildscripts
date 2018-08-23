@@ -24,7 +24,7 @@ apply plugin: 'maven'
 task createAAR(type: Upload) {
     def distDir = "${rootDir}/../dist"
 
-    def revision = project.findProperty("revision")
+    def revision = project.findProperty("revision").replaceAll("\\s","")
     def i18n = project.findProperty("i18n")
 
     doFirst {

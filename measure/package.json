@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "postinstall": "rm -rf ./node_modules/react-native && tar -xf react-native-x64-tar && mv package ./node_modules/react-native",
-    "android": "cd android && ./gradlew clean uninstallRelease installRelease",
+    "android": "cd android && ./gradlew clean uninstallAll installRelease",
     "androidi18n": "npm run android -- --project-prop i18n=true",
     "start": "node ./scripts/measure",
+    "starti18n": "npm run start -- i18n",
     "generateReadmeTable": "node ./scripts/resultsJsonToMarkdown",
     "downloadPublishedVersion": "node ./scripts/downloadPublishedVersion"
   },
@@ -14,7 +15,7 @@
     "react-native": "0.51.0",
     "react": "16.0.0",
     "prop-types": "*",
-    "lodash": "4.x.x"
+    "lodash": "latest"
   },
   "devDependencies": {
     "shell-utils": "1.x.x"

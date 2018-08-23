@@ -149,5 +149,43 @@
     "renderflat": "1154",
     "renderdeep": "1304",
     "size": "5.5/8.3"
+  },
+  {
+    "npm": "224109.1.0",
+    "date": "2018-07-29",
+    "config": {
+      "webkitGTK": "2.18.2",
+      "chromiumICUCommit": "b34251f",
+      "i18n": false
+    },
+    "revision": "224109",
+    "revisionDate": "2017-10-27",
+    "tti": "522",
+    "sunspider": "461",
+    "jetstream": "3045",
+    "octane2": "1946",
+    "sixspeed": "428",
+    "renderflat": "859",
+    "renderdeep": "1041",
+    "size": "5.1/7.7"
+  },
+  {
+    "npm": "224109.1.0",
+    "date": "2018-07-29",
+    "config": {
+      "webkitGTK": "2.18.2",
+      "chromiumICUCommit": "b34251f",
+      "i18n": true
+    },
+    "revision": "224109",
+    "revisionDate": "2017-10-27",
+    "tti": "549",
+    "sunspider": "451",
+    "jetstream": "3094",
+    "octane2": "1935",
+    "sixspeed": "430",
+    "renderflat": "833",
+    "renderdeep": "1123",
+    "size": "14/18"
   }
 ]
