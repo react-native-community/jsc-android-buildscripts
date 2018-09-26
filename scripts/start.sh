@@ -2,7 +2,7 @@
 
 ROOTDIR=$PWD
 TARGETDIR=$ROOTDIR/build/target
-REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
+source $PWD/scripts/info.sh
 
 patchAndMakeICU() {
   printf "\n\n\t\t===================== patch and make icu into target/icu/host =====================\n\n"
@@ -61,10 +61,10 @@ createAAR() {
   cd $ROOTDIR
 }
 
-# export I18N=false
-# prep
-# compile
-# createAAR
+export I18N=false
+prep
+compile
+createAAR
 
 export I18N=true
 prep
