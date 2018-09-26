@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -24,8 +24,8 @@ apply plugin: 'maven'
 task createAAR(type: Upload) {
     def distDir = "${rootDir}/../dist"
 
-    def revision = project.findProperty("revision").replaceAll("\\s","")
-    def i18n = project.findProperty("i18n")
+    def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
+    def i18n = project.findProperty("i18n") ?: ""
 
     doFirst {
         if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
