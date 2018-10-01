@@ -22,7 +22,7 @@ prep() {
   rm -rf $TARGETDIR/icu/host
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
-  $TARGETDIR/icu/source/runConfigureICU Linux --prefix=$PWD/prebuilts CFLAGS="-Os" CXXFLAGS="--std=c++11" --disable-tests --disable-samples
+  $TARGETDIR/icu/source/runConfigureICU Linux --prefix=$PWD/prebuilts CFLAGS="-Os" CXXFLAGS="--std=c++11" --disable-tests --disable-samples  --disable-layout --disable-layoutex
   make -j5
   cd $ROOTDIR
 
