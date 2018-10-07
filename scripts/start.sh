@@ -54,6 +54,12 @@ createAAR() {
   cd $ROOTDIR
 }
 
+copyHeaders() {
+  printf "\n\n\t\t===================== adding headers to $ROOTDIR/dist/include =====================\n\n"
+  mkdir -p $ROOTDIR/dist/include
+  cp -Rf $TARGETDIR/webkit/Source/JavaScriptCore/API/*.h $ROOTDIR/dist/include
+}
+
 export I18N=false
 prep
 compile
@@ -64,5 +70,8 @@ prep
 compile
 createAAR
 
+copyHeaders
+
 npm run info
+
 echo "I am not slacking off, my code is compiling."
