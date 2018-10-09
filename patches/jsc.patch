@@ -258,7 +258,7 @@ diff -aur target-org/webkit/Source/JavaScriptCore/API/JSBase.cpp target/webkit/S
 +extern "C" int __android_log_print(int prio, const char *tag, const char *fmt, ...);
 +__attribute__((constructor))
 +void printVersion() {
-+    __android_log_print(3, "JavaScriptCore-Version", "%s", "224109.1.0");
++    __android_log_print(3, "JavaScriptCore.Version", "%s", "224109.1.0");
 +}
 diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-10-16 15:19:26.000000000 +0300

@@ -23,9 +23,11 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 ## Build instructions
 
 1. Clone this repo
-1. Update the config section under `package.json` to the desired build configuration
-1. `npm run download`: downloads all needed sources
-1. `npm run start`: builds jsc (this might take some time...)
+2. `npm run clean` will clean everything (artifacts, downloaded sources)
+3. Update the config section under `package.json` to the desired build configuration
+4. Update patches if needed (don't forget to update the `printVersion` patch in jsc.patch)
+5. `npm run download`: downloads all needed sources
+6. `npm run start`: builds jsc (this might take some time...)
 
 The zipfile containing the android-jsc AAR will be available at `/dist`.
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
@@ -35,6 +37,8 @@ The library is packaged as a local Maven repository containing AAR files that in
 JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
 Please refer to the section below in order to learn how your app can consume this format.
+
+On load, JSC prints the version out to logcat, under "JavaScriptCore.Version" tag.
 
 ## How to use it with my React Native app
 
