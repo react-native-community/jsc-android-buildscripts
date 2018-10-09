@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 SCRIPT_DIR=$(cd `dirname $0`; pwd)
-export ANDROID_API=21
 
 compile_arch() {
   echo -e '\033]2;'"compiling toolchain for $JSC_ARCH $FLAVOR"'\007'

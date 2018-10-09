@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
-ROOTDIR=$PWD
-TARGETDIR=$ROOTDIR/build/target
-source $PWD/scripts/info.sh
+export ANDROID_API=21
+export ROOTDIR=$PWD
+export TARGETDIR=$ROOTDIR/build/target
+source $ROOTDIR/scripts/info.sh
 
 patchAndMakeICU() {
   printf "\n\n\t\t===================== patch and make icu into target/icu/host =====================\n\n"

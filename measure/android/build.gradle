@@ -7,9 +7,11 @@ ext {
 
     def i18nProp = project.findProperty("i18n")
     JSC_NAME = Boolean.valueOf(i18nProp) ? "android-jsc-intl" : "android-jsc"
+
+    isIDE = System.getProperties()['idea.platform.prefix'] != null
 }
 
-if (JSC_VERSION) {
+if (!isIDE && JSC_VERSION) {
     println "\n\n\t\tUsing JavaScriptCore for Android, version ${(char) 27}[35m${JSC_NAME}:${JSC_VERSION}${(char) 27}[0m \n\n"
 
     allprojects {
