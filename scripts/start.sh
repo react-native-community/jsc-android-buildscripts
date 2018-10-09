@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
-ROOTDIR=$PWD
-TARGETDIR=$ROOTDIR/build/target
-REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
+export ANDROID_API=21
+export ROOTDIR=$PWD
+export TARGETDIR=$ROOTDIR/build/target
+export REVISION=$(svn info --show-item last-changed-revision "https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}")
 
 prep() {
   echo -e '\033]2;'prep'\007'
