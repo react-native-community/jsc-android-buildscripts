@@ -190,7 +190,7 @@
   },
   {
     "npm": "225067.0.0",
-    "date": "2018-07-29",
+    "date": "2018-10-09",
     "config": {
       "webkitGTK": "2.19.2",
       "chromiumICUCommit": "b34251f",
@@ -209,7 +209,7 @@
   },
   {
     "npm": "225067.0.0",
-    "date": "2018-07-29",
+    "date": "2018-10-09",
     "config": {
       "webkitGTK": "2.19.2",
       "chromiumICUCommit": "b34251f",
