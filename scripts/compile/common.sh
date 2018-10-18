@@ -132,7 +132,8 @@ COMMON_CFLAGS=" \
 -ffunction-sections \
 -fomit-frame-pointer \
 -fno-strict-aliasing \
--fno-exceptions \
+-fexceptions \
+-frtti \
 -funwind-tables \
 -DPIC \
 -fPIC \
