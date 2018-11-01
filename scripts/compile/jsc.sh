@@ -14,7 +14,6 @@ CMAKE_CXX_FLAGS=" \
 $SWITCH_JSC_CFLAGS_COMPAT \
 $JSC_CFLAGS \
 $PLATFORM_CFLAGS \
--fno-rtti \
 -I$TARGETDIR/icu/source/i18n \
 -I$TOOLCHAIN_DIR/sysroot/usr/include \
 "

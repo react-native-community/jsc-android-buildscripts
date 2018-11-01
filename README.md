@@ -47,7 +47,7 @@ Follow steps below in order for your React Native app to use new version of JSC 
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
-+  "jsc-android": "224109.x.x",
++  "jsc-android": "225067.x.x",
 ```
 
 then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
@@ -77,7 +77,7 @@ allprojects {
 
 +configurations.all {
 +    resolutionStrategy {
-+        force 'org.webkit:android-jsc:r224109'
++        force 'org.webkit:android-jsc:r225067'
 +    }
 +}
 
@@ -108,7 +108,7 @@ To use this variant instead replace the third installation step with:
 +    resolutionStrategy {
 +        eachDependency { DependencyResolveDetails details ->
 +            if (details.requested.name == 'android-jsc') {
-+                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
++                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r225067'
 +            }
 +        }
 +    }
