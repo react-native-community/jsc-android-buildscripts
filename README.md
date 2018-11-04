@@ -24,6 +24,7 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 
 1. Clone this repo
 2. `npm run clean` will clean everything (artifacts, downloaded sources)
+3. Update the version in package.json. The version will be printed by JSC lib as soon as it loads.
 3. Update the config section under `package.json` to the desired build configuration
 4. Update patches if needed (don't forget to update the `printVersion` patch in jsc.patch)
 5. `npm run download`: downloads all needed sources

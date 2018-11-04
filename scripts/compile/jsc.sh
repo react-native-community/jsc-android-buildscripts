@@ -66,6 +66,7 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   -DCMAKE_EXE_LINKER_FLAGS='${CMAKE_MODULE_LINKER_FLAGS} $CMAKE_LD_FLAGS' \
   -DENABLE_API_TESTS=0 \
   -DCMAKE_VERBOSE_MAKEFILE=on \
+  -DJSC_VERSION=\"${JSC_VERSION}\" \
   "
 
 cp $TARGETDIR/webkit/WebKitBuild/Release/lib/libjsc.so $INSTALL_DIR

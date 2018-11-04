@@ -4,6 +4,7 @@ export ANDROID_API=21
 export ROOTDIR=$PWD
 export TARGETDIR=$ROOTDIR/build/target
 source $ROOTDIR/scripts/info.sh
+export JSC_VERSION=${npm_package_version}
 
 patchAndMakeICU() {
   printf "\n\n\t\t===================== patch and make icu into target/icu/host =====================\n\n"

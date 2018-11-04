@@ -279,16 +279,17 @@ diff -aur target-org/webkit/Source/JavaScriptCore/API/JSBase.cpp target/webkit/S
 +extern "C" int __android_log_print(int prio, const char *tag, const char *fmt, ...);
 +__attribute__((constructor))
 +void printVersion() {
-+    __android_log_print(3, "JavaScriptCore.Version", "%s", "225067.0.0");
++    __android_log_print(3, "JavaScriptCore.Version", "%s", JSC_VERSION);
 +}
 diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-10-16 15:19:26.000000000 +0300
 +++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-10-09 14:44:23.000000000 +0300
-@@ -1073,6 +1073,7 @@
+@@ -1073,6 +1073,8 @@
      WTF${DEBUG_SUFFIX}
      ${ICU_I18N_LIBRARIES}
      ${LLVM_LIBRARIES}
 +    log
  )
- 
++add_definitions(-DJSC_VERSION="${JSC_VERSION}")
+
  set(JavaScriptCore_SCRIPTS_SOURCES_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
