@@ -135,6 +135,6 @@ function getDensity() {
 }
 
 function getScreenSize() {
-  const size = exec.execSyncRead(`adb shell wm size | grep -Eo "\\d+x\\d+"`, true);
+  const size = exec.execSyncRead(`adb shell wm size | grep -Eo "[0-9]+x[0-9]+"`, true);
   return size.split('x');
 }
