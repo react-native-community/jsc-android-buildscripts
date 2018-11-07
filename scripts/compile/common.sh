@@ -110,7 +110,8 @@ process_switch_options "INTL"
 
 # checks
 err=false
-if ! [[ $ANDROID_API ]]; then echo "set ANDROID_API to the minimum supported Android platform version (e.g. 15)"; err=true; fi
+if ! [[ $ANDROID_API_FOR_ABI_32 ]]; then echo "set ANDROID_API_FOR_ABI_32 to the minimum supported Android platform version for arm and x86 (e.g. 16)"; err=true; fi
+if ! [[ $ANDROID_API_FOR_ABI_64 ]]; then echo "set ANDROID_API_FOR_ABI_64 to the minimum supported Android platform version for arm64 and x86_64 (e.g. 21)"; err=true; fi
 if ! [[ $FLAVOR ]]; then echo "set FLAVOR to the name of the flavor"; err=true; fi
 if ! [[ $CROSS_COMPILE_PLATFORM ]]; then echo "set JSC_ARCH to one of {arm,arm64,x86,x86_64}"; err=true; fi
 if ! [[ $ANDROID_HOME ]]; then echo "set ANDROID_HOME to android sdk dir"; err=true; fi
@@ -127,6 +128,7 @@ COMMON_LDFLAGS=" \
 -Wl,--gc-sections \
 -Wl,--exclude-libs,libgcc.a \
 -Wl,--exclude-libs,libunwind.a \
+-Wl,--no-undefined \
 "
 
 COMMON_CFLAGS=" \
@@ -141,6 +143,7 @@ COMMON_CFLAGS=" \
 -fPIC \
 -fvisibility=hidden \
 -DNDEBUG \
+-DCUSTOMIZE_REACT_NATIVE \
 $SWITCH_COMMON_CFLAGS_INTL \
 "
 
