@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: ~/jsc-android-buildscripts
     docker:
-      - image: swmansion/jsc-android-buildscripts:ndk-r17b
+      - image: swmansion/jsc-android-buildscripts:r17b
     steps:
       - checkout
       - restore_cache:
