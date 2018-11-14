@@ -4,21 +4,21 @@ jobs:
   build:
     working_directory: ~/jsc-android-buildscripts
     docker:
-      - image: gengjiawen/jsc-android-buildscripts
+      - image: swmansion/jsc-android-buildscripts:ndk-r17b
     steps:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run clean
       - run: npm run download
-      - run: npm run prep
       - run: npm run start
       - run:
           name: Build Android
