@@ -3,9 +3,8 @@
 URL="https://svn.webkit.org/repository/webkit/releases/WebKitGTK/webkit-${npm_package_config_webkitGTK}"
 ROOTDIR=$PWD
 
-export REVISION=$(svn info --show-item last-changed-revision "${URL}")
-
 INFO=$(svn info "${URL}")
+export REVISION=$(echo $INFO | sed -n 's/^Revision: //p')
 CONFIG=$(node -e "console.log(require('$ROOTDIR/package.json').config)")
 APPLE_VERSION=$(svn cat "${URL}/Source/WebCore/Configurations/Version.xcconfig" | grep 'MAJOR_VERSION\s=\|MINOR_VERSION\s=\|TINY_VERSION\s=\|MICRO_VERSION\s=\|NANO_VERSION\s=')
 

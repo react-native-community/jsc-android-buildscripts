@@ -54,6 +54,8 @@ jobs:
       - run: npm run clean
       - run: npm run download
       - run: npm run start
+      - store_artifacts:
+          path: dist/
       - run:
           name: Build Android
           command: |
