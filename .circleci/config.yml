@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/jsc-android-buildscripts
     machine: true
     environment:
-      ANDROID_NDK_VERSION: r18
+      NDK_VERSION: r18
       SDK_VERSION: sdk-tools-linux-3859397.zip
       ANDROID_HOME: /home/circleci/android-sdk
       ANDROID_NDK: /home/circleci/android-ndk
@@ -35,11 +35,12 @@ jobs:
       - run:
           name: install android ndk
           command: |
+            export PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
             mkdir /tmp/android-ndk-tmp && \
               cd /tmp/android-ndk-tmp && \
-              wget -q https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip &&
-              unzip -q android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip && \
-              mv ./android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK} && \
+              wget -q https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux-x86_64.zip &&
+              unzip -q android-ndk-${NDK_VERSION}-linux-x86_64.zip && \
+              mv ./android-ndk-${NDK_VERSION} ${ANDROID_NDK} && \
               cd ${ANDROID_NDK} && \
               rm -rf /tmp/android-ndk-tmp
             sdkmanager \
