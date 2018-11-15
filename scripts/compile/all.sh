@@ -21,6 +21,7 @@ compile_arch() {
 compile() {
   for arch in arm x86
   do
+    export ANDROID_API=$ANDROID_API_FOR_ABI_32
     export JSC_ARCH=$arch
     export ENABLE_COMPAT=1
     compile_arch
@@ -28,6 +29,7 @@ compile() {
 
   for arch in arm64 x86_64
   do
+    export ANDROID_API=$ANDROID_API_FOR_ABI_64
     export JSC_ARCH=$arch
     export ENABLE_COMPAT=0
     compile_arch
