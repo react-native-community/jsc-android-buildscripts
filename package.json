@@ -1,6 +1,6 @@
 {
   "name": "jsc-android",
-  "version": "174650.0.1",
+  "version": "174650.0.2",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
