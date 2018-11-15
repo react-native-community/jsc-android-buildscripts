@@ -18,7 +18,7 @@ jobs:
               mkdir -p ${ANDROID_HOME} && \
               unzip -q /tmp/${SDK_VERSION} -d ${ANDROID_HOME} && \
               rm /tmp/${SDK_VERSION}
-            PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
+            export PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
             mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
             yes | sdkmanager --licenses && sdkmanager --update
             sdkmanager \
