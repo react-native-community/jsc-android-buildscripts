@@ -11,7 +11,7 @@ jobs:
       ANDROID_NDK: /home/circleci/android-ndk
     steps:
       - checkout
-      - run: mkdir dist && touch dist/test
+      - run: mkdir -p dist && echo "hello" > dist/test.txt
       # - run:
       #     name: install android sdk
       #     command: |
@@ -57,12 +57,6 @@ jobs:
       # - run: npm run start
       - store_artifacts:
           path: dist/
-      # - run:
-      #     name: Build Android
-      #     command: |
-      #       cd measure
-      #       npm install
-      #       cd android && ./gradlew assembleRelease
 
 workflows:
   version: 2
