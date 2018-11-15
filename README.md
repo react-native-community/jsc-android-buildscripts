@@ -120,6 +120,21 @@ To use this variant instead replace the third installation step with:
 
 See **[Measurements](/measure)** page that contains synthetic perf test results for the most notable versions of JSC we have tried.
 
+## Troubleshooting
+
+Compile errors of the sort:
+```shell
+More than one file was found with OS independent path 'lib/armeabi-v7a/libgnustl_shared.so'
+```
+
+Add the following to your `app/build.gradle`, under `android`:
+
+```groovy
+packagingOptions {
+    pickFirst '**/libgnustl_shared.so'
+}
+```
+
 ## Resources
 - [WebkitGTK Sources](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
 - [ICU Sources](https://android.googlesource.com/platform/external/icu/)
