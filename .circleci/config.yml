@@ -7,8 +7,8 @@ jobs:
     environment:
       ANDROID_NDK_VERSION: r18
       SDK_VERSION: sdk-tools-linux-3859397.zip
-      ANDROID_HOME: ~/android-sdk
-      ANDROID_NDK: ~/android-ndk
+      ANDROID_HOME: /home/circleci/android-sdk
+      ANDROID_NDK: /home/circleci/android-ndk
     steps:
       - checkout
       - run:
