@@ -30,6 +30,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    packagingOptions {
+        pickFirst '**/libgnustl_shared.so'
+    }
 }
 
 dependencies {
