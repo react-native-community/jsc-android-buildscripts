@@ -125,6 +125,8 @@ COMMON_LDFLAGS=" \
 -Wl,--icf=safe \
 -Wl,-z,noexecstack \
 -Wl,--gc-sections \
+-Wl,--exclude-libs,libgcc.a \
+-Wl,--exclude-libs,libunwind.a \
 "
 
 COMMON_CFLAGS=" \
