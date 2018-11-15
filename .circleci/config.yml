@@ -3,20 +3,51 @@ version: 2
 jobs:
   build:
     working_directory: ~/jsc-android-buildscripts
-    docker:
-      - image: swmansion/jsc-android-buildscripts:r17b
+    machine: true
+    environment:
+      ANDROID_NDK_VERSION: r18
+      SDK_VERSION: sdk-tools-linux-3859397.zip
+      ANDROID_HOME: /opt/android/sdk
+      ANDROID_NDK: /opt/android-ndk
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+        name: install android sdk
+        command: |
+          curl --silent --show-error --location --fail --retry 3 --output /tmp/${SDK_VERSION} https://dl.google.com/android/repository/${SDK_VERSION} && \
+            mkdir -p ${ANDROID_HOME} && \
+            unzip -q /tmp/${SDK_VERSION} -d ${ANDROID_HOME} && \
+            rm /tmp/${SDK_VERSION}
+          mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
+          yes | sdkmanager --licenses && sdkmanager --update
+          sdkmanager \
+            "tools" \
+            "platform-tools" \
+            "emulator" \
+            "extras;android;m2repository" \
+            "extras;google;m2repository" \
+            "extras;google;google_play_services"
+          sdkmanager \
+            "build-tools;25.0.3" \
+            "build-tools;27.0.3"
+          sdkmanager "platforms;android-27"
+      - run:
+        name: install android ndk
+        command: |
+          mkdir /opt/android-ndk-tmp && \
+            cd /opt/android-ndk-tmp && \
+            wget -q https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip &&
+            unzip -q android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip && \
+            mv ./android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK} && \
+            cd ${ANDROID_NDK} && \
+            rm -rf /opt/android-ndk-tmp
+          sdkmanager \
+            "lldb;3.0" \
+            "cmake;3.6.4111459"
+      - run:
+        name: install subversion
+        command: |
+          apt-get update && apt-get install curl git subversion python-dev ruby gperf -y
       - run: npm run clean
       - run: npm run download
       - run: npm run start
