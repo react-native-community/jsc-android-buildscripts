@@ -1,5 +1,5 @@
-[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android) 
-[![Build Status](https://jenkins-oss.wixpress.com/job/jsc-android-master/badge/icon)](https://jenkins-oss.wixpress.com/job/jsc-android-master/)
+[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android)
+[![CircleCI](https://circleci.com/gh/react-community/jsc-android-buildscripts.svg?style=svg)](https://circleci.com/gh/react-community/jsc-android-buildscripts)
 
 # JSC build scripts for Android
 
@@ -86,18 +86,7 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
 ```
 
-4. Make sure your app's `build.gradle` uses a minimum sdk version of 21
-
-```diff
-defaultConfig {
-    applicationId "com.myApp"
--    minSdkVersion 16
-+    minSdkVersion 21
-    targetSdkVersion 22
-    versionCode 1
-```
-
-5. You're done, rebuild your app and enjoy updated version of JSC on android!
+4. You're done, rebuild your app and enjoy updated version of JSC on android!
 
 ### International variant
 International variant includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. Note that this variant is about 6MiB larger per architecture than default.
