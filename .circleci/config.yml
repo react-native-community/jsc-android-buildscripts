@@ -51,11 +51,30 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install coreutils realpath curl git subversion python-dev ruby gperf -y
+      - run:
+          name: upgrade node
+          command: |
+            source ~/.bashrc
+            nvm install 10
+            nvm use 10
+            nvm alias default 10
       - run: npm run clean
       - run: npm run download
       - run: npm run start
+      - run:
+          name: compress dist
+          command: tar -czf dist.tgz dist
       - store_artifacts:
-          path: dist/
+          path: dist.tgz
+      - run:
+          name: Build test app
+          command: |
+            source ~/.bashrc
+            cd test
+            npm install
+            cd android && ./gradlew assembleDebug assembleAndroidTest
+      - store_artifacts:
+          path: test/android/app/build/outputs/apk/
 
 workflows:
   version: 2
