@@ -4,27 +4,28 @@ ext {
     JSC_DIR = "$rootDir/../../dist"
     def jscAAR = fileTree(dir: JSC_DIR).find { it.name.endsWith(".aar") }
     JSC_VERSION = jscAAR ? file(file(jscAAR).getParent()).getName() : ""
+    println JSC_VERSION
 
-    def i18nProp = project.findProperty("i18n")
+    def i18nProp = true //project.findProperty("i18n")
     JSC_NAME = Boolean.valueOf(i18nProp) ? "android-jsc-intl" : "android-jsc"
 }
 
-// allprojects {
-//     configurations.all {
-//         resolutionStrategy {
-//             eachDependency { DependencyResolveDetails details ->
-//                 if (details.requested.name == 'android-jsc') {
-//                     details.useTarget group: details.requested.group, name: JSC_NAME, version: JSC_VERSION
-//                 }
-//             }
-//         }
-//     }
-// }
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.name == 'android-jsc') {
+                    details.useTarget group: details.requested.group, name: JSC_NAME, version: JSC_VERSION
+                }
+            }
+        }
+    }
+}
 
 buildscript {
     ext {
         buildToolsVersion = "27.0.3"
-        minSdkVersion = 16
+        minSdkVersion = 21
         compileSdkVersion = 27
         targetSdkVersion = 26
         supportLibVersion = "27.1.1"
