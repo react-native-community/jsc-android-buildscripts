@@ -11,7 +11,7 @@ jobs:
       ANDROID_NDK: /home/circleci/android-ndk
     steps:
       - checkout
-      - run:
+      # - run:
       #     name: install android sdk
       #     command: |
       #       curl --silent --show-error --location --fail --retry 3 --output /tmp/${SDK_VERSION} https://dl.google.com/android/repository/${SDK_VERSION} && \
