@@ -9,7 +9,6 @@ jobs:
       SDK_VERSION: sdk-tools-linux-3859397.zip
       ANDROID_HOME: /home/circleci/android-sdk
       ANDROID_NDK: /home/circleci/android-ndk
-      BASH_ENV: ~/.bashrc
     steps:
       - checkout
       # - run:
@@ -55,6 +54,7 @@ jobs:
       - run:
           name: upgrade node
           command: |
+            source ~/.bashrc
             nvm install 10
             nvm use 10
             nvm alias default 10
@@ -69,6 +69,7 @@ jobs:
       - run:
           name: Build test app
           command: |
+            source ~/.bashrc
             cd test
             npm install
             cd android && ./gradlew assembleAndroidTest

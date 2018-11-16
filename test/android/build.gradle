@@ -4,10 +4,7 @@ ext {
     JSC_DIR = "$rootDir/../../dist"
     def jscAAR = fileTree(dir: JSC_DIR).find { it.name.endsWith(".aar") }
     JSC_VERSION = jscAAR ? file(file(jscAAR).getParent()).getName() : ""
-    println JSC_VERSION
-
-    def i18nProp = true //project.findProperty("i18n")
-    JSC_NAME = Boolean.valueOf(i18nProp) ? "android-jsc-intl" : "android-jsc"
+    JSC_NAME = "android-jsc-intl"
 }
 
 allprojects {
