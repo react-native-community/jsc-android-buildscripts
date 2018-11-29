@@ -1,4 +1,5 @@
 #!/bin/bash -e
+set -x
 
 export ANDROID_API_FOR_ABI_32=16
 export ANDROID_API_FOR_ABI_64=21
@@ -39,12 +40,18 @@ patchAndMakeICU() {
 
 patchJsc() {
   printf "\n\n\t\t===================== patch jsc =====================\n\n"
-  patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
+  if [[ ! -d $ROOTDIR/build/patching ]]; then
+    patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc.patch
+  fi
 
   # disable i18n for non-i18n build
   if [[ "$I18N" = false ]]
   then
     patch -d $TARGETDIR -N -p1 < $ROOTDIR/patches/intl/icu-disabled.patch
+  fi
+
+  if [[ ! -d $ROOTDIR/build/patching ]]; then
+    patch -d $TARGETDIR -p1 < $ROOTDIR/patches/jsc_inspector.patch
   fi
 }
 
@@ -52,7 +59,11 @@ prep() {
   echo -e '\033]2;'prep'\007'
   printf "\n\n\t\t===================== copy downloaded sources =====================\n\n"
   rm -rf $TARGETDIR
-  cp -Rf $ROOTDIR/build/download $TARGETDIR
+  if [[ ! -d $ROOTDIR/build/patching ]]; then
+    cp -Rf $ROOTDIR/build/download $TARGETDIR
+  else
+    cp -Rf $ROOTDIR/build/patching $TARGETDIR
+  fi
   
   patchAndMakeICU
   patchJsc
@@ -84,10 +95,10 @@ prep
 compile
 createAAR
 
-export I18N=true
-prep
-compile
-createAAR
+# export I18N=true
+# prep
+# compile
+# createAAR
 
 copyHeaders
 

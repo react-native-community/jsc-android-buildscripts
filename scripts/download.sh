@@ -12,3 +12,7 @@ svn export https://svn.webkit.org/repository/webkit/$SVN_URL/CMakeLists.txt $TAR
 
 mkdir -p $TARGET_DIR/icu
 curl "https://chromium.googlesource.com/chromium/deps/icu/+archive/${npm_package_config_chromiumICUCommit}.tar.gz" | tar xzf - -C $TARGET_DIR/icu
+
+mkdir -p $TARGET_DIR/plist
+curl http://www.libimobiledevice.org/downloads/libplist-2.0.0.tar.bz2 | tar xjf - -C $TARGET_DIR/plist --strip 1
+

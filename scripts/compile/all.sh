@@ -7,6 +7,10 @@ compile_arch() {
   printf "\n\n\n\t\t=================== compiling toolchain for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/toolchain.sh
   
+  echo -e '\033]2;'"compiling plist for $JSC_ARCH $FLAVOR"'\007'
+  printf "\n\n\n\t\t=================== compiling plist for $JSC_ARCH $FLAVOR ===================\n\n\n"
+  $SCRIPT_DIR/plist.sh
+  
   echo -e '\033]2;'"compiling icu for $JSC_ARCH $FLAVOR"'\007'
   printf "\n\n\n\t\t=================== compiling icu for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/icu.sh
@@ -27,7 +31,7 @@ compile() {
     compile_arch
   done
 
-  for arch in arm64 x86_64
+  for arch in # arm64 x86_64
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_64
     export JSC_ARCH=$arch

@@ -1,0 +1,1580 @@
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/API/JSContextRef.cpp target/webkit/Source/JavaScriptCore/API/JSContextRef.cpp
+--- target-org/webkit/Source/JavaScriptCore/API/JSContextRef.cpp	2018-11-29 13:53:55.934815060 +0100
++++ target/webkit/Source/JavaScriptCore/API/JSContextRef.cpp	2018-11-29 13:53:54.826816864 +0100
+@@ -156,6 +156,7 @@
+     if (JSRemoteInspectorGetInspectionEnabledByDefault())
+         globalObject->setRemoteDebuggingEnabled(true);
+ #endif
++    JSRemoteInspectorStart();
+     return JSGlobalContextRetain(toGlobalRef(exec));
+ }
+ 
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
+--- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-11-29 13:53:57.078813198 +0100
++++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-11-29 13:53:54.826816864 +0100
+@@ -55,6 +55,21 @@
+ 
+ set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
+     "${ICU_INCLUDE_DIRS}"
++    "${PLIST_INCLUDE_DIRS}"
++)
++
++list(APPEND JavaScriptCore_SOURCES
++   inspector/remote/tcpplist/RemoteInspectorTCPPlist.cpp
++   inspector/remote/RemoteInspector.cpp
++   inspector/remote/tcpplist/RemoteConnectionToTargetTCPPlist.cpp
++   inspector/remote/tcpplist/RemoteInspectorTCPServer.cpp
++   inspector/remote/tcpplist/char_buffer.c
++   inspector/remote/tcpplist/webinspector.c
++   inspector/remote/RemoteAutomationTarget.cpp
++   inspector/remote/RemoteControllableTarget.cpp
++   inspector/remote/RemoteInspectionTarget.cpp
++   API/JSRemoteInspector.cpp
++   API/JSBase.cpp
+ )
+ 
+ set(JavaScriptCore_OBJECT_LUT_SOURCES
+@@ -121,6 +136,8 @@
+     ${ICU_LIBRARIES}
+     ${ICU_DATA_LIBRARIES}
+     log
++    ${PLIST_LIBRARIES}
++    ${PLISTXX_LIBRARIES}
+ )
+ add_definitions(-DJSC_VERSION="${JSC_VERSION}")
+ 
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/RemoteConnectionToTarget.h target/webkit/Source/JavaScriptCore/inspector/remote/RemoteConnectionToTarget.h
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/RemoteConnectionToTarget.h	2018-11-29 13:53:55.970815001 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/RemoteConnectionToTarget.h	2018-11-29 13:53:54.878816779 +0100
+@@ -30,6 +30,7 @@
+ #include "InspectorFrontendChannel.h"
+ #include <wtf/Lock.h>
+ #include <wtf/ThreadSafeRefCounted.h>
++#include <plist/String.h>
+ 
+ #if PLATFORM(COCOA)
+ #include <wtf/BlockPtr.h>
+@@ -46,26 +47,38 @@
+ typedef Vector<BlockPtr<void ()>> RemoteTargetQueue;
+ #endif
+ 
+-class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
++class RemoteConnectionToTarget final
++        : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
+ public:
+ #if PLATFORM(COCOA)
+     RemoteConnectionToTarget(RemoteControllableTarget*, NSString* connectionIdentifier, NSString* destination);
+ #else
+-    RemoteConnectionToTarget(RemoteControllableTarget&);
++
++    // TCPPlist
++    RemoteConnectionToTarget(RemoteControllableTarget &target,
++                             PList::String &connectionIdentifier,
++                             PList::String &destination);
+ #endif
++
+     virtual ~RemoteConnectionToTarget();
+ 
+     // Main API.
+     bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);
++
+ #if PLATFORM(COCOA)
+     void sendMessageToTarget(NSString *);
+ #else
+-    void sendMessageToTarget(const String&);
++
++    void sendMessageToTarget(const String &);
++
+ #endif
++
+     void close();
++
+     void targetClosed();
+ 
+     std::optional<unsigned> targetIdentifier() const;
++
+ #if PLATFORM(COCOA)
+     NSString *connectionIdentifier() const;
+     NSString *destination() const;
+@@ -77,9 +90,17 @@
+ 
+     // FrontendChannel overrides.
+     ConnectionType connectionType() const override { return ConnectionType::Remote; }
+-    void sendMessageToFrontend(const String&) override;
++
++    void sendMessageToFrontend(const String &) override;
++
++    // TCPPlist
++    std::string connectionIdentifier() const;
++    std::string destination() const;
+ 
+ private:
++    // TCPPlist
++    PList::String m_connectionIdentifier;
++    PList::String m_destination;
+ #if PLATFORM(COCOA)
+     void dispatchAsyncOnTarget(void (^block)());
+ 
+@@ -102,8 +123,8 @@
+     Lock m_queueMutex;
+ #endif
+ 
+-    RemoteControllableTarget* m_target { nullptr };
+-    bool m_connected { false };
++    RemoteControllableTarget *m_target{nullptr};
++    bool m_connected{false};
+ 
+ #if PLATFORM(COCOA)
+     RetainPtr<NSString> m_connectionIdentifier;
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/RemoteInspector.h target/webkit/Source/JavaScriptCore/inspector/remote/RemoteInspector.h
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/RemoteInspector.h	2018-11-29 13:53:55.970815001 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/RemoteInspector.h	2018-11-29 13:53:54.878816779 +0100
+@@ -33,6 +33,9 @@
+ #include <wtf/Lock.h>
+ #include <wtf/ProcessID.h>
+ #include <wtf/text/WTFString.h>
++#include <plist/Dictionary.h>
++#include <plist/Boolean.h>
++
+ 
+ #if PLATFORM(COCOA)
+ #include "RemoteInspectorXPCConnection.h"
+@@ -51,6 +54,13 @@
+ typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
+ #endif
+ 
++// TCPPlist
++typedef std::shared_ptr<PList::Dictionary> TargetListing;
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <plist/Dictionary.h>
++#include <inspector/remote/tcpplist/RemoteInspectorTCPServer.h>
++
+ namespace Inspector {
+ 
+ class RemoteAutomationTarget;
+@@ -63,7 +73,8 @@
+ #if PLATFORM(COCOA)
+     : public RemoteInspectorXPCConnection::Client
+ #endif
+-{
++: public RemoteInspectorTCPServer::Client
++    {
+ public:
+     class Client {
+     public:
+@@ -91,6 +102,10 @@
+         virtual void requestAutomationSession(const String& sessionIdentifier, const SessionCapabilities&) = 0;
+     };
+ 
++    // TCPPlist
++    static wi_status receivedPList(wi_t self, const plist_t rpc_dict);
++    void processReceivedPList(PList::Dictionary * dict);
++    void clientConnectionDied();
+     static void startDisabled();
+     static RemoteInspector& singleton();
+     friend class NeverDestroyed<RemoteInspector>;
+@@ -133,6 +148,13 @@
+ #endif
+ 
+ private:
++    // TCPPList
++    void setupTCPServerIfNeeded();
++    std::shared_ptr<RemoteInspectorTCPServer> m_tcpServer;
++    void receivedSetupMessage(PList::Dictionary *userInfo);
++    void receivedDataMessage(PList::Dictionary *userInfo);
++    void receivedDidCloseMessage(PList::Dictionary *userInfo);
++    void receivedGetListingMessage(PList::Dictionary *userInfo);
+     RemoteInspector();
+ 
+     unsigned nextAvailableTargetIdentifier();
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.c target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.c
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.c	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.c	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,308 @@
++// Google BSD license https://developers.google.com/google-bsd-license
++// Copyright 2012 Google Inc. wrightt@google.com
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <math.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "char_buffer.h"
++
++#define MIN_LENGTH 1024
++
++cb_t cb_new() {
++    cb_t self = (cb_t)malloc(sizeof(struct cb_struct));
++    if (self) {
++        memset(self, 0, sizeof(struct cb_struct));
++    }
++    return self;
++}
++
++void cb_free(cb_t self) {
++    if (self) {
++        if (self->begin) {
++            free(self->begin);
++        }
++        free(self);
++    }
++}
++
++void cb_clear(cb_t self) {
++    self->head = self->begin;
++    self->tail = self->begin;
++}
++
++int cb_ensure_capacity(cb_t self, size_t needed) {
++    if (!self->begin) {
++        size_t length = (needed > MIN_LENGTH ? needed : MIN_LENGTH);
++        self->begin = (char *)malloc(length * sizeof(char));
++        if (!self->begin) {
++            perror("Unable to allocate buffer");
++            return -1;
++        }
++        self->head = self->begin;
++        self->tail = self->begin;
++        self->end = self->begin + length;
++        return 0;
++    }
++    size_t used = self->tail - self->head;
++    if (!used) {
++        self->head = self->begin;
++        self->tail = self->begin;
++    }
++    size_t avail = self->end - self->tail;
++    if (needed > avail) {
++        size_t offset = self->head - self->begin;
++        if (offset) {
++            if (used) {
++                memmove(self->begin, self->head, used);
++            }
++            self->head = self->begin;
++            self->tail = self->begin + used;
++            avail += offset;
++        }
++        if (needed > avail) {
++            size_t length = self->end - self->begin;
++            size_t new_length = used + needed;
++            if (new_length < 1.5 * length) {
++                new_length = 1.5 * length;
++            }
++            char *new_begin = (char*)realloc(self->begin,
++                                             new_length * sizeof(char));
++            if (!new_begin) {
++                perror("Unable to resize buffer");
++                return -1;
++            }
++            self->begin = new_begin;
++            self->head = new_begin;
++            self->tail = new_begin + used;
++            self->end = new_begin + new_length;
++        }
++    }
++    return 0;
++}
++
++int cb_begin_input(cb_t self, const char *buf, ssize_t length) {
++    if (!buf || length < 0) {
++        return -1;
++    }
++    // Instead of always doing a memcpy into our buffer, see if we can
++    // use the buf as-is
++    int can_share = (!self->begin || self->tail == self->head);
++    if (can_share) {
++        self->in_head = buf;
++        self->in_tail = buf + length;
++    } else {
++        if (cb_ensure_capacity(self, length)) {
++            return -1;
++        }
++        if (length > 0) {
++            memcpy(self->tail, buf, length);
++            self->tail += length;
++        }
++        self->in_head = self->head;
++        self->in_tail = self->tail;
++    }
++    return 0;
++}
++
++int cb_end_input(cb_t self) {
++    int did_share = (!self->begin || self->in_tail != self->tail);
++    if (did_share) {
++        size_t length = self->in_tail - self->in_head;
++        if (length > 0) {
++            // We used the input buf as-is, but some bytes remain, so save them
++            if (cb_ensure_capacity(self, length)) {
++                return -1;
++            }
++            memcpy(self->tail, self->in_head, length);
++            self->tail += length;
++        }
++    } else {
++        self->head += self->in_head - self->head;
++    }
++    self->in_head = NULL;
++    self->in_tail = NULL;
++    return 0;
++}
++
++// similar to socat output, e.g.:
++// 47 45 54 20 2F 64 65 76 74 6F 6F 6C 73 2F 49 6D 61 67 65  GET /devtools/Image
++// ...
++size_t cb_sprint(char *to_buf, const char *buf, ssize_t length,
++                 ssize_t max_width, ssize_t max_lines) {
++    if (length <= 0) {
++        if (to_buf) {
++            *to_buf = '\0';
++        }
++        return 0;
++    }
++
++    char *s = to_buf;
++    size_t n = 0;
++
++#define APPEND(v) if (s) { *s++ = (v); } n++
++
++    size_t i = 0;
++    size_t num_lines = 0;
++
++    size_t chars_per_line;
++    if (max_width >= 0) {
++        chars_per_line = (max_width > 6 ? ((max_width - 2) >> 2) : 1);
++    } else {
++        size_t max_cpl = 1;
++        size_t curr_cpl = 0;
++        for (i = 0; i < length; i++) {
++            unsigned char ch = buf[i++];
++            curr_cpl++;
++            if (ch == '\n') {
++                if (curr_cpl > max_cpl) {
++                    max_cpl = curr_cpl;
++                }
++                if (max_lines >= 0 && ++num_lines > max_lines) {
++                    break;
++                }
++                curr_cpl = 0;
++            }
++        }
++        chars_per_line = max_cpl;
++    }
++
++    i = 0;
++    num_lines = 0;
++    while (1) {
++        size_t j;
++        size_t rem = chars_per_line;
++        for (j = i; j < length && rem; ) {
++            unsigned char ch = buf[j++];
++            static const char* hexchars = "0123456789ABCDEF";
++            APPEND(' ');
++            APPEND(hexchars[(ch >> 4) & 0xF]);
++            APPEND(hexchars[ch & 0xF]);
++            rem--;
++            if (ch == '\n') {
++                break;
++            }
++        }
++        size_t rem2 = rem;
++        for (rem2 = rem; rem2 > 0; rem2--) {
++            APPEND(' ');
++            APPEND(' ');
++            APPEND(' ');
++        }
++        APPEND(' ');
++        APPEND(' ');
++        while (i < j) {
++            unsigned char ch = buf[i++];
++            APPEND(ch < 32 || ch > 126 ? '.' : ch);
++        }
++        if (i >= length) {
++            break;
++        }
++        if (max_lines >= 0 && ++num_lines > max_lines) {
++            for (rem2 = rem; rem2 > 0; rem2--) {
++                APPEND(' ');
++            }
++            APPEND(' ');
++            APPEND('+');
++            if (s) {
++                size_t k = sprintf(s, "%zd", length - i);
++                s += k;
++                n += k;
++            } else {
++                n += (int)(log10(length - i) + 0.5) + 1;
++            }
++            break;
++        }
++        APPEND('\n');
++    }
++    if (s) {
++        *s++ = '\0';
++    }
++    return n;
++}
++
++int cb_asprint(char **ret, const char *buf, ssize_t length,
++               ssize_t max_width, ssize_t max_lines) {
++    size_t n = cb_sprint(NULL, buf, length, max_width, max_lines);
++    *ret = (char *)malloc((n+1) * sizeof(char));
++    if (!*ret) {
++        return -1;
++    }
++    return cb_sprint(*ret, buf, length, max_width, max_lines);
++}
++
++int hex2int(char c) {
++    if (c >= '0' && c <= '9')
++        return c - '0';
++    else if (c >= 'a' && c <= 'f')
++        return 10 + c - 'a';
++    else if (c >= 'A' && c <= 'F')
++        return 10 + c - 'A';
++    else
++        return -1;
++}
++
++int cb_sscan(char *to_buf, size_t *to_length, const char *buf) {
++    if (!to_buf || !to_length || !buf) {
++        return -1;
++    }
++    *to_length = 0;
++    const char *f = buf;
++    char *t = to_buf;
++    while (*f) {
++        for (; *f == ' '; f++) {
++        }
++        while (*f != ' ' && *f != '\n') {
++            int h0 = (*f ? hex2int(*f++) : -1);
++            int h1 = (*f ? hex2int(*f++) : -1);
++            char ch = (*f ? *f++ : '\0');
++            if (h0 < 0 || h1 < 0 || ch != ' ') {
++                return -1;
++            }
++            *t++ = (h0 << 4) | h1;
++            *to_length += 1;
++        }
++        if (*f == ' ') {
++            while (*++f && *f != '\n') {
++            }
++        }
++        if (*f && *f++ != '\n') {
++            return -1;
++        }
++    }
++    return 0;
++}
++
++int cb_asscan(char **ret, size_t *to_length, const char *buf) {
++    if (!ret || !*ret || !to_length || !buf) {
++        return -1;
++    }
++    *ret = (char *)calloc(strlen(buf) + 1, sizeof(char));
++    int rval = cb_sscan(*ret, to_length, buf);
++    if (*ret && to_length) {
++        *ret = (char*)realloc(*ret, *to_length * sizeof(char));
++    }
++    return rval;
++}
++
++#ifndef __MACH__
++char *strnstr(const char *s1, const char *s2, size_t n) {
++  size_t len = strlen(s2);
++  if (n >= len) {
++    char c = *s2;
++    const char *end = s1 + (n - len);
++    const char *s;
++    for (s = s1; *s && s <= end; s++) {
++      if (*s == c && !strncmp(s, s2, len)) {
++        return (char *)s;
++      }
++    }
++  }
++  return NULL;
++}
++#endif
+\ No newline at end of file
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.h target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.h
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.h	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/char_buffer.h	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,95 @@
++// Google BSD license https://developers.google.com/google-bsd-license
++// Copyright 2012 Google Inc. wrightt@google.com
++
++#ifndef CHAR_BUFFER_H
++#define	CHAR_BUFFER_H
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++
++#include <stdlib.h>
++
++
++struct cb_struct {
++    char *begin;
++    char *head;
++    char *tail;
++    char *end;
++
++    const char *in_head;
++    const char *in_tail;
++};
++typedef struct cb_struct *cb_t;
++
++cb_t cb_new();
++
++void cb_free(cb_t buffer);
++
++void cb_clear(cb_t buffer);
++
++int cb_ensure_capacity(cb_t self, size_t needed);
++
++// Instead of copying our input into our my->in, e.g.:
++//    cb_ensure_capacity(my->in, length);
++//    memcpy(my->in->tail, buf, length);
++//    my->in->tail += length;
++// we'll avoid the memcpy, if possible.  The shared pointer is
++// "my->in_head".
++int cb_begin_input(cb_t self, const char *buf, ssize_t length);
++
++int cb_end_input(cb_t self);
++
++
++// Print a buffer to a new string.
++//
++// @param to_buf
++//    Output buffer, e.g. will be set to:
++//    " 61 62 0A           ab.\n"+
++//    " 63 0A              c.   +3\0"+
++//    If NULL then nothing will be written but the return value will be the
++//    required minimal length.
++// @param buf
++//    Input buffer, e.g. "ab\nc\ndef"
++// @param length
++//    Input length, e.g. 8
++// @param max_width
++//    Max line length, e.g. 25, or negative for no limit
++// @param max_lines
++//    Max number of lines, e.g. 2, or negative for no limit
++// @result
++//    Number of characters written, not including the trailing '\0', e.g. 51
++size_t cb_sprint(char *to_buf, const char *buf, ssize_t length,
++                 ssize_t max_width, ssize_t max_lines);
++
++// Like cb_sprint, but dynamically allocates the *to_buf_ptr.
++int cb_asprint(char **to_buf_ptr, const char *buf, ssize_t length,
++               ssize_t max_width, ssize_t max_lines);
++
++
++// Scans a printed string back into a buffer.
++//
++// @param to_buf Output buffer, e.g. will be set to:
++//    Input buffer, e.g. "ab\nc\ndef"
++// @param to_length Output length
++// @param buf Input buffer, must match the cb_sprint no-limit format, e.g.:
++//    " 61 62 0A           ab.\n"+
++//    " 63 0A              c.\n"+
++//    " 64 65 66           def\0"
++// @result 0 for success
++int cb_sscan(char *to_buf, size_t *to_length, const char *buf);
++
++// Like cb_sscan, but dynamically allocates the *to_buf_ptr.
++int cb_asscan(char **to_buf_ptr, size_t *to_length, const char *buf);
++
++
++#ifndef __MACH__
++char *strnstr(const char *s1, const char *s2, size_t n);
++#endif
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif	/* CHAR_BUFFER_H */
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteConnectionToTargetTCPPlist.cpp target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteConnectionToTargetTCPPlist.cpp
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteConnectionToTargetTCPPlist.cpp	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteConnectionToTargetTCPPlist.cpp	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,136 @@
++/*
++ * Copyright (C) 2017 Igalia S.L.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "config.h"
++#include "RemoteConnectionToTarget.h"
++
++#if ENABLE(REMOTE_INSPECTOR)
++
++#include "RemoteAutomationTarget.h"
++#include "RemoteInspectionTarget.h"
++#include "RemoteInspector.h"
++
++namespace Inspector {
++
++RemoteConnectionToTarget::RemoteConnectionToTarget(RemoteControllableTarget& target, PList::String &connectionIdentifier, PList::String &destination)
++    : m_target(&target),
++      m_connectionIdentifier(connectionIdentifier),
++      m_destination(destination)
++{
++}
++
++RemoteConnectionToTarget::~RemoteConnectionToTarget()
++{
++}
++
++bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automaticallyPause)
++{
++    std::lock_guard<Lock> lock(m_targetMutex);
++    if (!m_target)
++        return false;
++
++    unsigned targetIdentifier = this->targetIdentifier().value_or(0);
++
++    if (!m_target || !m_target->remoteControlAllowed()) {
++        RemoteInspector::singleton().setupFailed(targetIdentifier);
++        m_target = nullptr;
++    } else if (is<RemoteInspectionTarget>(m_target)) {
++        auto target = downcast<RemoteInspectionTarget>(m_target);
++        target->connect(this, isAutomaticInspection);
++        m_connected = true;
++
++        RemoteInspector::singleton().updateTargetListing(targetIdentifier);
++    } else if (is<RemoteAutomationTarget>(m_target)) {
++        auto target = downcast<RemoteAutomationTarget>(m_target);
++        target->connect(this);
++        m_connected = true;
++
++        RemoteInspector::singleton().updateTargetListing(targetIdentifier);
++    }
++
++    return true;
++}
++
++void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
++{
++    RemoteControllableTarget* target = nullptr;
++    {
++        std::lock_guard<Lock> lock(m_targetMutex);
++        if (!m_target)
++            return;
++        target = m_target;
++    }
++    target->dispatchMessageFromRemote(message);
++}
++
++void RemoteConnectionToTarget::close()
++{
++    std::lock_guard<Lock> lock(m_targetMutex);
++    if (!m_target)
++        return;
++
++    unsigned targetIdentifier = m_target->targetIdentifier();
++
++    if (m_connected)
++        m_target->disconnect(this);
++
++    m_target = nullptr;
++
++    RemoteInspector::singleton().updateTargetListing(targetIdentifier);
++}
++
++void RemoteConnectionToTarget::targetClosed()
++{
++    std::lock_guard<Lock> lock(m_targetMutex);
++    m_target = nullptr;
++}
++
++std::optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
++{
++    return m_target ? std::optional<unsigned>(m_target->targetIdentifier()) : std::nullopt;
++}
++
++void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
++{
++    if (!m_target)
++        return;
++
++    RemoteInspector::singleton().sendMessageToRemote(m_target->targetIdentifier(), message);
++}
++
++    std::string RemoteConnectionToTarget::connectionIdentifier() const
++    {
++        return m_connectionIdentifier.GetValue();
++    }
++
++    std::string RemoteConnectionToTarget::destination() const
++    {
++        return m_destination.GetValue();
++    }
++
++
++} // namespace Inspector
++
++#endif // ENABLE(REMOTE_INSPECTOR)
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPPlist.cpp target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPPlist.cpp
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPPlist.cpp	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPPlist.cpp	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,300 @@
++#include "config.h"
++#include "RemoteInspector.h"
++
++#if ENABLE(REMOTE_INSPECTOR)
++
++#include "RemoteAutomationTarget.h"
++#include "RemoteConnectionToTarget.h"
++#include "RemoteInspectionTarget.h"
++#include <wtf/NeverDestroyed.h>
++#include <wtf/RunLoop.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++#include <plist/Dictionary.h>
++#include <plist/String.h>
++#include <plist/Boolean.h>
++#include <plist/Integer.h>
++#include <plist/Data.h>
++#include <runtime/InitializeThreading.h>
++#include <wtf/MainThread.h>
++#include <future>
++#include <iostream>
++#include "RemoteInspectorConstants.h"
++
++namespace Inspector {
++
++    RemoteInspector &RemoteInspector::singleton() {
++        static NeverDestroyed<RemoteInspector> shared;
++        return shared;
++    }
++
++    RemoteInspector::RemoteInspector() {
++        start();
++    }
++
++    void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget *target) {
++        ASSERT_ARG(target, target);
++
++        std::lock_guard<Lock> lock(m_mutex);
++
++        unsigned targetIdentifier = target->targetIdentifier();
++        if (!targetIdentifier)
++            return;
++
++        auto result = m_targetMap.set(targetIdentifier, target);
++        ASSERT_UNUSED(result, !result.isNewEntry);
++
++        // If the target has just allowed remote control, then the listing won't exist yet.
++        // If the target has no identifier remove the old listing.
++        if (std::shared_ptr<PList::Dictionary> targetListing = listingForTarget(*target))
++            m_targetListingMap.set(targetIdentifier, targetListing);
++        else
++            m_targetListingMap.remove(targetIdentifier);
++
++        pushListingsSoon();
++    }
++
++    void RemoteInspector::sendAutomaticInspectionCandidateMessage() {
++        // not implemented
++    }
++
++    void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const String &message) {
++        if (!m_tcpServer)
++            return;
++
++        auto targetConnection = m_targetConnectionMap.get(targetIdentifier);
++        if (!targetConnection)
++            return;
++
++        PList::Dictionary userInfo = PList::Dictionary();
++
++        userInfo.Set("WIRRawDataKey", PList::String(message.utf8().data()));
++        userInfo.Set("WIRConnectionIdentifierKey", PList::String(targetConnection->connectionIdentifier()));
++        userInfo.Set("WIRDestinationKey", PList::String(targetConnection->destination()));
++
++        m_tcpServer->sendMessage("WIRRawDataMessage", userInfo);
++    }
++
++    void RemoteInspector::start() {
++        std::lock_guard<Lock> lock(m_mutex);
++
++        if (m_enabled)
++            return;
++
++        m_enabled = true;
++
++        setupTCPServerIfNeeded();
++    }
++
++    void RemoteInspector::stopInternal(StopSource _source) {
++        std::lock_guard<Lock> lock(m_mutex);
++
++        if (!m_enabled)
++            return;
++
++        m_enabled = false;
++        m_pushScheduled = false;
++
++        for (const auto &targetConnection : m_targetConnectionMap.values())
++            targetConnection->close();
++        m_targetConnectionMap.clear();
++
++        updateHasActiveDebugSession();
++
++        if (m_tcpServer) {
++            m_tcpServer->close();
++            m_tcpServer = nullptr;
++        }
++    }
++
++    void RemoteInspector::setupTCPServerIfNeeded() {
++        if (m_tcpServer)
++            return;
++
++        m_tcpServer = std::shared_ptr<RemoteInspectorTCPServer>(new RemoteInspectorTCPServer(this));
++        pushListingsSoon();
++    }
++
++
++    wi_status RemoteInspector::receivedPList(wi_t self, const plist_t rpc_dict) {
++        PList::Dictionary dict = PList::Dictionary(rpc_dict);
++        ((RemoteInspectorTCPServer::Client *) self->context)->processReceivedPList(&dict);
++        return WI_SUCCESS;
++    }
++
++    void RemoteInspector::processReceivedPList(PList::Dictionary *dict) {
++        // TODO error support
++        PList::String *messageName = (PList::String *) (*dict)["messageName"];
++        PList::Dictionary *userInfo = (PList::Dictionary *) (*dict)["msgData"];
++        std::lock_guard<Lock> lock(m_mutex);
++
++        if (messageName->GetValue() == "WIRSocketDataMessage")
++            receivedDataMessage(userInfo);
++        else if (messageName->GetValue() == "WIRSocketSetupMessage")
++            receivedSetupMessage(userInfo);
++        else if (messageName->GetValue() == "WIRWebPageCloseMessage")
++            receivedDidCloseMessage(userInfo);
++        else if (messageName->GetValue() == "WIRApplicationGetListingMessage")
++            receivedGetListingMessage(userInfo);
++//        plist_free(dict->GetPlist());
++    }
++
++    TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget &target) const {
++        if (!target.remoteDebuggingAllowed())
++            return nullptr;
++
++        std::shared_ptr<PList::Dictionary> listing = std::shared_ptr<PList::Dictionary>(new PList::Dictionary());
++        listing->Set("WIRTargetIdentifierKey", PList::Integer(target.targetIdentifier()));
++
++        switch (target.type()) {
++            case RemoteInspectionTarget::Type::JavaScript:
++                listing->Set("WIRTitleKey", PList::String(target.name().utf8().data()));
++                listing->Set("WIRTypeKey", PList::String("WIRTypeJavaScript"));
++                break;
++            case RemoteInspectionTarget::Type::Web:
++                // not implemented
++                ASSERT_NOT_REACHED();
++                break;
++            default:
++                ASSERT_NOT_REACHED();
++                break;
++        }
++
++        if (auto *connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
++            listing->Set("WIRConnectionIdentifierKey", PList::String(connectionToTarget->connectionIdentifier()));
++
++        return listing;
++    }
++
++    TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget &target) const {
++        // not implemented
++        return nullptr;
++    }
++
++    void RemoteInspector::pushListingsNow() {
++        if (!m_tcpServer)
++            return;
++        m_pushScheduled = false;
++
++        PList::Dictionary listings = PList::Dictionary();
++
++        for (const std::shared_ptr<PList::Dictionary> listing : m_targetListingMap.values()) {
++            PList::Integer *targetIdentifierKey = (PList::Integer *) (*listing)["WIRTargetIdentifierKey"];
++            listings.Set(std::to_string(targetIdentifierKey->GetValue()), (*listing));
++        }
++
++        PList::Dictionary message = PList::Dictionary();
++        message.Set("WIRListingKey", listings);
++
++        m_tcpServer->sendMessage("WIRListingMessage", message);
++    }
++
++    void RemoteInspector::pushListingsSoon() {
++        if (!m_tcpServer)
++            return;
++
++        if (m_pushScheduled)
++            return;
++
++        m_pushScheduled = true;
++
++        std::thread([&] {
++            std::this_thread::sleep_for(std::chrono::milliseconds(200));
++            std::lock_guard<Lock> lock(m_mutex);
++            if (m_pushScheduled)
++                pushListingsNow();
++        }).detach();
++    }
++
++    void RemoteInspector::receivedSetupMessage(PList::Dictionary *userInfo) {
++        if (!((*userInfo)["WIRTargetIdentifierKey"]))
++            return;
++        unsigned targetIdentifier = ((PList::Integer *) ((*userInfo)["WIRTargetIdentifierKey"]))->GetValue();
++
++        if (!(*userInfo)["WIRConnectionIdentifierKey"])
++            return;
++        PList::String *connectionIdentifier = (PList::String *) (*userInfo)["WIRConnectionIdentifierKey"];
++
++        if (!(*userInfo)["WIRSenderKey"])
++            return;
++        PList::String *sender = (PList::String *) (*userInfo)["WIRSenderKey"];
++
++        if (m_targetConnectionMap.contains(targetIdentifier))
++            return;
++
++        auto findResult = m_targetMap.find(targetIdentifier);
++        if (findResult == m_targetMap.end())
++            return;
++
++        // Attempt to create a connection. This may fail if the page already has an inspector or if it disallows inspection.
++        RemoteControllableTarget &target = *(findResult->value);
++        auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target, *connectionIdentifier, *sender));
++
++        if (is<RemoteInspectionTarget>(target)) {
++            if (!connectionToTarget->setup(false, false)) {
++                connectionToTarget->close();
++                return;
++            }
++            m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
++        } else if (is<RemoteAutomationTarget>(target)) {
++            // not implemented
++        } else
++            ASSERT_NOT_REACHED();
++
++        updateHasActiveDebugSession();
++    }
++
++    void RemoteInspector::receivedDataMessage(PList::Dictionary *userInfo) {
++        if (!(*userInfo)["WIRTargetIdentifierKey"])
++            return;
++        unsigned targetIdentifier = ((PList::Integer *) (*userInfo)["WIRTargetIdentifierKey"])->GetValue();
++
++        auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier);
++        if (!connectionToTarget)
++            return;
++
++        PList::String *data = (PList::String *) (*userInfo)["WIRSocketDataKey"];
++        connectionToTarget->sendMessageToTarget(String(data->GetValue().c_str()));
++    }
++
++    void RemoteInspector::receivedDidCloseMessage(PList::Dictionary *userInfo) {
++        if (!(*userInfo)["WIRTargetIdentifierKey"])
++            return;
++        unsigned targetIdentifier = ((PList::Integer *) (*userInfo)["WIRTargetIdentifierKey"])->GetValue();
++
++        if (!((*userInfo)["WIRConnectionIdentifierKey"]))
++            return;
++        PList::String *connectionIdentifier = (PList::String *) (*userInfo)["WIRConnectionIdentifierKey"];
++
++        auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier);
++        if (!connectionToTarget)
++            return;
++
++        if (connectionIdentifier->GetValue() != connectionToTarget->connectionIdentifier())
++            return;
++
++        connectionToTarget->close();
++        m_targetConnectionMap.remove(targetIdentifier);
++
++        updateHasActiveDebugSession();
++    }
++
++    void RemoteInspector::clientConnectionDied() {
++        std::lock_guard<Lock> lock(m_mutex);
++
++        auto it = m_targetConnectionMap.begin();
++        auto end = m_targetConnectionMap.end();
++        for (; it != end; ++it) {
++            auto connection = it->value;
++            connection->close();
++            m_targetConnectionMap.remove(it);
++        }
++    }
++
++    void RemoteInspector::receivedGetListingMessage(PList::Dictionary *userInfo) {
++        pushListingsNow();
++    }
++} // namespace Inspector
++
++#endif // ENABLE(REMOTE_INSPECTOR)
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.cpp target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.cpp
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.cpp	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.cpp	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,137 @@
++/*
++ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "config.h"
++#include "RemoteInspectorTCPServer.h"
++
++#if ENABLE(REMOTE_INSPECTOR)
++
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <inspector/remote/RemoteInspector.h>
++#include <unistd.h>
++#include <thread>
++
++#define RECV_BUFFER_SIZE 4096
++
++namespace Inspector {
++
++// Constants private to this file for message serialization on both ends.
++#define RemoteInspectorTCPConnectionMessageNameKey "messageName"
++#define RemoteInspectorTCPConnectionSerializedMessageKey "msgData"
++
++    RemoteInspectorTCPServer::RemoteInspectorTCPServer(Client *client)
++            : m_client(client) {
++        // TODO error handling
++        m_wi = wi_new(false);
++        m_wi->recv_plist = RemoteInspector::receivedPList;
++        m_wi->context = client;
++        m_clientSockFd = 0;
++
++        sockaddr_in serverAddress;
++       m_serverSockFd = socket(AF_INET, SOCK_STREAM, 0);
++        memset(&serverAddress, 0, sizeof(serverAddress));
++        serverAddress.sin_family = AF_INET;
++        serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
++        serverAddress.sin_port = htons(9123);
++
++        bind(m_serverSockFd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
++        listen(m_serverSockFd, 5);
++
++        std::thread([&]() {
++            sockaddr_in clientAddress;
++            char *recv_buffer = static_cast<char *>(malloc(RECV_BUFFER_SIZE));
++            while (true) {
++                socklen_t socketSize = sizeof(clientAddress);
++                m_clientSockFd = accept(m_serverSockFd, (struct sockaddr *) &clientAddress, &socketSize);
++
++                while (true) {
++                    ssize_t len = recv(m_clientSockFd, recv_buffer, RECV_BUFFER_SIZE, NULL);
++                    if (len == 0) {
++                        m_client->clientConnectionDied();
++                        ::close(m_clientSockFd);
++                        m_clientSockFd = 0;
++                        break;
++                    } else {
++                        m_wi->on_recv(m_wi, recv_buffer, len);
++                    }
++                }
++            }
++        }).detach();
++    }
++
++    RemoteInspectorTCPServer::~RemoteInspectorTCPServer() {
++        ASSERT(!m_client);
++        ASSERT(!m_serverSockFd);
++        ASSERT(m_closed);
++    }
++
++    void RemoteInspectorTCPServer::close() {
++        if(m_serverSockFd != 0)
++            ::close(m_serverSockFd);
++    }
++
++    void RemoteInspectorTCPServer::sendMessage(std::string messageName, PList::Dictionary &userInfo) {
++        ASSERT(!m_closed);
++        if (m_closed)
++            return;
++        if (m_clientSockFd == 0) {
++            return;
++        }
++
++        PList::Dictionary dictionary = PList::Dictionary();
++        dictionary.Set(RemoteInspectorTCPConnectionMessageNameKey, PList::String(messageName));
++        dictionary.Set(RemoteInspectorTCPConnectionSerializedMessageKey, userInfo);
++
++        char *rpc_bin = NULL;
++        uint32_t rpc_len = 0;
++        plist_t dict = dictionary.GetPlist();
++        plist_to_bin(dict, &rpc_bin, &rpc_len);
++
++        wi_status ret = WI_ERROR;
++
++        size_t length = rpc_len + 4;
++        char *out_head = (char *) malloc(length * sizeof(char));
++        if (!out_head) {
++            return;
++        }
++        char *out_tail = out_head;
++
++        // write big-endian int
++        *out_tail++ = ((rpc_len >> 24) & 0xFF);
++        *out_tail++ = ((rpc_len >> 16) & 0xFF);
++        *out_tail++ = ((rpc_len >> 8) & 0xFF);
++        *out_tail++ = (rpc_len & 0xFF);
++
++        // write data
++        memcpy(out_tail, rpc_bin, rpc_len);
++
++        send(m_clientSockFd, out_head, length, NULL);
++        free(out_head);
++    }
++
++} // namespace Inspector
++
++#endif // ENABLE(REMOTE_INSPECTOR)
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.h target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.h
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.h	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/RemoteInspectorTCPServer.h	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,66 @@
++/*
++ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#if ENABLE(REMOTE_INSPECTOR)
++
++#include <mutex>
++#include <wtf/Lock.h>
++#include <wtf/ThreadSafeRefCounted.h>
++#include <plist/String.h>
++#include <plist/Dictionary.h>
++#include "webinspector.h"
++
++namespace Inspector {
++
++class RemoteInspectorTCPServer : public ThreadSafeRefCounted<RemoteInspectorTCPServer> {
++public:
++    class Client {
++    public:
++        virtual ~Client() { }
++        virtual void processReceivedPList(PList::Dictionary * dict) = 0;
++        virtual void clientConnectionDied() = 0;
++    };
++
++    RemoteInspectorTCPServer(Client*);
++    virtual ~RemoteInspectorTCPServer();
++
++    void close();
++    void sendMessage(std::string messageName, PList::Dictionary & userInfo);
++
++private:
++    Lock m_mutex;
++
++    int m_serverSockFd;
++    int m_clientSockFd;
++    Client* m_client;
++    bool m_closed { false };
++    wi_t m_wi;
++};
++
++} // namespace Inspector
++
++#endif // ENABLE(REMOTE_INSPECTOR)
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.c target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.c
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.c	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.c	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,225 @@
++// Google BSD license https://developers.google.com/google-bsd-license
++// Copyright 2012 Google Inc. wrightt@google.com
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <getopt.h>
++#include <math.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++
++#include "char_buffer.h"
++#include "webinspector.h"
++
++// some arbitrarly limit, to catch bad packets
++#define MAX_BODY_LENGTH 1<<24
++
++struct wi_private {
++    bool is_sim;
++    cb_t in;
++    cb_t partial;
++    bool has_length;
++    size_t body_length;
++};
++
++wi_status wi_on_error(wi_t self, const char *format, ...) {
++    va_list args;
++    va_start(args, format);
++    vfprintf(stderr, format, args);
++    fprintf(stderr, "\n");
++    va_end(args);
++    return WI_ERROR;
++}
++
++wi_status wi_on_debug(wi_t self, const char *message,
++                      const char *buf, size_t length) {
++    if (self->is_debug && *self->is_debug) {
++        char *text;
++        cb_asprint(&text, buf, length, 80, 30);
++        printf("%s[%zd]:\n%s\n", message, length, text);
++        free(text);
++    }
++    return WI_SUCCESS;
++}
++
++//
++// RECV
++//
++
++wi_status wi_parse_length(wi_t self, const char *buf, size_t *to_length) {
++    if (!buf || !to_length) {
++        return WI_ERROR;
++    }
++    *to_length = (
++            ((((unsigned char) buf[0]) & 0xFF) << 24) |
++            ((((unsigned char) buf[1]) & 0xFF) << 16) |
++            ((((unsigned char) buf[2]) & 0xFF) << 8) |
++            (((unsigned char) buf[3]) & 0xFF));
++    if (MAX_BODY_LENGTH > 0 && *to_length > MAX_BODY_LENGTH) {
++#define TO_CHAR(c) ((c) >= ' ' && (c) < '~' ? (c) : '.')
++        return self->on_error(self, "Invalid packet header "
++                                      "0x%x%x%x%x == %c%c%c%c == %zd",
++                              buf[0], buf[1], buf[2], buf[3],
++                              TO_CHAR(buf[0]), TO_CHAR(buf[1]),
++                              TO_CHAR(buf[2]), TO_CHAR(buf[3]),
++                              *to_length);
++    }
++    return WI_SUCCESS;
++}
++
++wi_status wi_parse_plist(wi_t self, const char *from_buf, size_t length,
++                         plist_t *to_rpc_dict, bool *to_is_partial) {
++    wi_private_t my = self->private_state;
++    *to_rpc_dict = NULL;
++
++        plist_from_bin(from_buf, length, to_rpc_dict);
++
++    return (*to_rpc_dict ? WI_SUCCESS : WI_ERROR);
++}
++
++wi_status wi_recv_packet(wi_t self, const char *packet, ssize_t length) {
++    wi_on_debug(self, "wi.recv_packet", packet, length);
++
++    size_t body_length = 0;
++    plist_t rpc_dict = NULL;
++    bool is_partial = false;
++    if (!packet || length < 4 || wi_parse_length(self, packet, &body_length) ||
++        // (body_length != length - 4) || // TODO
++        wi_parse_plist(self, packet + 4, body_length, &rpc_dict, &is_partial)) {
++
++        // invalid packet
++        char *text = NULL;
++        if (body_length != length - 4) {
++            if (asprintf(&text, "size %zd != %zd - 4", body_length, length) < 0) {
++                return self->on_error(self, "asprintf failed");
++            }
++        } else {
++            cb_asprint(&text, packet, length, 80, 50);
++        }
++        wi_status ret = self->on_error(self, "Invalid packet %s\n", text);
++        free(text);
++        return ret;
++    }
++
++    if (is_partial) {
++        return WI_SUCCESS;
++    }
++    wi_status ret = self->recv_plist(self, rpc_dict);
++    return ret;
++}
++
++wi_status wi_recv_loop(wi_t self) {
++    wi_private_t my = self->private_state;
++    wi_status ret;
++    const char *in_head = my->in->in_head;
++    const char *in_tail = my->in->in_tail;
++    while (1) {
++        size_t in_length = in_tail - in_head;
++        if (!my->has_length && in_length >= 4) {
++            // can read body_length now
++            size_t len;
++            ret = wi_parse_length(self, in_head, &len);
++            if (ret) {
++                in_head += 4;
++                break;
++            }
++            my->body_length = len;
++            my->has_length = true;
++            // don't advance in_head yet
++        } else if (my->has_length && in_length >= my->body_length + 4) {
++            // can read body now
++            ret = self->recv_packet(self, in_head, my->body_length + 4);
++            in_head += my->body_length + 4;
++            my->has_length = false;
++            my->body_length = 0;
++            if (ret) {
++                break;
++            }
++        } else {
++            // need more input
++            ret = WI_SUCCESS;
++            break;
++        }
++    }
++    my->in->in_head = in_head;
++    return ret;
++}
++
++wi_status wi_on_recv(wi_t self, const char *buf, ssize_t length) {
++    wi_private_t my = self->private_state;
++    if (length < 0) {
++        return WI_ERROR;
++    } else if (length == 0) {
++        return WI_SUCCESS;
++    }
++    wi_on_debug(self, "wi.recv", buf, length);
++    if (cb_begin_input(my->in, buf, length)) {
++        return self->on_error(self, "begin_input buffer error");
++    }
++    wi_status ret = wi_recv_loop(self);
++    if (cb_end_input(my->in)) {
++        return self->on_error(self, "end_input buffer error");
++    }
++    return ret;
++}
++
++//
++// STRUCTS
++//
++
++void wi_private_free(wi_private_t my) {
++    if (my) {
++        cb_free(my->in);
++        cb_free(my->partial);
++        memset(my, 0, sizeof(struct wi_private));
++        free(my);
++    }
++}
++wi_private_t wi_private_new() {
++    wi_private_t my = (wi_private_t)malloc(sizeof(
++                                                   struct wi_private));
++    if (my) {
++        memset(my, 0, sizeof(struct wi_private));
++        my->in = cb_new();
++        my->partial = cb_new();
++        if (!my->in || !my->partial) {
++            wi_private_free(my);
++            return NULL;
++        }
++    }
++    return my;
++}
++
++
++void wi_free(wi_t self) {
++    if (self) {
++        wi_private_free(self->private_state);
++        memset(self, 0, sizeof(struct wi_struct));
++        free(self);
++    }
++}
++wi_t wi_new(bool is_sim) {
++    wi_t self = (wi_t)malloc(sizeof(struct wi_struct));
++    if (!self) {
++        return NULL;
++    }
++    memset(self, 0, sizeof(struct wi_struct));
++    self->on_recv = wi_on_recv;
++    self->recv_packet = wi_recv_packet;
++    self->on_error = wi_on_error;
++    self->private_state = wi_private_new();
++    if (!self->private_state) {
++        wi_free(self);
++        return NULL;
++    }
++    self->private_state->is_sim = is_sim;
++    return self;
++}
+\ No newline at end of file
+diff -Naur --new-file target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.h target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.h
+--- target-org/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.h	1970-01-01 01:00:00.000000000 +0100
++++ target/webkit/Source/JavaScriptCore/inspector/remote/tcpplist/webinspector.h	2018-11-29 13:53:54.878816779 +0100
+@@ -0,0 +1,88 @@
++// Google BSD license https://developers.google.com/google-bsd-license
++// Copyright 2012 Google Inc. wrightt@google.com
++
++//
++// iOS WebInspector
++//
++
++#ifndef WEBINSPECTOR_H
++#define	WEBINSPECTOR_H
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++#include "config.h"
++#include <stdint.h>
++#include <stdlib.h>
++#include <plist/plist.h>
++
++typedef uint8_t wi_status;
++#define WI_ERROR 1
++#define WI_SUCCESS 0
++
++
++// Create a webinspector connection.
++//
++// @param device_id iOS 40-character device id, or NULL for any device
++// @param to_device_id selected device_id (copy of device_id if set)
++// @param to_device_name selected device name
++// @param recv_timeout Set the socket receive timeout for future recv calls:
++//    negative for non-blocking,
++//    zero for the system default (5000 millis), or
++//    positive for milliseconds.
++// @result fd, or -1 for error
++int wi_connect(const char *device_id, char **to_device_id,
++               char **to_device_name, int recv_timeout);
++
++struct wi_struct;
++typedef struct wi_struct *wi_t;
++wi_t wi_new(bool is_sim);
++void wi_free(wi_t self);
++
++struct wi_private;
++typedef struct wi_private *wi_private_t;
++
++// iOS WebInspector.
++struct wi_struct {
++
++    //
++    // Call these APIs:
++    //
++
++    // Appends an arbitrary number of bytes to our input buffer,
++    // calls recv_packet when the buffer contains one or more packets.
++    wi_status (*on_recv)(wi_t self, const char *buf, ssize_t length);
++
++    // Calls recv_plist if the packet is a full plist, otherwise appends
++    // the partial packet to our pending buffer.
++    wi_status (*recv_packet)(wi_t self, const char *packet, ssize_t length);
++
++    // Calls send_packet with the serialized rpc packet(s).
++    wi_status (*send_plist)(wi_t self, const plist_t rpc_dict);
++
++    // Optional state for use in your callbacks.
++    void *state;
++    bool *is_debug;
++    void *context;
++    //
++    // Set these callbacks:
++    //
++
++    // Send a serialized rpc (full or partial).
++    wi_status (*send_packet)(wi_t self, const char *packet, size_t length);
++
++    // Receive a deserialized full rpc.
++    wi_status (*recv_plist)(wi_t self, const plist_t rpc_dict);
++
++    // For internal use only:
++    wi_status (*on_error)(wi_t self, const char *format, ...);
++    wi_private_t private_state;
++};
++
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif	/* WEBINSPECTOR_H */
+\ No newline at end of file
