@@ -31,7 +31,7 @@ compile() {
     compile_arch
   done
 
-  for arch in # arm64 x86_64
+  for arch in arm64 x86_64
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_64
     export JSC_ARCH=$arch

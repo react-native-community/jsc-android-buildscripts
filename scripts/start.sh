@@ -95,10 +95,10 @@ prep
 compile
 createAAR
 
-# export I18N=true
-# prep
-# compile
-# createAAR
+export I18N=true
+prep
+compile
+createAAR
 
 copyHeaders
 
