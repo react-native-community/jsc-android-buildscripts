@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android)
-[![CircleCI](https://circleci.com/gh/react-community/jsc-android-buildscripts.svg?style=svg)](https://circleci.com/gh/react-community/jsc-android-buildscripts)
+[![CircleCI](https://circleci.com/gh/react-native-community/jsc-android-buildscripts.svg?style=svg)](https://circleci.com/gh/react-native-community/jsc-android-buildscripts)
 
 # JSC build scripts for Android
 
