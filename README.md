@@ -45,6 +45,65 @@ On load, JSC prints the version out to logcat, under "JavaScriptCore.Version" ta
 
 Follow steps below in order for your React Native app to use new version of JSC VM on android:
 
+### For React Native version 0.59 and newer
+
+1. Add `jsc-android` to the "dependencies" section in your `package.json`:
+```diff
+dependencies {
++  "jsc-android": "241213.x.x",
+```
+
+then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
+
+2. Modify `android/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
+```diff
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
++       maven {
++           // Local Maven repo containing AARs with JSC library built for Android
++           url "$rootDir/../node_modules/jsc-android/dist"
++       }
+    }
+}
+```
+
+3. Update your app's `build.gradle` file located in `android/app/build.gradle` to add the JSC dependencey.  Please make sure the dependency should put before  React Native dependency.
+
+```diff
+
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
++
++   // Make sure android-jsc is before react-native
++   implementation "org.webkit:android-jsc:r241213"
++
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+}
+```
+
+4. Update your app's `build.gradle` file located in `android/app/build.gradle` to use first matched JSC library.
+
+```diff
+android {
+    // ...
++   packagingOptions {
++       pickFirst '**/libjsc.so'
++       pickFirst '**/libc++_shared.so'
++    }
+}
+```
+
+5. You're done, rebuild your app and enjoy updated version of JSC on android!
+
+### For React Native version 0.58 below
+
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
@@ -92,6 +151,23 @@ dependencies {
 International variant includes ICU i18n library and necessary data allowing to use e.g. Date.toLocaleString and String.localeCompare that give correct results when using with locales other than en-US. Note that this variant is about 6MiB larger per architecture than default.
 
 To use this variant instead replace the third installation step with:
+
+For React Native version 0.59 and newer, replace original artifact id with `android-jsc-intl`
+
+```diff
+
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
++
++   // Make sure android-jsc is before react-native
++   implementation "org.webkit:android-jsc-intl:r241213"
++
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+}
+```
+
+For React Native version 0.58 below, replace original `resolutionStrategy` with this.
 
 ```diff
 +configurations.all {
