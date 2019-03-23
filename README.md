@@ -78,11 +78,10 @@ allprojects {
 ```diff
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-+
-+   // Make sure android-jsc is before react-native
++   // Make sure to put android-jsc at the the first
 +   implementation "org.webkit:android-jsc:r241213"
 +
+    compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
@@ -157,11 +156,10 @@ For React Native version 0.59 and newer, replace original artifact id with `andr
 ```diff
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-+
-+   // Make sure android-jsc is before react-native
++   // Make sure to put android-jsc at the the first
 +   implementation "org.webkit:android-jsc-intl:r241213"
 +
+    compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
