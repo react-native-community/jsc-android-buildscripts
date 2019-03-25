@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/jsc-android-buildscripts
     machine: true
     environment:
-      NDK_VERSION: r17c
+      NDK_VERSION: r19c
       SDK_VERSION: sdk-tools-linux-3859397.zip
       ANDROID_HOME: /home/circleci/android-sdk
       ANDROID_NDK: /home/circleci/android-ndk
