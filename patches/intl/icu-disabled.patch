@@ -1,9 +1,7 @@
-diff -aur target-icucollator/webkit/Source/WTF/wtf/CMakeLists.txt target/webkit/Source/WTF/wtf/CMakeLists.txt
---- target-icucollator/webkit/Source/WTF/wtf/CMakeLists.txt	2017-07-11 13:16:20.800299018 +0200
-+++ target/webkit/Source/WTF/wtf/CMakeLists.txt	2017-07-11 13:17:20.743222116 +0200
-@@ -331,9 +331,8 @@
- endif ()
- 
+diff -aur target-org/webkit/Source/WTF/wtf/CMakeLists.txt target/webkit/Source/WTF/wtf/CMakeLists.txt
+--- target-org/webkit/Source/WTF/wtf/CMakeLists.txt	2019-03-26 11:25:32.000000000 +0800
++++ target/webkit/Source/WTF/wtf/CMakeLists.txt	2019-03-26 13:09:15.000000000 +0800
+@@ -475,7 +475,6 @@
  list(APPEND WTF_SOURCES
      unicode/CollatorDefault.cpp
 

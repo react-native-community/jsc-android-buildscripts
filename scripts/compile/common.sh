@@ -121,9 +121,21 @@ if [[ $err = true ]]; then exit 1; fi
 
 ####
 
+DEBUG_SYMBOL_LEVEL="-g2"
+if [[ "$BUILD_TYPE" = "Release" ]]
+then
+    FRAME_POINTER_FLAG="-fomit-frame-pointer"
+    CFLAGS_BUILD_TYPE="-DNDEBUG"
+    ICU_CFLAGS_BUILD_TYPE="-Oz"
+else
+    FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
+    CFLAGS_BUILD_TYPE=""
+    ICU_CFLAGS_BUILD_TYPE=$DEBUG_SYMBOL_LEVEL
+fi
+
+####
+
 COMMON_LDFLAGS=" \
--fuse-ld=gold \
--Wl,--icf=safe \
 -Wl,-z,noexecstack \
 -Wl,--gc-sections \
 -Wl,--exclude-libs,libgcc.a \
@@ -134,26 +146,27 @@ COMMON_LDFLAGS=" \
 COMMON_CFLAGS=" \
 -fstack-protector \
 -ffunction-sections \
--fomit-frame-pointer \
+$FRAME_POINTER_FLAG \
 -fno-strict-aliasing \
--fexceptions \
--frtti \
 -funwind-tables \
 -DPIC \
 -fPIC \
 -fvisibility=hidden \
--DNDEBUG \
 -DCUSTOMIZE_REACT_NATIVE \
 $SWITCH_COMMON_CFLAGS_INTL \
+$CFLAGS_BUILD_TYPE \
 "
 
 COMMON_CXXFLAGS=" \
---std=c++11 \
 "
 
-ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS -Oz"
-ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS -Oz"
-ICU_LDFLAGS="$COMMON_LDFLAGS $PLATFORM_LDFLAGS -s"
+ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
+ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
+ICU_LDFLAGS="$COMMON_LDFLAGS \
+-fuse-ld=gold \
+-Wl,--icf=safe \
+$PLATFORM_LDFLAGS \
+"
 
 JSC_LDFLAGS="$COMMON_LDFLAGS"
 JSC_CFLAGS="$COMMON_CFLAGS -DU_STATIC_IMPLEMENTATION=1 -DU_SHOW_CPLUSPLUS_API=0"

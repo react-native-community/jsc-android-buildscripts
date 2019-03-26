@@ -6,6 +6,8 @@ export ROOTDIR=$PWD
 export TARGETDIR=$ROOTDIR/build/target
 source $ROOTDIR/scripts/info.sh
 export JSC_VERSION=${npm_package_version}
+export BUILD_TYPE=Release
+# export BUILD_TYPE=Debug
 
 patchAndMakeICU() {
   printf "\n\n\t\t===================== patch and make icu into target/icu/host =====================\n\n"
@@ -20,10 +22,17 @@ patchAndMakeICU() {
   rm -rf $TARGETDIR/icu/host
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
-  
+
+  if [[ "$BUILD_TYPE" = "Release" ]]
+  then
+    CFLAGS="-Os"
+  else
+    CFLAGS="-g2"
+  fi
+
   $TARGETDIR/icu/source/runConfigureICU Linux \
   --prefix=$PWD/prebuilts \
-  CFLAGS="-Os" \
+  CFLAGS="$CFLAGS" \
   CXXFLAGS="--std=c++11" \
   --disable-tests \
   --disable-samples \
@@ -53,7 +62,7 @@ prep() {
   printf "\n\n\t\t===================== copy downloaded sources =====================\n\n"
   rm -rf $TARGETDIR
   cp -Rf $ROOTDIR/build/download $TARGETDIR
-  
+
   patchAndMakeICU
   patchJsc
   # origs=$(find $ROOTDIR/build/target -name "*.orig")
