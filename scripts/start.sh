@@ -20,7 +20,7 @@ patchAndMakeICU() {
   rm -rf $TARGETDIR/icu/host
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
-  
+
   $TARGETDIR/icu/source/runConfigureICU Linux \
   --prefix=$PWD/prebuilts \
   CFLAGS="-Os" \
@@ -53,7 +53,7 @@ prep() {
   printf "\n\n\t\t===================== copy downloaded sources =====================\n\n"
   rm -rf $TARGETDIR
   cp -Rf $ROOTDIR/build/download $TARGETDIR
-  
+
   patchAndMakeICU
   patchJsc
   # origs=$(find $ROOTDIR/build/target -name "*.orig")
@@ -67,10 +67,12 @@ compile() {
 }
 
 createAAR() {
-  printf "\n\n\t\t===================== create aar =====================\n\n"
+  TARGET=$1
+  printf "\n\n\t\t===================== create aar :$TARGET: =====================\n\n"
   cd $ROOTDIR/lib
-  ./gradlew clean createAAR --project-prop revision="$REVISION" --project-prop i18n="${I18N}"
+  ./gradlew clean :$TARGET:createAAR --project-prop revision="$REVISION" --project-prop i18n="${I18N}"
   cd $ROOTDIR
+  unset TARGET
 }
 
 copyHeaders() {
@@ -82,12 +84,14 @@ copyHeaders() {
 export I18N=false
 prep
 compile
-createAAR
+createAAR "android-jsc"
 
 export I18N=true
 prep
 compile
-createAAR
+createAAR "android-jsc"
+
+createAAR "cppruntime"
 
 copyHeaders
 
