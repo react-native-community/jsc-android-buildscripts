@@ -1,0 +1,45 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["${rootDir}/../build/cppruntime"]
+        }
+    }
+}
+
+dependencies {}
+
+apply plugin: 'maven'
+
+task createAAR(type: Upload) {
+    def distDir = "${rootDir}/../dist"
+
+    def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
+
+    doFirst {
+        if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
+    }
+
+    project.group = "org.webkit"
+    project.version = "r${revision}"
+
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        repository url: "file://${distDir}"
+        pom.project {
+            name "android-jsc"
+            artifactId "android-jsc-cppruntime"
+            packaging "aar"
+        }
+    }
+}
