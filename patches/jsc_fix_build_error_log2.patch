@@ -1,0 +1,21 @@
+diff -aur target-org/webkit/Source/JavaScriptCore/Sources.txt target/webkit/Source/JavaScriptCore/Sources.txt
+--- target-org/webkit/Source/JavaScriptCore/Sources.txt 2018-11-11 23:05:40.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/Sources.txt     2018-11-12 00:03:26.000000000 +0800
+@@ -1045,3 +1045,6 @@
+
+ // Derived Sources
+ yarr/YarrCanonicalizeUnicode.cpp
++
++// Polyfills
++polyfills/log2.cpp
+diff -aur /dev/null target/webkit/Source/JavaScriptCore/polyfills/log2.cpp
+--- /dev/null   2018-11-12 01:21:57.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/polyfills/log2.cpp      2018-11-12 01:19:49.000000000 +0800
+@@ -0,0 +1,7 @@
++#include <math.h>
++
++#if defined(__ANDROID__) && __ANDROID_API__ < 18
++double log2(double x) {
++  return log(x) / log(2.0);
++}
++#endif

@@ -1,0 +1,19 @@
+diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
+--- target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp      2017-02-03 22:59:08.000000000 +0100
++++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp  2017-08-02 10:07:11.000383124 +0200
+@@ -89,13 +89,8 @@
+
+ void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
+ {
+-    void* result;
+-    if (posix_memalign(&result, alignment, size)) {
+-        if (crashOnFailure)
+-            BCRASH();
+-        return nullptr;
+-    }
+-    return result;
++    BCRASH();
++    return nullptr;
+ }
+
+ void* DebugHeap::realloc(void* object, size_t size)
