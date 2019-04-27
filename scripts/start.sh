@@ -6,6 +6,9 @@ export ROOTDIR=$PWD
 export TARGETDIR=$ROOTDIR/build/target
 source $ROOTDIR/scripts/info.sh
 export JSC_VERSION=${npm_package_version}
+export BUILD_TYPE=Release
+# export BUILD_TYPE=Debug
+
 SCRIPT_DIR=$(cd `dirname $0`; pwd)
 
 patchAndMakeICU() {
@@ -22,9 +25,16 @@ patchAndMakeICU() {
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
 
+  if [[ "$BUILD_TYPE" = "Release" ]]
+  then
+    CFLAGS="-Os"
+  else
+    CFLAGS="-g2"
+  fi
+
   $TARGETDIR/icu/source/runConfigureICU Linux \
   --prefix=$PWD/prebuilts \
-  CFLAGS="-Os" \
+  CFLAGS="$CFLAGS" \
   CXXFLAGS="--std=c++11" \
   --disable-tests \
   --disable-samples \

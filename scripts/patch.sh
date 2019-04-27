@@ -41,6 +41,10 @@ JSC_PATCHSET=(
 
   # Will print current JSC version in adb log during initialization
   "jsc_startup_log_version.patch"
+
+  # NDK r17c does not define __mulodi4, which is being used in debug build.
+  # (However, NDK r19 fixed this)
+  "jsc_fix_build_error_mulodi4.patch"
 )
 
 if [[ "$I18N" = false ]]

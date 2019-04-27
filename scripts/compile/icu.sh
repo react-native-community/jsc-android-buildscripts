@@ -18,7 +18,15 @@ cd $BUILD_DIR
 CROSS_BUILD_DIR=$(realpath $TARGETDIR/icu/host)
 PATH=$TOOLCHAIN_DIR/bin:$PATH
 
+if [[ "$BUILD_TYPE" = "Release" ]]
+then
+    BUILD_TYPE_CONFIG="--enable-release=yes"
+else
+    BUILD_TYPE_CONFIG="--enable-debug=yes"
+fi
+
 $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
+    $BUILD_TYPE_CONFIG \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-static=yes \
     --enable-shared=no \

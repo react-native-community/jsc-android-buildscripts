@@ -1,0 +1,30 @@
+diff -aur target-org/webkit/Source/WTF/wtf/CheckedArithmetic.h target/webkit/Source/WTF/wtf/CheckedArithmetic.h
+--- target-org/webkit/Source/WTF/wtf/CheckedArithmetic.h	2018-07-26 17:00:09.000000000 +0800
++++ target/webkit/Source/WTF/wtf/CheckedArithmetic.h	2019-04-12 12:03:55.000000000 +0800
+@@ -317,7 +317,7 @@
+
+     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+     {
+-#if COMPILER(GCC_OR_CLANG)
++#if COMPILER(GCC_OR_CLANG) && CPU(ARM_THUMB2) && defined(NDEBUG)
+         ResultType temp;
+         if (__builtin_mul_overflow(lhs, rhs, &temp))
+             return false;
+@@ -390,7 +390,7 @@
+
+     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+     {
+-#if COMPILER(GCC_OR_CLANG)
++#if COMPILER(GCC_OR_CLANG) && CPU(ARM_THUMB2) && defined(NDEBUG)
+         ResultType temp;
+         if (__builtin_mul_overflow(lhs, rhs, &temp))
+             return false;
+@@ -453,7 +453,7 @@
+
+     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
+     {
+-#if COMPILER(GCC_OR_CLANG)
++#if COMPILER(GCC_OR_CLANG) && CPU(ARM_THUMB2) && defined(NDEBUG)
+         ResultType temp;
+         if (__builtin_mul_overflow(lhs, rhs, &temp))
+             return false;

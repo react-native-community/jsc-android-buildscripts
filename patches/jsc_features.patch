@@ -23,9 +23,9 @@ diff -aur target-org/webkit/CMakeLists.txt target/webkit/CMakeLists.txt
  # -----------------------------------------------------------------------------
  # Print the features list last, for maximum visibility.
 diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Source/cmake/OptionsJSCOnly.cmake
---- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-04-17 15:51:21.000000000 +0200
-+++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2017-07-11 11:34:55.962374878 +0200
-@@ -35,12 +35,11 @@
+--- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake 2019-03-26 11:25:17.000000000 +0800
++++ target/webkit/Source/cmake/OptionsJSCOnly.cmake     2019-03-26 11:28:29.000000000 +0800
+@@ -35,12 +35,7 @@
  set(ENABLE_WEBCORE OFF)
  set(ENABLE_WEBKIT_LEGACY OFF)
  set(ENABLE_WEBKIT OFF)
@@ -36,13 +36,9 @@ diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Sour
 -    set(ENABLE_API_TESTS ON)
 -endif ()
 +set(ENABLE_API_TESTS OFF)
-+set(ENABLE_SAMPLING_PROFILER OFF)
-+set(ENABLE_DFG_JIT ON)
-+set(ENABLE_FTL_JIT OFF)
-+set(ENABLE_JIT ON)
 
- if (WTF_CPU_X86 OR WTF_CPU_X86_64)
-     SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
+     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
 diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.000000000 +0200
 +++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-07-11 11:34:55.962374878 +0200
