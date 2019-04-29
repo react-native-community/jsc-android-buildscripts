@@ -45,6 +45,9 @@ JSC_PATCHSET=(
   # NDK r17c does not define __mulodi4, which is being used in debug build.
   # (However, NDK r19 fixed this)
   "jsc_fix_build_error_mulodi4.patch"
+
+  # Fix build error if disabling DFG_JIT
+  "jsc_fix_build_error_disable_dfg.patch"
 )
 
 if [[ "$I18N" = false ]]
