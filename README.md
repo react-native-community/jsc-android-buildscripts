@@ -14,10 +14,11 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
 * Node `brew install node`
 * Java 8: `brew tap caskroom/versions && brew cask install java8`
 * Android SDK: `brew cask install android-sdk`
-  * Run `sdkmanager --list` and install all platforms, tools, cmake, ndk (android images are not needed)
+  * Run `sdkmanager --list` and install all platforms, tools, buildtool v28.0.3, cmake (android images are not needed)
   * Set `$ANDROID_HOME` to the correct path (in ~/.bashrc or similar)
-  * Set `export ANDROID_NDK=$ANDROID_HOME/ndk-bundle`
   * Set `export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin`
+* Android NDK r17c: download from [NDK Archives](https://developer.android.com/ndk/downloads/older_releases.html)
+  * Set `export ANDROID_NDK=/path/to/android-ndk-r17c`
 * Make sure you have Ruby (>2.3), Python (>2.7), Git, SVN, gperf
 
 ## Build instructions
