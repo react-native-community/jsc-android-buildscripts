@@ -1,0 +1,19 @@
+diff -aur target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp
+--- target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp     2018-11-11 23:05:48.000000000 +0800
++++ target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp 2018-11-12 23:39:22.000000000 +0800
+@@ -23,6 +23,10 @@
+  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+
++// CUSTOMIZE_REACT_NATIVE: getline() does not implemented until Android NDK API 18.
++// Since MemoryFootprint does not being used in JSC, comment out to prevent build break.
++#if !defined(CUSTOMIZE_REACT_NATIVE)
++
+ #include "config.h"
+ #include "MemoryFootprint.h"
+
+@@ -107,3 +111,4 @@
+ }
+
+ }
++#endif // !defined(CUSTOMIZE_REACT_NATIVE)

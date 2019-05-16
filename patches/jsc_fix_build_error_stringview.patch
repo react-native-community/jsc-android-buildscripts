@@ -1,0 +1,27 @@
+diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
+--- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.000000000 +0100
++++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-07-11 11:36:01.845264855 +0200
+@@ -28,12 +28,13 @@
+
+ #include "config.h"
+ #include "Collator.h"
++#include <StringView.h>
+
+ #if UCONFIG_NO_COLLATION
+
+ namespace WTF {
+
+-int Collator::collate(StringView a, StringView b) const
++int Collator::collate(StringView a, StringView b)
+ {
+     unsigned commonLength = std::min(a.length(), b.length());
+     for (unsigned i = 0; i < commonLength; ++i) {
+@@ -51,7 +52,7 @@
+     return 0;
+ }
+
+-int Collator::collateUTF8(const char* a, const char* b) const
++int Collator::collateUTF8(const char* a, const char* b)
+ {
+     return collate(String::fromUTF8(a), String::fromUTF8(b));
+ }
