@@ -15,6 +15,10 @@ android {
             jniLibs.srcDirs = ["${rootDir}/../build/compiled"]
         }
     }
+
+    packagingOptions {
+        doNotStrip "**/libjsc.so"
+    }
 }
 
 dependencies {}
