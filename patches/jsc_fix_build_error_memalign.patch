@@ -17,3 +17,31 @@ diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/S
  }
 
  void* DebugHeap::realloc(void* object, size_t size)
+
+#
+# Disable the DebugHeap since DebugHeap::memalign is broken by the patch above
+#
+--- target-org/webkit/Source/bmalloc/bmalloc/Environment.cpp
++++ target/webkit/Source/bmalloc/bmalloc/Environment.cpp
+@@ -129,20 +129,10 @@
+     : m_isDebugHeapEnabled(computeIsDebugHeapEnabled())
+ {
+ }
+ 
+ bool Environment::computeIsDebugHeapEnabled()
+ {
+-    if (isMallocEnvironmentVariableSet())
+-        return true;
+-    if (isLibgmallocEnabled())
+-        return true;
+-    if (isSanitizerEnabled())
+-        return true;
+-#if BUSE(CHECK_NANO_MALLOC)
+-    if (!isNanoMallocEnabled() && !shouldProcessUnconditionallyUseBmalloc())
+-        return true;
+-#endif
+     return false;
+ }
+ 
+ } // namespace bmalloc
+
