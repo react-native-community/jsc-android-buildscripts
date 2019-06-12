@@ -1,19 +1,40 @@
-diff -aur target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp
---- target-org/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp      2017-02-03 22:59:08.000000000 +0100
-+++ target/webkit/Source/bmalloc/bmalloc/DebugHeap.cpp  2017-08-02 10:07:11.000383124 +0200
-@@ -89,13 +89,8 @@
+diff -aur target-org/webkit/Source/bmalloc/CMakeLists.txt target/webkit/Source/bmalloc/CMakeLists.txt
+--- target-org/webkit/Source/bmalloc/CMakeLists.txt  2018-07-12 11:27:26.185794000 -0700
++++ target/webkit/Source/bmalloc/CMakeLists.txt    2019-06-11 12:20:28.556676100 -0700
+@@ -32,6 +32,7 @@
+     bmalloc/VMHeap.cpp
+     bmalloc/bmalloc.cpp
+     bmalloc/mbmalloc.cpp
++    bmalloc/posix_memalign.cpp
+ )
 
- void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
- {
--    void* result;
--    if (posix_memalign(&result, alignment, size)) {
--        if (crashOnFailure)
--            BCRASH();
--        return nullptr;
--    }
--    return result;
-+    BCRASH();
-+    return nullptr;
- }
+ if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
- void* DebugHeap::realloc(void* object, size_t size)
+
+diff -aur /dev/null target/webkit/Source/bmalloc/bmalloc/posix_memalign.cpp
+--- /dev/null   2019-06-11 10:46:36.937580800 -0700
++++ target/webkit/Source/bmalloc/bmalloc/posix_memalign.cpp 2019-06-11 14:47:32.119738900 -0700
+@@ -0,0 +1,23 @@
++#if defined(__ANDROID__) && __ANDROID_API__ < 17
++//
++// Implementation borrowed from the Android Support Library
++// https://android.googlesource.com/platform/ndk/+/c066f37aeadeb8a8b21468ad8c82f4469fb5a70d/sources/android/support/src/posix_memalign.cpp
++//
++#include <errno.h>
++#include <malloc.h>
++#include <stdlib.h>
++
++int posix_memalign(void** memptr, size_t alignment, size_t size) {
++  if ((alignment & (alignment - 1)) != 0 || alignment == 0) {
++    return EINVAL;
++  }
++  if (alignment % sizeof(void*) != 0) {
++    return EINVAL;
++  }
++  *memptr = memalign(alignment, size);
++  if (*memptr == NULL) {
++    return errno;
++  }
++  return 0;
++}
++#endif
