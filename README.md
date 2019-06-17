@@ -68,9 +68,9 @@ dependencies {
 +  "jsc-android": "241213.x.x",
 ```
 
-then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
+then run `npm install` or `yarn` (depending on which npm client you use) in order for the new dependency to be installed in `node_modules`
 
-2. Modify `android/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
+2. Modify `android/build.gradle` file to add the new local maven repository packaged in the `jsc-android` package to the search path:
 ```diff
 allprojects {
     repositories {
@@ -88,12 +88,12 @@ allprojects {
 }
 ```
 
-3. Update your app's `build.gradle` file located in `android/app/build.gradle` to add the JSC dependencey.  Please make sure the dependency should put before  React Native dependency.
+3. Update your app's `build.gradle` file located in `android/app/build.gradle` to add the JSC dependency.  Please make sure the dependency is before the React Native dependency.
 
 ```diff
 
 dependencies {
-+   // Make sure to put android-jsc at the the first
++   // Make sure to put android-jsc at the top
 +   implementation "org.webkit:android-jsc:r241213"
 +
     compile fileTree(dir: "libs", include: ["*.jar"])
@@ -114,7 +114,7 @@ android {
 }
 ```
 
-5. You're done, rebuild your app and enjoy updated version of JSC on android!
+5. You're done - rebuild your app and enjoy the updated version of JSC on Android!
 
 ### For React Native version 0.58 below
 
