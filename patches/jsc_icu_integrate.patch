@@ -53,7 +53,7 @@ diff -aur target-org/webkit/Source/cmake/FindICU.cmake target/webkit/Source/cmak
 diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-07-25 09:56:23.662494914 +0200
 +++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2018-07-18 12:55:24.726736260 +0200
-@@ -118,6 +118,8 @@
+@@ -120,6 +120,8 @@
  set(JavaScriptCore_LIBRARIES
      WTF${DEBUG_SUFFIX}
      ${ICU_I18N_LIBRARIES}

@@ -1,0 +1,15 @@
+diff -aur target-org/webkit/Source/WTF/wtf/posix/FileSystemPOSIX.cpp target/webkit/Source/WTF/wtf/posix/FileSystemPOSIX.cpp
+--- target-org/webkit/Source/WTF/wtf/posix/FileSystemPOSIX.cpp	2019-06-18 21:49:52.000000000 +0800
++++ target/webkit/Source/WTF/wtf/posix/FileSystemPOSIX.cpp	2019-06-18 22:58:46.000000000 +0800
+@@ -45,6 +45,11 @@
+ #include <wtf/text/StringBuilder.h>
+ #include <wtf/text/WTFString.h>
+
++#if defined(CUSTOMIZE_REACT_NATIVE) && defined(__ANDROID__) && __ANDROID_API__ < 19
++#include <sys/vfs.h>
++#define statvfs statfs
++#endif // defined(CUSTOMIZE_REACT_NATIVE) && defined(__ANDROID__) && __ANDROID_API__ < 19
++
+ namespace WTF {
+
+ namespace FileSystemImpl {

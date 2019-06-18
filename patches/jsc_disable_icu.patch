@@ -1,7 +1,7 @@
 diff -aur target-org/webkit/Source/WTF/wtf/CMakeLists.txt target/webkit/Source/WTF/wtf/CMakeLists.txt
 --- target-org/webkit/Source/WTF/wtf/CMakeLists.txt     2019-04-27 00:04:50.000000000 +0800
 +++ target/webkit/Source/WTF/wtf/CMakeLists.txt 2019-04-27 00:14:29.000000000 +0800
-@@ -475,7 +475,6 @@
+@@ -482,7 +482,6 @@
  list(APPEND WTF_SOURCES
      unicode/CollatorDefault.cpp
 

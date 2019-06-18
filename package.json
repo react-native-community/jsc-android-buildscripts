@@ -26,7 +26,7 @@
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.22.6",
+    "webkitGTK": "2.24.2",
     "chromiumICUCommit": "b34251f8b762f8e2112a89c587855ca4297fed96"
   }
 }

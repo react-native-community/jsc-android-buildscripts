@@ -46,8 +46,12 @@ JSC_PATCHSET=(
   # (However, NDK r19 fixed this)
   "jsc_fix_build_error_mulodi4.patch"
 
-  # Fix build error if disabling DFG_JIT
-  "jsc_fix_build_error_disable_dfg.patch"
+  # statvfs is provided after NDK API level 19.
+  # Use statfs as fallback
+  "jsc_fix_build_error_statvfs.patch"
+
+  # Misc errors
+  "jsc_fix_build_error_miss_headers.patch"
 )
 
 if [[ "$I18N" = false ]]

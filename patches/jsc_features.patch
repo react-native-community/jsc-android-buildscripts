@@ -1,7 +1,7 @@
 diff -aur target-org/webkit/CMakeLists.txt target/webkit/CMakeLists.txt
 --- target-org/webkit/CMakeLists.txt	2017-12-22 19:18:43.000000000 +0200
 +++ target/webkit/CMakeLists.txt	2018-06-14 15:41:59.000000000 +0300
-@@ -174,13 +174,13 @@
+@@ -177,13 +177,13 @@
      add_subdirectory(Tools)
  endif ()
 
@@ -42,7 +42,7 @@ diff -aur target-org/webkit/Source/cmake/OptionsJSCOnly.cmake target/webkit/Sour
 diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-05-02 21:13:03.000000000 +0200
 +++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2017-07-11 11:34:55.962374878 +0200
-@@ -1221,7 +1225,7 @@
+@@ -1291,7 +1291,7 @@
  )
  target_include_directories(LLIntOffsetsExtractor SYSTEM PRIVATE ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 
