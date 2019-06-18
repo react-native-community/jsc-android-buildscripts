@@ -50,6 +50,19 @@ else
     BUILD_TYPE_FLAGS="-DDEBUG_FISSION=OFF"
 fi
 
+if [[ "$ARCH_NAME" = "i686" ]]
+then
+    JSC_FEATURE_FLAGS=" \
+      -DENABLE_JIT=OFF \
+      -DENABLE_C_LOOP=ON \
+    "
+else
+    JSC_FEATURE_FLAGS=" \
+      -DENABLE_JIT=ON \
+      -DENABLE_C_LOOP=OFF \
+    "
+fi
+
 $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   --jsc-only \
   $BUILD_TYPE_CONFIG \
@@ -79,10 +92,11 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   -DCMAKE_VERBOSE_MAKEFILE=on \
   -DENABLE_API_TESTS=OFF \
   -DENABLE_SAMPLING_PROFILER=OFF \
-  -DENABLE_JIT=OFF \
   -DENABLE_DFG_JIT=OFF \
   -DENABLE_FTL_JIT=OFF \
+  -DUSE_SYSTEM_MALLOC=OFF \
   -DJSC_VERSION=\"${JSC_VERSION}\" \
+  $JSC_FEATURE_FLAGS \
   $BUILD_TYPE_FLAGS \
   "
 
