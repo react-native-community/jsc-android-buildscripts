@@ -1,0 +1,41 @@
+diff -aur target-org/webkit/Source/JavaScriptCore/assembler/ARM64Assembler.h target/webkit/Source/JavaScriptCore/assembler/ARM64Assembler.h
+--- target-org/webkit/Source/JavaScriptCore/assembler/ARM64Assembler.h	2019-06-18 21:49:21.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/assembler/ARM64Assembler.h	2019-06-19 15:14:46.000000000 +0800
+@@ -2863,7 +2863,36 @@
+
+     unsigned debugOffset() { return m_buffer.debugOffset(); }
+
+-#if OS(LINUX) && COMPILER(GCC_COMPATIBLE)
++#if defined(CUSTOMIZE_REACT_NATIVE)
++    static inline void linuxPageFlush(uintptr_t start, uintptr_t end)
++    {
++        // NOTE(CUSTOMIZE_REACT_NATIVE): The code mostly copied from LLVM compiler-rt
++        // https://github.com/llvm-mirror/compiler-rt/blob/ff75f2a0260b1940436a483413091c5770427c04/lib/builtins/clear_cache.c#L142
++        // But only to modify "dc cvau" to "dc civac"
++
++        uint64_t xstart = (uint64_t)(uintptr_t)start;
++        uint64_t xend = (uint64_t)(uintptr_t)end;
++        uint64_t addr;
++
++        // Get Cache Type Info
++        uint64_t ctr_el0;
++        __asm __volatile("mrs %0, ctr_el0" : "=r"(ctr_el0));
++
++        // dc & ic instructions must use 64bit registers so we don't use
++        // uintptr_t in case this runs in an IPL32 environment.
++        const size_t dcache_line_size = 4 << ((ctr_el0 >> 16) & 15);
++        for (addr = xstart & ~(dcache_line_size - 1); addr < xend;
++                addr += dcache_line_size)
++            __asm __volatile("dc civac, %0" ::"r"(addr));
++        __asm __volatile("dsb ish");
++
++        const size_t icache_line_size = 4 << ((ctr_el0 >> 0) & 15);
++        for (addr = xstart & ~(icache_line_size - 1); addr < xend;
++                addr += icache_line_size)
++            __asm __volatile("ic ivau, %0" ::"r"(addr));
++        __asm __volatile("isb sy");
++    }
++#elif OS(LINUX) && COMPILER(GCC_COMPATIBLE)
+     static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
+     {
+         __builtin___clear_cache(reinterpret_cast<char*>(begin), reinterpret_cast<char*>(end));
