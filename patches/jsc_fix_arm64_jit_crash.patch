@@ -6,7 +6,7 @@ diff -aur target-org/webkit/Source/JavaScriptCore/assembler/ARM64Assembler.h tar
      unsigned debugOffset() { return m_buffer.debugOffset(); }
 
 -#if OS(LINUX) && COMPILER(GCC_COMPATIBLE)
-+#if defined(CUSTOMIZE_REACT_NATIVE)
++#if defined(CUSTOMIZE_REACT_NATIVE) && CPU(ARM64)
 +    static inline void linuxPageFlush(uintptr_t start, uintptr_t end)
 +    {
 +        // NOTE(CUSTOMIZE_REACT_NATIVE): The code mostly copied from LLVM compiler-rt
