@@ -1,7 +1,7 @@
 diff -aur target-org/webkit/Source/JavaScriptCore/Sources.txt target/webkit/Source/JavaScriptCore/Sources.txt
 --- target-org/webkit/Source/JavaScriptCore/Sources.txt 2018-11-11 23:05:40.000000000 +0800
 +++ target/webkit/Source/JavaScriptCore/Sources.txt     2018-11-12 00:03:26.000000000 +0800
-@@ -1045,3 +1045,6 @@
+@@ -1053,3 +1053,6 @@
 
  // Derived Sources
  yarr/YarrCanonicalizeUnicode.cpp

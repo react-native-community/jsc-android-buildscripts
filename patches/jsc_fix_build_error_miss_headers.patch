@@ -1,0 +1,14 @@
+diff -aur target-org/webkit/Source/JavaScriptCore/assembler/PerfLog.cpp target/webkit/Source/JavaScriptCore/assembler/PerfLog.cpp
+--- target-org/webkit/Source/JavaScriptCore/assembler/PerfLog.cpp	2019-06-18 21:49:21.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/assembler/PerfLog.cpp	2019-06-18 23:12:38.000000000 +0800
+@@ -41,6 +41,10 @@
+ #include <wtf/PageBlock.h>
+ #include <wtf/ProcessID.h>
+
++#if defined(CUSTOMIZE_REACT_NATIVE)
++#include <array>
++#endif // defined(CUSTOMIZE_REACT_NATIVE)
++
+ namespace JSC {
+
+ namespace PerfLogInternal {

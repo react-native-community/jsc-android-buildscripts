@@ -1,10 +1,10 @@
 diff -aur target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp
---- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2014-03-15 05:08:27.000000000 +0100
-+++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2017-07-11 11:36:01.845264855 +0200
+--- target-org/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2019-06-18 21:49:52.000000000 +0800
++++ target/webkit/Source/WTF/wtf/unicode/CollatorDefault.cpp	2019-06-18 22:44:39.000000000 +0800
 @@ -28,12 +28,13 @@
 
  #include "config.h"
- #include "Collator.h"
+ #include <wtf/unicode/Collator.h>
 +#include <StringView.h>
 
  #if UCONFIG_NO_COLLATION

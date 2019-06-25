@@ -1,6 +1,6 @@
 --- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt      2019-04-27 00:04:34.000000000 +0800
 +++ target/webkit/Source/JavaScriptCore/CMakeLists.txt  2019-04-27 00:06:00.000000000 +0800
-@@ -1234,6 +1234,7 @@
+@@ -1304,6 +1304,7 @@
          install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
      endif ()
  endif ()

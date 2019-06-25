@@ -1,6 +1,6 @@
 diff -aur target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp
---- target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp     2018-11-11 23:05:48.000000000 +0800
-+++ target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp 2018-11-12 23:39:22.000000000 +0800
+--- target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp	2019-06-18 21:49:53.000000000 +0800
++++ target/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp	2019-06-18 22:44:39.000000000 +0800
 @@ -23,6 +23,10 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
@@ -10,10 +10,11 @@ diff -aur target-org/webkit/Source/WTF/wtf/linux/MemoryFootprintLinux.cpp target
 +#if !defined(CUSTOMIZE_REACT_NATIVE)
 +
  #include "config.h"
- #include "MemoryFootprint.h"
+ #include <wtf/MemoryFootprint.h>
 
-@@ -107,3 +111,4 @@
+@@ -100,3 +104,5 @@
  }
 
- }
+ } // namespace WTF
++
 +#endif // !defined(CUSTOMIZE_REACT_NATIVE)
