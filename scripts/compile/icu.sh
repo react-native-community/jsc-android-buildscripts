@@ -25,6 +25,7 @@ else
     BUILD_TYPE_CONFIG="--enable-debug=yes"
 fi
 
+ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
 $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     $BUILD_TYPE_CONFIG \
     --host=$CROSS_COMPILE_PLATFORM \
@@ -35,7 +36,6 @@ $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     --enable-icuio=no \
     --enable-layout=no \
     --enable-layoutex=no \
-    --enable-tools=no \
     --enable-tests=no \
     --enable-samples=no \
     --enable-dyload=no \

@@ -2,19 +2,19 @@ diff -aur target-org/icu/source/config/Makefile.inc.in target/icu/source/config/
 --- target-org/icu/source/config/Makefile.inc.in	2017-07-05 13:23:06.000000000 +0200
 +++ target/icu/source/config/Makefile.inc.in	2017-07-06 14:02:52.275016858 +0200
 @@ -143,7 +143,7 @@
- 
+
  # Versioned target for a shared library
  FINAL_SO_TARGET = $(SO_TARGET).$(SO_TARGET_VERSION)
 -MIDDLE_SO_TARGET = $(SO_TARGET).$(SO_TARGET_VERSION_MAJOR)
 +MIDDLE_SO_TARGET = $(SO_TARGET)
- 
+
  # Access to important ICU tools.
- # Use as follows:  $(INVOKE) $(GENRB) arguments .. 
+ # Use as follows:  $(INVOKE) $(GENRB) arguments ..
 diff -aur target-org/icu/source/config/mh-linux target/icu/source/config/mh-linux
 --- target-org/icu/source/config/mh-linux	2017-07-05 13:23:06.000000000 +0200
 +++ target/icu/source/config/mh-linux	2017-07-06 14:02:52.275016858 +0200
 @@ -25,9 +25,12 @@
- 
+
  ## Compiler switch to embed a library name
  # The initial tab in the next line is to prevent icu-config from reading it.
 -	LD_SONAME = -Wl,-soname -Wl,$(notdir $(MIDDLE_SO_TARGET))
@@ -25,7 +25,7 @@ diff -aur target-org/icu/source/config/mh-linux target/icu/source/config/mh-linu
  #SH# # We can't depend on MIDDLE_SO_TARGET being set.
 -#SH# LD_SONAME=
 +#SH# LD_SONAME=${SO_TARGET}
- 
+
  ## Shared library options
  LD_SOOPTIONS= -Wl,-Bsymbolic
 diff -aur target-org/icu/source/data/Makefile.in target/icu/source/data/Makefile.in
@@ -41,22 +41,6 @@ diff -aur target-org/icu/source/data/Makefile.in target/icu/source/data/Makefile
 +#ifeq ($(PKGDATA_VERSIONING),)
 +#PKGDATA_VERSIONING = -r $(SO_TARGET_VERSION)
 +#endif
- 
+
  # This allows all the data to be in one directory
  ifeq ($(PKGDATA_MODE),dll)
-diff -aur target-org/icu/source/i18n/digitlst.cpp target/icu/source/i18n/digitlst.cpp
---- target-org/icu/source/i18n/digitlst.cpp	2018-07-23 11:20:13.000000000 +0200
-+++ target/icu/source/i18n/digitlst.cpp	2018-07-23 15:29:24.729402639 +0200
-@@ -61,11 +61,7 @@
- #endif
- 
- #if U_USE_STRTOD_L
--# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN
--#   include <locale.h>
--# else
--#   include <xlocale.h>
--# endif
-+# include <xlocale.h>
- #endif
- 
- // ***************************************************************************
