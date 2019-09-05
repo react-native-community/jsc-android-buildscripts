@@ -17,10 +17,6 @@ patchAndMakeICU() {
   printf "ICU version: ${ICU_VERSION_MAJOR}\n"
   $SCRIPT_DIR/patch.sh icu
 
-  # use compiled .dat archive from Android Chromium
-  cp $TARGETDIR/icu/android/icudtl.dat $TARGETDIR/icu/source/data/in/icudt${ICU_VERSION_MAJOR}l.dat
-  rm $TARGETDIR/icu/source/data/translit/root_subset.txt $TARGETDIR/icu/source/data/translit/trnslocal.mk
-
   rm -rf $TARGETDIR/icu/host
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
@@ -32,6 +28,7 @@ patchAndMakeICU() {
     CFLAGS="-g2"
   fi
 
+  ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
   $TARGETDIR/icu/source/runConfigureICU Linux \
   --prefix=$PWD/prebuilts \
   CFLAGS="$CFLAGS" \
