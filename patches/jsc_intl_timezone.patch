@@ -1,0 +1,53 @@
+diff -aur target-org/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp target/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp
+--- target-org/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp	2019-01-28 09:56:29.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp	2019-09-06 02:00:12.000000000 +0800
+@@ -40,6 +40,8 @@
+ #include <unicode/udatpg.h>
+ #include <unicode/uenum.h>
+ #include <wtf/text/StringBuilder.h>
++#include <sys/system_properties.h>
++#include <wtf/unicode/UTF8Conversion.h>
+
+ #if JSC_ICU_HAS_UFIELDPOSITER
+ #include <unicode/ufieldpositer.h>
+@@ -121,14 +123,34 @@
+     // 6.4.3 DefaultTimeZone () (ECMA-402 2.0)
+     // The DefaultTimeZone abstract operation returns a String value representing the valid (6.4.1) and canonicalized (6.4.2) time zone name for the host environment’s current time zone.
+
+-    UErrorCode status = U_ZERO_ERROR;
++    UErrorCode status = U_UNDEFINED_VARIABLE;
+     Vector<UChar, 32> buffer(32);
+-    auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
+-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+-        status = U_ZERO_ERROR;
+-        buffer.grow(bufferLength);
+-        ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
++    size_t bufferLength = 32;
++
++    // [0] Try to get timezone from Android system property
++    char systemPropBuffer[2 * (PROP_VALUE_MAX + 1)] = {0};
++    if (__system_property_get("persist.sys.timezone", systemPropBuffer) != 0) {
++        size_t systemPropLength = strlen(systemPropBuffer);
++        if (systemPropLength > buffer.capacity()) {
++            buffer.grow(strlen(systemPropBuffer));
++        }
++        UChar* bufferStart = buffer.data();
++        if (WTF::Unicode::convertUTF8ToUTF16(reinterpret_cast<const char**>(&systemPropBuffer), systemPropBuffer + systemPropLength, &bufferStart, bufferStart + buffer.capacity()) == WTF::Unicode::conversionOK) {
++            status = U_ZERO_ERROR;
++        }
+     }
++
++    // [1] Fallback to get timezone from ICU default
++    if (U_FAILURE(status)) {
++        bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
++        if (status == U_BUFFER_OVERFLOW_ERROR) {
++            status = U_ZERO_ERROR;
++            buffer.grow(bufferLength);
++            ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
++        }
++    }
++
++    // [2] Get canonical timezone ID
+     if (U_SUCCESS(status)) {
+         status = U_ZERO_ERROR;
+         Vector<UChar, 32> canonicalBuffer(32);
