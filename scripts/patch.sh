@@ -5,8 +5,7 @@ PATCHES_DIR=$ROOTDIR/patches
 # Patchset management that manage files by commented purpose
 ######################################################################################
 ICU_PATCHSET=(
-  # Basic build setup for JSC on Android
-  "icu.patch"
+  # Add ICU patchset if needed
 )
 
 JSC_PATCHSET=(

@@ -19,7 +19,6 @@ compile() {
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_32
     export JSC_ARCH=$arch
-    export ENABLE_COMPAT=1
     compile_arch
   done
 
@@ -27,7 +26,6 @@ compile() {
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_64
     export JSC_ARCH=$arch
-    export ENABLE_COMPAT=0
     compile_arch
   done
 }

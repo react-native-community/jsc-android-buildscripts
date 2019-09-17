@@ -45,13 +45,14 @@ jobs:
               rm -rf /tmp/android-ndk-tmp
             sdkmanager \
               "lldb;3.0" \
-              "cmake;3.6.4111459"
+              "cmake;3.10.2.4988404"
       - run:
           name: install subversion
           command: |
             sudo apt-get update
-            sudo apt-get install coreutils realpath curl git subversion python-dev ruby gperf -y
-            pyenv global 3.5.2
+            sudo apt-get install coreutils realpath curl git subversion python3.5 python3.5-dev ruby gperf -y
+            sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1
+            pyenv global system
       - run:
           name: upgrade node
           command: |
