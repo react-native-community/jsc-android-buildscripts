@@ -11,15 +11,16 @@ diff -aur target-org/webkit/Source/JavaScriptCore/API/JSBase.cpp target/webkit/S
 +void printVersion() {
 +    __android_log_print(3, "JavaScriptCore.Version", "%s", JSC_VERSION);
 +}
---- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt      2019-03-26 13:04:34.000000000 +0800
-+++ target/webkit/Source/JavaScriptCore/CMakeLists.txt  2019-03-26 13:01:41.000000000 +0800
-@@ -122,7 +122,9 @@
-     ${ICU_I18N_LIBRARIES}
-     ${ICU_LIBRARIES}
-     ${ICU_DATA_LIBRARIES}
-+    log
- )
-+add_definitions(-DJSC_VERSION="${JSC_VERSION}")
+diff -aur target-org/webkit/Source/JavaScriptCore/CMakeLists.txt target/webkit/Source/JavaScriptCore/CMakeLists.txt
+--- target-org/webkit/Source/JavaScriptCore/CMakeLists.txt	2019-09-17 13:57:03.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/CMakeLists.txt	2019-09-17 13:57:08.000000000 +0800
+@@ -120,6 +120,9 @@
 
+ list(APPEND JavaScriptCore_LIBRARIES ${ICU_LIBRARIES} ${ICU_DATA_LIBRARIES})
+
++list(APPEND JavaScriptCore_LIBRARIES log)
++add_definitions(-DJSC_VERSION="${JSC_VERSION}")
++
  if (USE_CAPSTONE)
      list(APPEND JavaScriptCore_LIBRARIES capstone)
+ endif ()
