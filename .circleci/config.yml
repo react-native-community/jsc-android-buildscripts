@@ -64,7 +64,7 @@ jobs:
       - run: npm run start
       - run:
           name: compress dist
-          command: tar -czf dist.tgz dist
+          command: tar -czf dist.tgz dist dist.unstripped
       - store_artifacts:
           path: dist.tgz
       - run:

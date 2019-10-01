@@ -3,7 +3,8 @@
 export ANDROID_API_FOR_ABI_32=16
 export ANDROID_API_FOR_ABI_64=21
 export ROOTDIR=$PWD
-export TARGETDIR=$ROOTDIR/build/target
+
+source $ROOTDIR/scripts/env.sh
 source $ROOTDIR/scripts/info.sh
 export JSC_VERSION=${npm_package_version}
 export BUILD_TYPE=Release
@@ -64,38 +65,58 @@ prep() {
 
 compile() {
   printf "\n\n\t\t===================== starting to compile all archs for i18n="${I18N}" =====================\n\n"
-  rm -rf $ROOTDIR/build/compiled
+  local var="INSTALL_DIR_I18N_${I18N}"
+  export INSTALL_DIR_I18N=${!var}
+  local var="INSTALL_UNSTRIPPED_DIR_I18N_${I18N}"
+  export INSTALL_UNSTRIPPED_DIR_I18N=${!var}
+  rm -rf $INSTALL_DIR_I18N
+  rm -rf $INSTALL_UNSTRIPPED_DIR_I18N
   $ROOTDIR/scripts/compile/all.sh
 }
 
 createAAR() {
-  TARGET=$1
-  printf "\n\n\t\t===================== create aar :$TARGET: =====================\n\n"
+  local target=$1
+  local distDir=$2
+  local jniLibsDir=$3
+  local i18n=$4
+  printf "\n\n\t\t===================== create aar :${target}: =====================\n\n"
   cd $ROOTDIR/lib
-  ./gradlew clean :$TARGET:createAAR --project-prop revision="$REVISION" --project-prop i18n="${I18N}"
+  ./gradlew clean :${target}:createAAR \
+      --project-prop distDir="${distDir}" \
+      --project-prop jniLibsDir="${jniLibsDir}" \
+      --project-prop revision="$REVISION" \
+      --project-prop i18n="${i18n}"
   cd $ROOTDIR
-  unset TARGET
 }
 
 copyHeaders() {
-  printf "\n\n\t\t===================== adding headers to $ROOTDIR/dist/include =====================\n\n"
-  mkdir -p $ROOTDIR/dist/include
-  cp -Rf $TARGETDIR/webkit/Source/JavaScriptCore/API/*.h $ROOTDIR/dist/include
+  local distDir=$1
+  printf "\n\n\t\t===================== adding headers to ${distDir}/include =====================\n\n"
+  mkdir -p ${distDir}/include
+  cp -Rf $TARGETDIR/webkit/Source/JavaScriptCore/API/*.h ${distDir}/include
 }
 
 export I18N=false
 prep
 compile
-createAAR "android-jsc"
 
 export I18N=true
 prep
 compile
-createAAR "android-jsc"
 
-createAAR "cppruntime"
+export DISTDIR=${ROOTDIR}/dist
+printf "\n\n\t\t===================== create stripped distributions =====================\n\n"
+createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_false} "false"
+createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_true} "true"
+createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
+copyHeaders ${DISTDIR}
 
-copyHeaders
+printf "\n\n\t\t===================== create unstripped distributions =====================\n\n"
+export DISTDIR=${ROOTDIR}/dist.unstripped
+createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_false} "false"
+createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_true} "true"
+createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
+copyHeaders ${DISTDIR}
 
 npm run info
 

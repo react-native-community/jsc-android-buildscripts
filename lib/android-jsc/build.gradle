@@ -1,5 +1,15 @@
 apply plugin: 'com.android.library'
 
+def distDir = project.findProperty("distDir") ?: ""
+def jniLibsDir = project.findProperty("jniLibsDir") ?: ""
+def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
+def i18n = project.findProperty("i18n") ?: ""
+
+if (!distDir) throw new RuntimeException("expecting --project-prop distDir=??? but was empty")
+if (!jniLibsDir) throw new RuntimeException("expecting --project-prop jniLibsDir=??? but was empty")
+if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
+if (!i18n) throw new RuntimeException("expecting --project-prop i18n=??? but was empty")
+
 android {
     compileSdkVersion 28
 
@@ -12,7 +22,7 @@ android {
 
     sourceSets {
         main {
-            jniLibs.srcDirs = ["${rootDir}/../build/compiled"]
+            jniLibs.srcDirs = ["${jniLibsDir}"]
         }
     }
 
@@ -26,16 +36,6 @@ dependencies {}
 apply plugin: 'maven'
 
 task createAAR(type: Upload) {
-    def distDir = "${rootDir}/../dist"
-
-    def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
-    def i18n = project.findProperty("i18n") ?: ""
-
-    doFirst {
-        if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
-        if (!i18n) throw new RuntimeException("expecting --project-prop i18n=??? but was empty")
-    }
-
     project.group = "org.webkit"
     def artifactName = Boolean.valueOf(i18n) ? "android-jsc-intl" : "android-jsc"
     project.version = "r${revision}"
