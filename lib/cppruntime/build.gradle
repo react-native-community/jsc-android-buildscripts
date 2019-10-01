@@ -1,5 +1,13 @@
 apply plugin: 'com.android.library'
 
+def distDir = project.findProperty("distDir") ?: ""
+def jniLibsDir = project.findProperty("jniLibsDir") ?: ""
+def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
+
+if (!distDir) throw new RuntimeException("expecting --project-prop distDir=??? but was empty")
+if (!jniLibsDir) throw new RuntimeException("expecting --project-prop jniLibsDir=??? but was empty")
+if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
+
 android {
     compileSdkVersion 28
 
@@ -12,7 +20,7 @@ android {
 
     sourceSets {
         main {
-            jniLibs.srcDirs = ["${rootDir}/../build/cppruntime"]
+            jniLibs.srcDirs = ["${jniLibsDir}"]
         }
     }
 }
@@ -22,14 +30,6 @@ dependencies {}
 apply plugin: 'maven'
 
 task createAAR(type: Upload) {
-    def distDir = "${rootDir}/../dist"
-
-    def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
-
-    doFirst {
-        if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
-    }
-
     project.group = "org.webkit"
     project.version = "r${revision}"
 

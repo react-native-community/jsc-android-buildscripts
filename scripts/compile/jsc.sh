@@ -100,5 +100,9 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   $BUILD_TYPE_FLAGS \
   "
 
-cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_DIR
+mkdir -p $INSTALL_UNSTRIPPED_DIR_I18N/$JNI_ARCH
+mkdir -p $INSTALL_DIR_I18N/$JNI_ARCH
+cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_UNSTRIPPED_DIR_I18N/$JNI_ARCH
+cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_DIR_I18N/$JNI_ARCH
+$TOOLCHAIN_BIN_STRIP $INSTALL_DIR_I18N/$JNI_ARCH/libjsc.so
 mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
