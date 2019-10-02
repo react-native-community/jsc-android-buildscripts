@@ -28,5 +28,10 @@
   "config": {
     "webkitGTK": "2.24.2",
     "chromiumICUCommit": "64e5d7d43a1ff205e3787ab6150bbc1a1837332b"
+  },
+  "devDependencies": {
+    "commander": "^4.0.1",
+    "rimraf": "^3.0.0",
+    "semver": "^6.3.0"
   }
 }
