@@ -57,6 +57,9 @@ JSC_PATCHSET=(
 
   # Intl default timezone with Android integration
   "jsc_intl_timezone.patch"
+
+  # Improve heap GC mechanism like iOS
+  "jsc_heap_gc_like_ios.patch"
 )
 
 if [[ "$I18N" = false ]]
