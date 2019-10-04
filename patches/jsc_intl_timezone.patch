@@ -32,7 +32,7 @@ diff -aur target-org/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp
 +            buffer.grow(strlen(systemPropBuffer));
 +        }
 +        UChar* bufferStart = buffer.data();
-+        if (WTF::Unicode::convertUTF8ToUTF16(reinterpret_cast<const char**>(&systemPropBuffer), systemPropBuffer + systemPropLength, &bufferStart, bufferStart + buffer.capacity()) == WTF::Unicode::conversionOK) {
++        if (WTF::Unicode::convertUTF8ToUTF16(systemPropBuffer, systemPropBuffer + systemPropLength, &bufferStart, bufferStart + buffer.capacity())) {
 +            status = U_ZERO_ERROR;
 +        }
      }
