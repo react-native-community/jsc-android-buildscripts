@@ -58,7 +58,6 @@ def main():
     if not os.path.exists(workdir):
         os.makedirs(workdir)
     distdir = os.path.join(ROOT_DIR, 'dist')
-    dryrun = '--dry-run' if args.dry_run else ''
 
     print('\n\n========== Publish standard package ==========')
     with PackageConfigPatcher(''):
@@ -67,7 +66,10 @@ def main():
         subprocess.check_call(
             ['tar', '-xf', args.dist_tar_file, '-C', workdir])
         shutil.move(os.path.join(workdir, 'dist'), distdir)
-        subprocess.check_call(['npm', 'publish', dryrun, '--tag', args.tag])
+        cmds = ['npm', 'publish', '--tag', args.tag]
+        if args.dry_run:
+            cmds.append('--dry-run')
+        subprocess.check_call(cmds)
 
     print('\n\n========== Publish unstripped package ==========')
     with PackageConfigPatcher('unstripped'):
@@ -76,8 +78,10 @@ def main():
         subprocess.check_call(
             ['tar', '-xf', args.dist_tar_file, '-C', workdir])
         shutil.move(os.path.join(workdir, 'dist.unstripped'), distdir)
-        subprocess.check_call(
-            ['npm', 'publish', dryrun, '--tag', args.tag + '-unstripped'])
+        cmds = ['npm', 'publish', '--tag', args.tag + '-unstripped']
+        if args.dry_run:
+            cmds.append('--dry-run')
+        subprocess.check_call(cmds)
 
     shutil.rmtree(workdir)
 
