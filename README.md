@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android.svg)](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android)
-![GitHub Actions CI](https://github.com/Kudo/jsc-android-buildscripts/workflows/.github/workflows/build_and_test.yml/badge.svg)
+![GitHub Actions CI](https://github.com/Kudo/jsc-android-buildscripts/workflows/Build%20jsc-android%20and%20test/badge.svg)
 
 # JSC build scripts for Android
 
