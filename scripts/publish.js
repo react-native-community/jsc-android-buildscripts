@@ -17,17 +17,20 @@ if (!semver.satisfies(process.versions.node, '>= 10.12.0')) {
 
 commander
   .requiredOption('-T, --tag <tag>', 'NPM published tag')
-  .arguments('<dist_tar_file>')
+  .arguments('<artifact_zip_file>')
   .option('--dry-run', 'Dry run mode for npm publish')
   .parse(process.argv);
 
-const distTarFile = verifyFile(commander.args[0], '<dist_tar_file>');
+const artifactZipFile = verifyFile(commander.args[0], '<artifact_zip_file>');
 const rootDir = path.dirname(__dirname);
 const workDir = path.join(rootDir, 'build', 'publish');
 const distDir = path.join(rootDir, 'dist');
-if (!fs.existsSync(workDir)) {
-  fs.mkdirSync(workDir, {recursive: true});
+if (fs.existsSync(workDir)) {
+  rimraf.sync(workDir);
 }
+fs.mkdirSync(workDir, {recursive: true});
+
+child_process.execFileSync('unzip', [artifactZipFile, '-d', workDir]);
 
 // Publish standard package
 console.log('\n\n========== Publish standard package ==========');
@@ -35,8 +38,7 @@ createPatchedContext(rootDir, '', () => {
   if (fs.existsSync(distDir)) {
     rimraf.sync(distDir);
   }
-  child_process.execFileSync('tar', ['-xf', distTarFile, '-C', workDir]);
-  fs.renameSync(path.join(workDir, 'dist'), distDir);
+  fs.renameSync(path.join(workDir, 'archive', 'dist'), distDir);
   const publishArgs = ['publish', '--tag', commander.tag];
   if (commander.dryRun) {
     publishArgs.push('--dry-run');
@@ -47,14 +49,13 @@ createPatchedContext(rootDir, '', () => {
 // Publish unstripped package
 // 1. Add suffix in version, e.g. 245459.0.0-unstripped
 // 2. Add suffix in tag, e.g. latest-unstripped
-// 3. Get unstripped distribution from dist.unstripped/ in CI dist.tgz
+// 3. Get unstripped distribution from dist.unstripped/ in CI archive.zip
 console.log('\n\n========== Publish unstripped package ==========');
 createPatchedContext(rootDir, 'unstripped', () => {
   if (fs.existsSync(distDir)) {
     rimraf.sync(distDir);
   }
-  child_process.execFileSync('tar', ['-xf', distTarFile, '-C', workDir]);
-  fs.renameSync(path.join(workDir, 'dist.unstripped'), distDir);
+  fs.renameSync(path.join(workDir, 'archive', 'dist.unstripped'), distDir);
   const publishArgs = ['publish', '--tag', `${commander.tag}-unstripped`];
   if (commander.dryRun) {
     publishArgs.push('--dry-run');
