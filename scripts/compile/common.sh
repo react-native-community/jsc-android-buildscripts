@@ -119,7 +119,7 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0"
     ICU_CFLAGS_BUILD_TYPE="-Oz"
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
