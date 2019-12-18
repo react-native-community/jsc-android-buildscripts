@@ -1,5 +1,5 @@
-[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android)
-[![CircleCI](https://circleci.com/gh/react-native-community/jsc-android-buildscripts.svg?style=svg)](https://circleci.com/gh/react-native-community/jsc-android-buildscripts)
+[![npm version](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android.svg)](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android)
+![GitHub Actions CI](https://github.com/Kudo/jsc-android-buildscripts/workflows/.github/workflows/build_and_test.yml/badge.svg)
 
 # JSC build scripts for Android
 
@@ -17,8 +17,8 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
   * Run `sdkmanager --list` and install all platforms, tools, buildtool v28.0.3, cmake (android images are not needed)
   * Set `$ANDROID_HOME` to the correct path (in ~/.bashrc or similar)
   * Set `export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin`
-* Android NDK r17c: download from [NDK Archives](https://developer.android.com/ndk/downloads/older_releases.html)
-  * Set `export ANDROID_NDK=/path/to/android-ndk-r17c`
+* Android NDK r19c: download from [NDK Archives](https://developer.android.com/ndk/downloads/older_releases.html)
+  * Set `export ANDROID_NDK=/path/to/android-ndk-r19c`
 * Make sure you have Ruby (>2.3), Python (>2.7), Git, SVN, gperf
 
 ## Build instructions
@@ -36,7 +36,7 @@ The library is packaged as a local Maven repository containing AAR files that in
 
 ## Distribution
 
-JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
+JSC library built using this project is distributed over npm: [npm/@kudo-ci/jsc-android](https://www.npmjs.com/package/@kudo-ci/jsc-android).
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
 Please refer to the section below in order to learn how your app can consume this format.
 
@@ -48,13 +48,13 @@ Follow steps below in order for your React Native app to use new version of JSC 
 
 ### For React Native version 0.60 and newer
 
-1. Update `jsc-android`:
+1. Use `@kudo-ci/jsc-android` to override stock `jsc-android`:
 
 ```
-yarn add jsc-android
+yarn add jsc-android@npm:@kudo-ci/jsc-android
 
 # Or if you would like to try latest version
-# yarn add 'jsc-android@canary`
+# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
 
 ```
 
@@ -62,13 +62,15 @@ yarn add jsc-android
 
 ### For React Native version 0.59
 
-1. Add `jsc-android` to the "dependencies" section in your `package.json`:
-```diff
-dependencies {
-+  "jsc-android": "241213.x.x",
-```
+1. Add `@kudo-ci/jsc-android`:
 
-then run `npm install` or `yarn` (depending on which npm client you use) in order for the new dependency to be installed in `node_modules`
+```
+yarn add jsc-android@npm:@kudo-ci/jsc-android
+
+# Or if you would like to try latest version
+# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
+
+```
 
 2. Modify `android/build.gradle` file to add the new local maven repository packaged in the `jsc-android` package to the search path:
 ```diff
@@ -94,7 +96,7 @@ allprojects {
 
 dependencies {
 +   // Make sure to put android-jsc at the top
-+   implementation "org.webkit:android-jsc:r241213"
++   implementation "org.webkit:android-jsc:+"
 +
     compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -118,13 +120,15 @@ android {
 
 ### For React Native version 0.58 below
 
-1. Add `jsc-android` to the "dependencies" section in your `package.json`:
-```diff
-dependencies {
-+  "jsc-android": "241213.x.x",
-```
+1. Add `@kudo-ci/jsc-android`:
 
-then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
+```
+yarn add jsc-android@npm:@kudo-ci/jsc-android
+
+# Or if you would like to try latest version
+# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
+
+```
 
 2. Modify `android/build.gradle` file to add new local maven repository packaged in the `jsc-android` package to the search path:
 ```diff
@@ -151,7 +155,7 @@ allprojects {
 
 +configurations.all {
 +    resolutionStrategy {
-+        force 'org.webkit:android-jsc:r241213'
++        force 'org.webkit:android-jsc:+'
 +    }
 +}
 
@@ -189,7 +193,7 @@ For React Native version 0.59, replace original artifact id with `android-jsc-in
 
 dependencies {
 +   // Make sure to put android-jsc at the the first
-+   implementation "org.webkit:android-jsc-intl:r241213"
++   implementation "org.webkit:android-jsc-intl:+"
 +
     compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
