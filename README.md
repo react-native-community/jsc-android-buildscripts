@@ -65,7 +65,7 @@ yarn add jsc-android
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
-+  "jsc-android": "241213.x.x",
++  "jsc-android": "245459.x.x",
 ```
 
 then run `npm install` or `yarn` (depending on which npm client you use) in order for the new dependency to be installed in `node_modules`
@@ -94,7 +94,7 @@ allprojects {
 
 dependencies {
 +   // Make sure to put android-jsc at the top
-+   implementation "org.webkit:android-jsc:r241213"
++   implementation "org.webkit:android-jsc:r245459"
 +
     compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -121,7 +121,7 @@ android {
 1. Add `jsc-android` to the "dependencies" section in your `package.json`:
 ```diff
 dependencies {
-+  "jsc-android": "241213.x.x",
++  "jsc-android": "245459.x.x",
 ```
 
 then run `npm install` or `yarn` (depending which npm client you use) in order for the new dependency to be installed in `node_modules`
@@ -151,7 +151,7 @@ allprojects {
 
 +configurations.all {
 +    resolutionStrategy {
-+        force 'org.webkit:android-jsc:r241213'
++        force 'org.webkit:android-jsc:r245459'
 +    }
 +}
 
@@ -189,7 +189,7 @@ For React Native version 0.59, replace original artifact id with `android-jsc-in
 
 dependencies {
 +   // Make sure to put android-jsc at the the first
-+   implementation "org.webkit:android-jsc-intl:r241213"
++   implementation "org.webkit:android-jsc-intl:r245459"
 +
     compile fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -204,7 +204,7 @@ For React Native version 0.58 below, replace original `resolutionStrategy` with 
 +    resolutionStrategy {
 +        eachDependency { DependencyResolveDetails details ->
 +            if (details.requested.name == 'android-jsc') {
-+                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r241213'
++                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r245459'
 +            }
 +        }
 +    }
