@@ -27,7 +27,6 @@ jobs:
     - name: Install Android packages
       run: |
         sdkmanager \
-          "lldb;3.0" \
           "cmake;3.10.2.4988404"
       shell: bash
     - name: Build
