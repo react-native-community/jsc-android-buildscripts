@@ -1,5 +1,5 @@
-[![npm version](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android.svg)](https://badge.fury.io/js/%40kudo-ci%2Fjsc-android)
-![GitHub Actions CI](https://github.com/Kudo/jsc-android-buildscripts/workflows/Build%20jsc-android%20and%20test/badge.svg)
+[![npm version](https://badge.fury.io/js/jsc-android.svg)](https://badge.fury.io/js/jsc-android)
+![GitHub Actions CI](https://github.com/react-native-community/jsc-android-buildscripts/workflows/Build%20jsc-android%20and%20test/badge.svg)
 
 # JSC build scripts for Android
 
@@ -36,7 +36,7 @@ The library is packaged as a local Maven repository containing AAR files that in
 
 ## Distribution
 
-JSC library built using this project is distributed over npm: [npm/@kudo-ci/jsc-android](https://www.npmjs.com/package/@kudo-ci/jsc-android).
+JSC library built using this project is distributed over npm: [npm/jsc-android](https://www.npmjs.com/package/jsc-android).
 The library is packaged as a local Maven repository containing AAR files that include the binaries.
 Please refer to the section below in order to learn how your app can consume this format.
 
@@ -48,13 +48,13 @@ Follow steps below in order for your React Native app to use new version of JSC 
 
 ### For React Native version 0.60 and newer
 
-1. Use `@kudo-ci/jsc-android` to override stock `jsc-android`:
+1. Update `jsc-android`:
 
 ```
-yarn add jsc-android@npm:@kudo-ci/jsc-android
+yarn add jsc-android
 
 # Or if you would like to try latest version
-# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
+# yarn add 'jsc-android@next'
 
 ```
 
@@ -62,13 +62,13 @@ yarn add jsc-android@npm:@kudo-ci/jsc-android
 
 ### For React Native version 0.59
 
-1. Add `@kudo-ci/jsc-android`:
+1. Add `jsc-android`:
 
 ```
-yarn add jsc-android@npm:@kudo-ci/jsc-android
+yarn add jsc-android
 
 # Or if you would like to try latest version
-# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
+# yarn add 'jsc-android@next'
 
 ```
 
@@ -120,13 +120,13 @@ android {
 
 ### For React Native version 0.58 below
 
-1. Add `@kudo-ci/jsc-android`:
+1. Add `jsc-android`:
 
 ```
-yarn add jsc-android@npm:@kudo-ci/jsc-android
+yarn add jsc-android
 
 # Or if you would like to try latest version
-# yarn add 'jsc-android@npm:@kudo-ci/jsc-android@next'
+# yarn add 'jsc-android@next'
 
 ```
 
