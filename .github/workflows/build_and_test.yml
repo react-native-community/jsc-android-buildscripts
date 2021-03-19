@@ -1,6 +1,6 @@
 name: Build jsc-android and test
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
