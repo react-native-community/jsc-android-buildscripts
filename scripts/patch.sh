@@ -5,8 +5,7 @@ PATCHES_DIR=$ROOTDIR/patches
 # Patchset management that manage files by commented purpose
 ######################################################################################
 ICU_PATCHSET=(
-  # Basic build setup for JSC on Android
-  "icu.patch"
+  # Add ICU patchset if needed
 )
 
 JSC_PATCHSET=(
@@ -55,6 +54,16 @@ JSC_PATCHSET=(
 
   # Workaround JIT crash on arm64, especially for Saumsung S7 Edge
   "jsc_fix_arm64_jit_crash.patch"
+
+  # Intl default timezone with Android integration
+  "jsc_intl_timezone.patch"
+
+  # Improve heap GC mechanism like iOS
+  "jsc_heap_gc_like_ios.patch"
+
+  # GC concurrent issue potential fix
+  # https://trac.webkit.org/changeset/251307/webkit
+  "jsc_fix_concurrent_gc_issue.patch"
 )
 
 if [[ "$I18N" = false ]]

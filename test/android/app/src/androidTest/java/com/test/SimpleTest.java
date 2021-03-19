@@ -36,7 +36,7 @@ public class SimpleTest {
 
     @Test
     public void testIfAppLoads() {
-      onView(isRoot()).perform(waitText("Welcome to React Native!", 10000));
+      onView(isRoot()).perform(waitText("Welcome to React", 10000));
     }
 
     public static ViewAction waitText(final String text, final long millis) {

@@ -1,0 +1,89 @@
+name: Build jsc-android and test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: reactnativecommunity/react-native-android:2019-9-4
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install packages
+      run: |
+        apt-get update
+        apt-get install coreutils realpath curl git subversion python3.5 python3.5-dev ruby gperf -y
+        update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+        echo 'export NVM_DIR="$HOME/.nvm"' >> "${HOME}/.bashrc"
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> "${HOME}/.bashrc"
+        source "${HOME}/.bashrc"
+        nvm install 10
+        nvm use 10
+        nvm alias default 10
+      shell: bash
+
+    - name: Install Android packages
+      run: |
+        sdkmanager \
+          "lldb;3.0" \
+          "cmake;3.10.2.4988404"
+      shell: bash
+    - name: Build
+      run: |
+        yarn clean
+        yarn download
+        yarn start
+      shell: bash
+
+    - name: Archive
+      run: |
+          mkdir -p archive
+          mv dist archive/
+          mv dist.unstripped archive/
+      shell: bash
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: archive
+        path: archive
+
+
+  test:
+    needs: build
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: actions/download-artifact@master
+      with:
+        name: archive
+        path: archive
+
+    - name: Launch AVD
+      run: |
+          source scripts/android-setup.sh
+          export PATH="${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+          export AVD_PACKAGES="system-images;android-${ANDROID_SDK_TARGET_API_LEVEL};google_apis;${AVD_ABI}"
+          sdkmanager "${AVD_PACKAGES}"
+          createAVD
+          launchAVD &
+      shell: bash
+
+    - name: Wait AVD
+      run: |
+        export PATH="${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+        source scripts/android-setup.sh
+        set +e +o pipefail
+        waitForAVD
+      shell: bash
+
+    - name: Run test
+      run: |
+        mv archive/dist .
+        cd test
+        yarn
+        cd android && ./gradlew assembleDebug assembleAndroidTest connectedAndroidTest
+      shell: bash

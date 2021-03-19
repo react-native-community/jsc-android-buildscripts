@@ -3,14 +3,10 @@
 SCRIPT_DIR=$(cd `dirname $0`; pwd)
 
 compile_arch() {
-  echo -e '\033]2;'"compiling toolchain for $JSC_ARCH $FLAVOR"'\007'
-  printf "\n\n\n\t\t=================== compiling toolchain for $JSC_ARCH $FLAVOR ===================\n\n\n"
-  $SCRIPT_DIR/toolchain.sh
-  
   echo -e '\033]2;'"compiling icu for $JSC_ARCH $FLAVOR"'\007'
   printf "\n\n\n\t\t=================== compiling icu for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/icu.sh
-  
+
   echo -e '\033]2;'"compiling jsc for $JSC_ARCH $FLAVOR"'\007'
   printf "\n\n\n\t\t=================== compiling jsc for $JSC_ARCH $FLAVOR ===================\n\n\n"
   $SCRIPT_DIR/jsc.sh
@@ -23,7 +19,6 @@ compile() {
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_32
     export JSC_ARCH=$arch
-    export ENABLE_COMPAT=1
     compile_arch
   done
 
@@ -31,7 +26,6 @@ compile() {
   do
     export ANDROID_API=$ANDROID_API_FOR_ABI_64
     export JSC_ARCH=$arch
-    export ENABLE_COMPAT=0
     compile_arch
   done
 }

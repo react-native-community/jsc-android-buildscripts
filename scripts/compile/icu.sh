@@ -17,6 +17,7 @@ cd $BUILD_DIR
 
 CROSS_BUILD_DIR=$(realpath $TARGETDIR/icu/host)
 PATH=$TOOLCHAIN_DIR/bin:$PATH
+INSTALL_DIR=${BUILD_DIR}/prebuilts
 
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
@@ -26,7 +27,7 @@ else
 fi
 
 ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
-$TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
+$TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
     $BUILD_TYPE_CONFIG \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-static=yes \
@@ -43,15 +44,14 @@ $TARGETDIR/icu/source/configure --prefix=$(pwd)/prebuilts \
     CFLAGS="$ICU_CFLAGS" \
     CXXFLAGS="$ICU_CXXFLAGS" \
     LDFLAGS="$ICU_LDFLAGS" \
-    CC=$CROSS_COMPILE_PLATFORM-clang \
-    CXX=$CROSS_COMPILE_PLATFORM-clang++ \
+    CC=$CROSS_COMPILE_PLATFORM_CC-clang \
+    CXX=$CROSS_COMPILE_PLATFORM_CC-clang++ \
     AR=$CROSS_COMPILE_PLATFORM-ar \
     RINLIB=$CROSS_COMPILE_PLATFORM-ranlib \
     --with-data-packaging=static
 
-make -j5
+make -j5 install
 
 if ! [[ $ENABLE_INTL ]]; then
-  rm lib/libicui18n_jsc.a
-  cp stubdata/libicudata_jsc.a lib/
+  cp stubdata/libicudata.a ${INSTALL_DIR}/lib/
 fi

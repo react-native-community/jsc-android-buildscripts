@@ -1,0 +1,52 @@
+--- download/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp	2019-08-28 06:14:52.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/runtime/IntlDateTimeFormat.cpp	2019-12-19 11:44:16.000000000 +0800
+@@ -40,6 +40,7 @@
+ #include <unicode/udatpg.h>
+ #include <unicode/uenum.h>
+ #include <wtf/text/StringBuilder.h>
++#include <sys/system_properties.h>
+
+ #if JSC_ICU_HAS_UFIELDPOSITER
+ #include <unicode/ufieldpositer.h>
+@@ -121,14 +123,35 @@
+     // 6.4.3 DefaultTimeZone () (ECMA-402 2.0)
+     // The DefaultTimeZone abstract operation returns a String value representing the valid (6.4.1) and canonicalized (6.4.2) time zone name for the host environment’s current time zone.
+
+-    UErrorCode status = U_ZERO_ERROR;
++    UErrorCode status = U_UNDEFINED_VARIABLE;
+     Vector<UChar, 32> buffer(32);
+-    auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
+-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+-        status = U_ZERO_ERROR;
+-        buffer.grow(bufferLength);
+-        ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
++    size_t bufferLength = 32;
++
++    // [0] Try to get timezone from Android system property
++    char systemPropBuffer[2 * (PROP_VALUE_MAX + 1)] = {0};
++    if (__system_property_get("persist.sys.timezone", systemPropBuffer) != 0) {
++        size_t systemPropLength = strlen(systemPropBuffer);
++        bufferLength = systemPropLength;
++        if (bufferLength > buffer.capacity()) {
++            buffer.grow(bufferLength);
++        }
++
++        if (u_uastrncpy(buffer.data(), systemPropBuffer, buffer.capacity())) {
++            status = U_ZERO_ERROR;
++        }
+     }
++
++    // [1] Fallback to get timezone from ICU default
++    if (U_FAILURE(status)) {
++        bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
++        if (status == U_BUFFER_OVERFLOW_ERROR) {
++            status = U_ZERO_ERROR;
++            buffer.grow(bufferLength);
++            ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
++        }
++    }
++
++    // [2] Get canonical timezone ID
+     if (U_SUCCESS(status)) {
+         status = U_ZERO_ERROR;
+         Vector<UChar, 32> canonicalBuffer(32);

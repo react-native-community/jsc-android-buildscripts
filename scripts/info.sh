@@ -8,8 +8,8 @@ export REVISION=$(svn info "${URL}" | sed -n 's/^Last Changed Rev: //p')
 CONFIG=$(node -e "console.log(require('$ROOTDIR/package.json').config)")
 APPLE_VERSION=$(svn cat "${URL}/Source/WebCore/Configurations/Version.xcconfig" | grep 'MAJOR_VERSION\s=\|MINOR_VERSION\s=\|TINY_VERSION\s=\|MICRO_VERSION\s=\|NANO_VERSION\s=')
 
-if [ -d "$ROOTDIR/build/compiled" ]; then
-  SIZE=$(du -ah $ROOTDIR/build/compiled)
+if [ -d "$INSTALL_DIR_I18N_false" ]; then
+  SIZE=$(du -ah $INSTALL_DIR_I18N_false)
 else
   SIZE="0"
 fi
