@@ -7,13 +7,13 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import android.view.View;
 
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.util.TreeIterables;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.filters.LargeTest;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import java.util.concurrent.TimeoutException;
@@ -29,10 +29,8 @@ import org.hamcrest.Matcher;
 @LargeTest
 public class SimpleTest {
 
-    @Before
-    public void launchActivity() {
-      ActivityScenario.launch(MainActivity.class);
-    }
+    @Rule public ActivityScenarioRule<MainActivity> activityScenarioRule
+            = new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
     public void testIfAppLoads() {
