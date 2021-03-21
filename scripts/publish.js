@@ -38,7 +38,7 @@ createPatchedContext(rootDir, '', () => {
   if (fs.existsSync(distDir)) {
     rimraf.sync(distDir);
   }
-  fs.renameSync(path.join(workDir, 'archive', 'dist'), distDir);
+  fs.renameSync(path.join(workDir, 'dist'), distDir);
   const publishArgs = ['publish', '--tag', commander.tag];
   if (commander.dryRun) {
     publishArgs.push('--dry-run');
@@ -55,7 +55,7 @@ createPatchedContext(rootDir, 'unstripped', () => {
   if (fs.existsSync(distDir)) {
     rimraf.sync(distDir);
   }
-  fs.renameSync(path.join(workDir, 'archive', 'dist.unstripped'), distDir);
+  fs.renameSync(path.join(workDir, 'dist.unstripped'), distDir);
   const publishArgs = ['publish', '--tag', `${commander.tag}-unstripped`];
   if (commander.dryRun) {
     publishArgs.push('--dry-run');
