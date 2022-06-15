@@ -1,0 +1,11 @@
+--- target-org/webkit/Source/JavaScriptCore/runtime/Options.h	2022-06-15 16:28:04.000000000 +0800
++++ target/webkit/Source/JavaScriptCore/runtime/Options.h	2022-06-14 15:19:42.000000000 +0800
+@@ -498,7 +498,7 @@
+     v(bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
+     v(bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
+     v(bool, useWeakRefs, false, Normal, "Expose the WeakRef constructor.") \
+-    v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
++    v(bool, useBigInt, true, Normal, "If true, we will enable BigInt support.") \
+     v(bool, useNullishAwareOperators, false, Normal, "Enable support for ?. and ?? operators.") \
+     v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
+     v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \

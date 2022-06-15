@@ -64,6 +64,9 @@ JSC_PATCHSET=(
   # GC concurrent issue potential fix
   # https://trac.webkit.org/changeset/251307/webkit
   "jsc_fix_concurrent_gc_issue.patch"
+
+  # enable bigint support
+  "jsc_usebigint.patch"
 )
 
 if [[ "$I18N" = false ]]
