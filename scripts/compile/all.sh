@@ -30,13 +30,6 @@ compile() {
   done
 }
 
-if ${I18N}
-then
-  export FLAVOR=intl
-  export ENABLE_INTL=1
-  compile
-else
-  export FLAVOR=no-intl
-  export ENABLE_INTL=0
-  compile
-fi
+export FLAVOR=intl
+export ENABLE_INTL=1
+compile
