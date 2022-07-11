@@ -11,9 +11,6 @@ export INSTALL_DIR=$ROOTDIR/build/compiled
 # JSC unstripped shared library install dir
 export INSTALL_UNSTRIPPED_DIR=$ROOTDIR/build/compiled.unstripped
 
-# CPP runtime shared library install dir
-export INSTALL_CPPRUNTIME_DIR=$ROOTDIR/build/cppruntime
-
 # Install dir for i18n build variants
 export INSTALL_DIR_I18N_true=$INSTALL_DIR/intl
 export INSTALL_DIR_I18N_false=$INSTALL_DIR/nointl
