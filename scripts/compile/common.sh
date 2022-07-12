@@ -49,38 +49,18 @@ TOOLCHAIN_PLATFORM=$(ls -1 $ANDROID_NDK/toolchains/llvm/prebuilt | head -1)
 TOOLCHAIN_DIR="$ANDROID_NDK/toolchains/llvm/prebuilt/$TOOLCHAIN_PLATFORM/"
 
 # settings
-PLATFORM_CFLAGS_arm=" \
--march=armv7-a \
--mfloat-abi=softfp \
--mfpu=neon \
--mthumb \
-"
-PLATFORM_LDFLAGS_arm=" \
--march=armv7-a \
--Wl,--fix-cortex-a8 \
-"
+PLATFORM_CFLAGS_arm=""
+PLATFORM_LDFLAGS_arm=""
 JNI_ARCH_arm=armeabi-v7a
 
 PLATFORM_LDFLAGS_arm64=""
 JNI_ARCH_arm64=arm64-v8a
 
-PLATFORM_CFLAGS_x86=" \
--march=i686 \
--mtune=intel \
--mssse3 \
--mfpmath=sse \
--m32 \
-"
+PLATFORM_CFLAGS_x86=""
 PLATFORM_LDFLAGS_x86=""
 JNI_ARCH_x86=x86
 
-PLATFORM_CFLAGS_x86_64=" \
--march=x86-64 \
--msse4.2 \
--mpopcnt \
--m64 \
--mtune=intel \
-"
+PLATFORM_CFLAGS_x86_64=""
 PLATFORM_LDFLAGS_x86_64=""
 JNI_ARCH_x86_64=x86_64
 
@@ -119,7 +99,7 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG -g0"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -Oz -flto=full"
     ICU_CFLAGS_BUILD_TYPE="-Oz"
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
@@ -149,7 +129,7 @@ $FRAME_POINTER_FLAG \
 -DCUSTOMIZE_REACT_NATIVE \
 $SWITCH_COMMON_CFLAGS_INTL \
 $CFLAGS_BUILD_TYPE \
--D__ANDROID_API__=${ANDROID_API} \
+-D__ANDROID_MIN_SDK_VERSION__=${ANDROID_API} \
 "
 
 COMMON_CXXFLAGS=" \
@@ -158,8 +138,6 @@ COMMON_CXXFLAGS=" \
 ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
 ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
 ICU_LDFLAGS="$COMMON_LDFLAGS \
--fuse-ld=gold \
--Wl,--icf=safe \
 $PLATFORM_LDFLAGS \
 "
 

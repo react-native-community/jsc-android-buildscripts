@@ -19,7 +19,7 @@ $PLATFORM_CFLAGS \
 CMAKE_LD_FLAGS=" \
 -latomic \
 -lm \
--lc++_shared \
+-static-libstdc++ \
 $JSC_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
@@ -90,7 +90,5 @@ mkdir -p $INSTALL_UNSTRIPPED_DIR_I18N/$JNI_ARCH
 mkdir -p $INSTALL_DIR_I18N/$JNI_ARCH
 cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_UNSTRIPPED_DIR_I18N/$JNI_ARCH
 cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_DIR_I18N/$JNI_ARCH
-$TOOLCHAIN_DIR/$CROSS_COMPILE_PLATFORM/bin/strip $INSTALL_DIR_I18N/$JNI_ARCH/libjsc.so
+$TOOLCHAIN_DIR/bin/llvm-strip $INSTALL_DIR_I18N/$JNI_ARCH/libjsc.so
 mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
-
-cp $TOOLCHAIN_DIR/sysroot/usr/lib/$CROSS_COMPILE_PLATFORM/libc++_shared.so $INSTALL_CPPRUNTIME_DIR

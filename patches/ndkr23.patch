@@ -1,0 +1,53 @@
+--- target-org/webkit/Source/bmalloc/libpas/src/libpas/pas_min_heap.h	2021-11-16 15:02:45.000000000 +0800
++++ target/webkit/Source/bmalloc/libpas/src/libpas/pas_min_heap.h	2022-07-10 11:45:19.000000000 +0800
+@@ -260,7 +260,7 @@
+         \
+         size_t index = config.get_index(&element); \
+         PAS_ASSERT(index); \
+-        PAS_ASSERT(!bcmp(name##_get_ptr_by_index(min_heap, index), &element, sizeof(type))); \
++        PAS_ASSERT(!memcmp(name##_get_ptr_by_index(min_heap, index), &element, sizeof(type))); \
+         name##_remove_by_index(min_heap, index); \
+     } \
+     \
+--- target-org/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c	2022-07-10 22:34:50.000000000 +0800
++++ target/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c	2022-07-10 23:15:53.000000000 +0800
+@@ -201,9 +201,9 @@
+     else
+         pas_log("[%d] thread %p does not have id\n", getpid(), thread);
+ #endif
+-    if (!pthread_getname_np(thread, thread_name, sizeof(thread_name)))
+-        pas_log("[%d] thread %p has name %s\n", getpid(), (void*)thread, thread_name);
+-    else
++    // if (!pthread_getname_np(thread, thread_name, sizeof(thread_name)))
++    //     pas_log("[%d] thread %p has name %s\n", getpid(), (void*)thread, thread_name);
++    // else
+         pas_log("[%d] thread %p does not have name\n", getpid(), (void*)thread);
+ }
+ 
+--- target-org/webkit/Source/cmake/OptionsCommon.cmake	2022-02-12 06:46:36.000000000 +0800
++++ target/webkit/Source/cmake/OptionsCommon.cmake	2022-07-10 22:56:50.000000000 +0800
+@@ -1,10 +1,11 @@
+-set(CMAKE_CXX_STANDARD 20)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ 
+ add_definitions(-DBUILDING_WITH_CMAKE=1)
+ add_definitions(-DHAVE_CONFIG_H=1)
+ add_definitions(-DPAS_BMALLOC=1)
++add_definitions(-DHAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR=1)
+ 
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ define_property(TARGET PROPERTY FOLDER INHERITED BRIEF_DOCS "folder" FULL_DOCS "IDE folder name")
+--- target-org/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake	2021-10-20 16:26:42.000000000 +0800
++++ target/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake	2022-07-10 12:49:42.000000000 +0800
+@@ -95,7 +95,7 @@
+     list(APPEND WTF_PUBLIC_HEADERS
+         spi/darwin/ProcessMemoryFootprint.h
+     )
+-elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
++elseif (CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Android")
+     list(APPEND WTF_SOURCES
+         linux/CurrentProcessMemoryStatus.cpp
+         linux/MemoryFootprintLinux.cpp
+

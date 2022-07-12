@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-export ANDROID_API_FOR_ABI_32=16
+export ANDROID_API_FOR_ABI_32=21
 export ANDROID_API_FOR_ABI_64=21
 export ROOTDIR=$PWD
 
@@ -96,26 +96,18 @@ copyHeaders() {
   cp -Rf $TARGETDIR/webkit/Source/JavaScriptCore/API/*.h ${distDir}/include
 }
 
-export I18N=false
-prep
-compile
-
 export I18N=true
 prep
 compile
 
 export DISTDIR=${ROOTDIR}/dist
 printf "\n\n\t\t===================== create stripped distributions =====================\n\n"
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_false} "false"
 createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_true} "true"
-createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
 copyHeaders ${DISTDIR}
 
 printf "\n\n\t\t===================== create unstripped distributions =====================\n\n"
 export DISTDIR=${ROOTDIR}/dist.unstripped
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_false} "false"
 createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_true} "true"
-createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
 copyHeaders ${DISTDIR}
 
 npm run info

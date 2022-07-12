@@ -8,3 +8,16 @@
 
  # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
 
+--- target-org/webkit/Source/cmake/OptionsJSCOnly.cmake	2022-07-09 15:31:32.000000000 +0800
++++ target/webkit/Source/cmake/OptionsJSCOnly.cmake	2022-07-10 12:40:43.000000000 +0800
+@@ -58,8 +58,8 @@
+ # https://bugs.webkit.org/show_bug.cgi?id=172862
+ if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
+     set(JavaScriptCore_LIBRARY_TYPE SHARED)
+-    set(bmalloc_LIBRARY_TYPE OBJECT)
+-    set(WTF_LIBRARY_TYPE OBJECT)
++    set(bmalloc_LIBRARY_TYPE STATIC)
++    set(WTF_LIBRARY_TYPE STATIC)
+ endif ()
+ 
+ if (WIN32)
