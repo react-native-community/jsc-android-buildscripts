@@ -64,6 +64,7 @@ $TARGETDIR/webkit/Tools/Scripts/build-webkit \
   --no-netscape-plugin-api \
   --no-tools \
   --cmakeargs="-DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \
+  -DUSE_LD_GOLD=OFF \
   -DANDROID_ABI=${JNI_ARCH} \
   -DANDROID_PLATFORM=${ANDROID_API} \
   -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
@@ -92,3 +93,5 @@ cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_UNSTRIPPED_D
 cp $TARGETDIR/webkit/WebKitBuild/$BUILD_TYPE/lib/libjsc.so $INSTALL_DIR_I18N/$JNI_ARCH
 $TOOLCHAIN_DIR/bin/llvm-strip $INSTALL_DIR_I18N/$JNI_ARCH/libjsc.so
 mv $TARGETDIR/webkit/WebKitBuild $TARGETDIR/webkit/${CROSS_COMPILE_PLATFORM}-${FLAVOR}
+
+cp $TOOLCHAIN_DIR/sysroot/usr/lib/$CROSS_COMPILE_PLATFORM/libc++_shared.so $INSTALL_CPPRUNTIME_DIR
