@@ -1,11 +1,14 @@
 name: Build jsc-android and test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: reactnativecommunity/react-native-android:2019-9-4
+    container: reactnativecommunity/react-native-android:5.4
 
     steps:
     - uses: actions/checkout@v1
@@ -13,22 +16,27 @@ jobs:
     - name: Install packages
       run: |
         apt-get update
-        apt-get install coreutils realpath curl git subversion python3.5 python3.5-dev ruby gperf -y
-        update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1
-        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+        apt-get install coreutils curl git subversion wget python3 ruby gperf -y
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
         echo 'export NVM_DIR="$HOME/.nvm"' >> "${HOME}/.bashrc"
         echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> "${HOME}/.bashrc"
         source "${HOME}/.bashrc"
-        nvm install 10
-        nvm use 10
-        nvm alias default 10
+        nvm install 16
+        nvm use 16
+        nvm alias default 16
       shell: bash
 
     - name: Install Android packages
       run: |
         sdkmanager \
-          "cmake;3.10.2.4988404"
+          "cmake;3.10.2.4988404" \
+          "cmake;3.18.1" \
+          "ndk;23.2.8568313"
+        # move out builtin icu headers from ndk and prevent icu build errors
+        mv "${ANDROID_HOME}/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode" "${ANDROID_HOME}/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode2"
+        echo "ANDROID_NDK=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
       shell: bash
+
     - name: Build
       run: |
         yarn clean
@@ -64,7 +72,7 @@ jobs:
     - name: Run test
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: 16
-        arch: x86
+        api-level: 21
+        arch: x86_64
         disable-animations: false
         script: mv archive/dist . && cd test && yarn && cd android && ./gradlew assembleRelease assembleAndroidTest connectedAndroidTest

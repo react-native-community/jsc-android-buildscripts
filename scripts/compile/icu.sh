@@ -46,8 +46,10 @@ $TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
     LDFLAGS="$ICU_LDFLAGS" \
     CC=$CROSS_COMPILE_PLATFORM_CC-clang \
     CXX=$CROSS_COMPILE_PLATFORM_CC-clang++ \
-    AR=$CROSS_COMPILE_PLATFORM-ar \
-    RINLIB=$CROSS_COMPILE_PLATFORM-ranlib \
+    AR=$TOOLCHAIN_DIR/bin/llvm-ar \
+    LD=$TOOLCHAIN_DIR/bin/ld \
+    RANLIB=$TOOLCHAIN_DIR/bin/llvm-ranlib \
+    STRIP=$TOOLCHAIN_DIR/bin/llvm-strip \
     --with-data-packaging=static
 
 make -j5 install
