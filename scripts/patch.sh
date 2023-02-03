@@ -15,6 +15,9 @@ JSC_PATCHSET=(
   # Feature toggles, e.g. disable unnecessary build or JIT settings
   "jsc_features.patch"
 
+  # NDK r23 errors
+  "ndkr23.patch"
+
   # NDK does not support backtrace and execinfo.h
   "jsc_fix_build_error_execinfo.patch"
 
