@@ -36,10 +36,10 @@ jobs:
       run: |
         sdkmanager \
           "cmake;3.22.1" \
-          "ndk;23.2.8568313"
+          "ndk;23.1.7779620"
         # move out builtin icu headers from ndk and prevent icu build errors
-        mv "${ANDROID_HOME}/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode" "${ANDROID_HOME}/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode2"
-        echo "ANDROID_NDK=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
+        mv "${ANDROID_HOME}/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode" "${ANDROID_HOME}/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode2"
+        echo "ANDROID_NDK=$ANDROID_HOME/ndk/23.1.7779620" >> $GITHUB_ENV
       shell: bash
 
     - name: Build
