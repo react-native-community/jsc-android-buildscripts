@@ -19,7 +19,7 @@ $PLATFORM_CFLAGS \
 CMAKE_LD_FLAGS=" \
 -latomic \
 -lm \
--static-libstdc++ \
+-lc++_shared \
 $JSC_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
