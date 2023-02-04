@@ -134,6 +134,8 @@ android {
         }
     }
 
+    testBuildType 'release'
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -169,10 +171,10 @@ dependencies {
         implementation jscFlavor
     }
 
-    androidTestImplementation 'androidx.test:core:1.4.0';
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3';
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0';
+    androidTestImplementation 'androidx.test:core:1.5.0';
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5';
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1';
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

@@ -44,6 +44,7 @@ jobs:
 
     - name: Build
       run: |
+        yarn install --frozen-lockfile
         yarn clean
         yarn download
         yarn start
@@ -79,6 +80,10 @@ jobs:
       with:
         name: archive
         path: archive
+
+    - name: Install node packages
+      run: yarn install --frozen-lockfile
+      working-directory: test
 
     - name: Run test
       uses: reactivecircus/android-emulator-runner@v2
