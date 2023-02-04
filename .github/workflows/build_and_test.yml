@@ -91,4 +91,4 @@ jobs:
         api-level: 21
         arch: x86_64
         disable-animations: false
-        script: mv archive/dist . && cd test && yarn && cd android && ./gradlew assembleRelease assembleAndroidTest connectedAndroidTest
+        script: mv archive/dist . && cd test && yarn && cd android && ./gradlew :app:assembleRelease :app:assembleAndroidTest :app:connectedAndroidTest
