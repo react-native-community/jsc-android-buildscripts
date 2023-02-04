@@ -76,7 +76,9 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+// def jscFlavor = 'org.webkit:android-jsc:+'
+def jscVersion = ["node", "-e", "console.log(require('${rootDir}/../../package.json').version.split('.')[0]);"].execute([], projectDir).text.trim()
+def jscFlavor = "org.webkit:android-jsc:r${jscVersion}"
 
 /**
  * Private function to get the list of Native Architectures you want to build.
