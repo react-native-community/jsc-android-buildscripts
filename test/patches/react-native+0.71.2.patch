@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native/ReactAndroid/src/main/jni/react/jscexecutor/CMakeLists.txt b/node_modules/react-native/ReactAndroid/src/main/jni/react/jscexecutor/CMakeLists.txt
+index 464aa19..e0c3c8e 100644
+--- a/node_modules/react-native/ReactAndroid/src/main/jni/react/jscexecutor/CMakeLists.txt
++++ b/node_modules/react-native/ReactAndroid/src/main/jni/react/jscexecutor/CMakeLists.txt
+@@ -16,6 +16,7 @@ target_include_directories(jscexecutor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(jscexecutor
+         jsireact
+         jscruntime
++        unwind
+         fb
+         fbjni
+         folly_runtime
