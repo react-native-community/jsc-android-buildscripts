@@ -141,4 +141,4 @@ $PLATFORM_LDFLAGS \
 "
 
 JSC_LDFLAGS="$COMMON_LDFLAGS"
-JSC_CFLAGS="$COMMON_CFLAGS -Wno-implicit-const-int-float-conversion -DU_STATIC_IMPLEMENTATION=1 -DU_SHOW_CPLUSPLUS_API=0 -DTRUE=1 -DFALSE=0"
+JSC_CFLAGS="$COMMON_CFLAGS -Wno-implicit-const-int-float-conversion -Wno-cast-align -Wno-incompatible-pointer-types-discards-qualifiers -DU_STATIC_IMPLEMENTATION=1 -DU_SHOW_CPLUSPLUS_API=0 -DTRUE=1 -DFALSE=0"
