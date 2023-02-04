@@ -27,4 +27,23 @@ allprojects {
             url("$rootDir/../../dist")
         }
     }
+
+    configurations.all {
+        if (findProperty("buildReactNativeFromSource") == "true") {
+            resolutionStrategy.dependencySubstitution {
+                substitute(module("com.facebook.react:react-native"))
+                    .using(project(":ReactAndroid"))
+                    .because("Building React Native from source")
+                substitute(module("com.facebook.react:react-android"))
+                    .using(project(":ReactAndroid"))
+                    .because("Building React Native from source")
+                substitute(module("com.facebook.react:hermes-engine"))
+                    .using(project(":ReactAndroid:hermes-engine"))
+                    .because("Building Hermes from source")
+                substitute(module("com.facebook.react:hermes-android"))
+                    .using(project(":ReactAndroid:hermes-engine"))
+                    .because("Building Hermes from source")
+            }
+        }
+    }
 }
