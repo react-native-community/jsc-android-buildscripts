@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 def distDir = project.findProperty("distDir") ?: ""
 def jniLibsDir = project.findProperty("jniLibsDir") ?: ""
@@ -11,42 +12,54 @@ if (!revision) throw new RuntimeException("expecting --project-prop revision=???
 if (!i18n) throw new RuntimeException("expecting --project-prop i18n=??? but was empty")
 
 android {
-    compileSdkVersion 28
+  namespace 'org.webkit.androidjsc'
+  compileSdkVersion 35
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-    }
+  defaultConfig {
+    minSdkVersion 24
+      targetSdkVersion 34
+      versionCode 1
+      versionName "1.0"
+  }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ["${jniLibsDir}"]
-        }
+  sourceSets {
+    main {
+      jniLibs.srcDirs = ["${jniLibsDir}"]
     }
+  }
 
-    packagingOptions {
-        doNotStrip "**/libjsc.so"
+  packagingOptions {
+    doNotStrip "**/libjsc.so"
+  }
+
+  publishing {
+    singleVariant("release") {
     }
+  }
 }
 
 dependencies {}
 
-apply plugin: 'maven'
+project.group = "org.webkit"
+def artifactName = Boolean.valueOf(i18n) ? "android-jsc-intl" : "android-jsc"
+project.version = "r${revision}"
 
-task createAAR(type: Upload) {
-    project.group = "org.webkit"
-    def artifactName = Boolean.valueOf(i18n) ? "android-jsc-intl" : "android-jsc"
-    project.version = "r${revision}"
-
-    configuration = configurations.archives
-    repositories.mavenDeployer {
-        repository url: "file://${distDir}"
-        pom.project {
-            name "android-jsc"
-            artifactId artifactName
-            packaging "aar"
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        from components.release
+        pom {
+          name = "android-jsc"
+          artifactId = artifactName
+          packaging = "aar"
         }
+      }
     }
+    repositories {
+      maven {
+        url = "file://${distDir}"
+      }
+    }
+  }
 }
