@@ -1,0 +1,124 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+def distDir = project.findProperty("distDir") ?: ""
+def jniLibsDir = project.findProperty("jniLibsDir") ?: ""
+def headersDir = project.findProperty("headersDir") ?: "${distDir}/include"
+def version = project.findProperty("version") ?: "".replaceAll("\\s", "")
+def i18n = project.findProperty("i18n") ?: ""
+
+def signingKey = project.findProperty('signingKey')
+def signingPassword = project.findProperty('signingPassword')
+
+if (!distDir) throw new RuntimeException("expecting --project-prop distDir=??? but was empty")
+if (!jniLibsDir) throw new RuntimeException("expecting --project-prop jniLibsDir=??? but was empty")
+if (!version) throw new RuntimeException("expecting --project-prop version=??? but was empty")
+if (!i18n) throw new RuntimeException("expecting --project-prop i18n=??? but was empty")
+
+android {
+  namespace 'io.github.react_native_community.jscandroid'
+  compileSdkVersion 35
+
+  defaultConfig {
+    minSdkVersion 24
+    targetSdkVersion 34
+    versionCode 1
+    versionName "1.0"
+
+    externalNativeBuild {
+      cmake {
+        arguments '-DANDROID_STL=c++_shared',
+                  "-DPREBUILT_LIBS_DIR=${jniLibsDir}"
+        targets   'jsc'
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path 'CMakeLists.txt'
+    }
+  }
+
+  packagingOptions {
+    doNotStrip '**/libjsc.so'
+    pickFirst '**/libjsc.so'
+
+    excludes += [
+      '**/libc++_shared.so',
+    ]
+  }
+
+  buildFeatures {
+    prefabPublishing true
+  }
+
+  prefab {
+    jsc {
+      headerOnly true
+      headers file(headersDir).absolutePath
+    }
+  }
+
+  publishing {
+    singleVariant("release") {
+    }
+  }
+}
+
+dependencies {}
+
+project.group = "io.github.react-native-community"
+def artifactName = Boolean.valueOf(i18n) ? "jsc-android-intl" : "jsc-android"
+project.version = "${version}"
+
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        from components.release
+        pom {
+          name = artifactName
+          artifactId = artifactName
+          description = 'Pre-build version of JavaScriptCore to be used by React Native apps'
+          url = 'https://github.com/react-native-community/jsc-android-buildscripts'
+
+          developers {
+            developer {
+              id = 'react-native-community'
+              name = 'React Native Community'
+            }
+          }
+
+          licenses {
+            license {
+              name = 'BSD-2-Clause'
+              url = 'https://github.com/react-native-community/jsc-android-buildscripts/blob/main/LICENSE'
+              distribution = 'repo'
+            }
+          }
+
+          scm {
+            url = 'https://github.com/react-native-community/jsc-android-buildscripts.git'
+            connection = 'scm:git:https://github.com/react-native-community/jsc-android-buildscripts.git'
+            developerConnection = 'scm:git:git@github.com:react-native-community/jsc-android-buildscripts.git'
+          }
+        }
+      }
+    }
+
+    repositories {
+      maven {
+        url = "file://${distDir}"
+      }
+    }
+
+    if (signingKey && signingPassword) {
+      signing {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.release
+      }
+    }
+  }
+}

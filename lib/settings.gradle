@@ -1,4 +1,4 @@
 rootProject.name = 'JavaScriptCore Lib'
 
-include ':android-jsc'
+include ':jsc-android'
 include ':cppruntime'

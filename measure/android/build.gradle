@@ -6,7 +6,7 @@ ext {
     JSC_VERSION = jscAAR ? file(file(jscAAR).getParent()).getName() : ""
 
     def i18nProp = project.findProperty("i18n")
-    JSC_NAME = Boolean.valueOf(i18nProp) ? "android-jsc-intl" : "android-jsc"
+    JSC_NAME = Boolean.valueOf(i18nProp) ? "jsc-android-intl" : "jsc-android"
 
     isIDE = System.getProperties()['idea.platform.prefix'] != null
 }
@@ -18,7 +18,7 @@ if (!isIDE && JSC_VERSION) {
         configurations.all {
             resolutionStrategy {
                 eachDependency { DependencyResolveDetails details ->
-                    if (details.requested.name == 'android-jsc') {
+                    if (details.requested.name == 'jsc-android') {
                         details.useTarget group: details.requested.group, name: JSC_NAME, version: JSC_VERSION
                     }
                 }
@@ -43,7 +43,7 @@ buildscript {
 
 allprojects {
     repositories {
-        // this tells gradle where android-jsc resides
+        // this tells gradle where jsc-android resides
         maven {
             url JSC_DIR
         }

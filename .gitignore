@@ -20,6 +20,7 @@ package-lock.json
 bin/
 gen/
 out/
+.cxx/
 
 # Gradle files
 .gradle/

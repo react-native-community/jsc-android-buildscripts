@@ -3,14 +3,14 @@ apply plugin: 'maven-publish'
 
 def distDir = project.findProperty("distDir") ?: ""
 def jniLibsDir = project.findProperty("jniLibsDir") ?: ""
-def revision = project.findProperty("revision") ?: "".replaceAll("\\s", "")
+def version = project.findProperty("version") ?: "".replaceAll("\\s", "")
 
 if (!distDir) throw new RuntimeException("expecting --project-prop distDir=??? but was empty")
 if (!jniLibsDir) throw new RuntimeException("expecting --project-prop jniLibsDir=??? but was empty")
-if (!revision) throw new RuntimeException("expecting --project-prop revision=??? but was empty")
+if (!version) throw new RuntimeException("expecting --project-prop version=??? but was empty")
 
 android {
-  namespace 'org.webkit.androidjsc_cppruntime'
+  namespace 'io.github.react_native_community.jscandroid_cppruntime'
   compileSdkVersion 35
 
   defaultConfig {
@@ -34,8 +34,8 @@ android {
 
 dependencies {}
 
-project.group = "org.webkit"
-project.version = "r${revision}"
+project.group = "io.github.react-native-community"
+project.version = "${version}"
 
 afterEvaluate {
   publishing {
@@ -43,8 +43,8 @@ afterEvaluate {
       release(MavenPublication) {
         from components.release
         pom {
-          name = "android-jsc"
-          artifactId = "android-jsc-cppruntime"
+          name = "jsc-android"
+          artifactId = "jsc-android-cppruntime"
           packaging = "aar"
         }
       }
