@@ -19,7 +19,7 @@ This project is based on [facebook/android-jsc](https://github.com/facebook/andr
   * Set `export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin`
 * Android NDK r19c: download from [NDK Archives](https://developer.android.com/ndk/downloads/older_releases.html)
   * Set `export ANDROID_NDK=/path/to/android-ndk-r19c`
-* Make sure you have Ruby (>2.3), Python (>2.7), Git, SVN, gperf
+* Make sure you have Ruby (>2.3), Python (>2.7), Git, gperf
 
 ## Build instructions
 
@@ -235,7 +235,7 @@ packagingOptions {
 ```
 
 ## Resources
-- [WebkitGTK Sources](https://svn.webkit.org/repository/webkit/releases/WebKitGTK/)
+- [WebKit Sources](https://github.com/WebKit/WebKit)
 - [ICU Sources](https://android.googlesource.com/platform/external/icu/)
 - [Info about Webkit Revisions](https://trac.webkit.org/browser/webkit/releases/WebKitGTK)
 - [Info about JSC version used on iOS](https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.18.2/Source/WebCore/Configurations/Version.xcconfig)

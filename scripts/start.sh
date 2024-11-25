@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-export ANDROID_API_FOR_ABI_32=16
-export ANDROID_API_FOR_ABI_64=21
+export ANDROID_API_FOR_ABI_32=24
+export ANDROID_API_FOR_ABI_64=24
 export ROOTDIR=$PWD
 
 source $ROOTDIR/scripts/env.sh
@@ -81,7 +81,7 @@ createAAR() {
   local i18n=$4
   printf "\n\n\t\t===================== create aar :${target}: =====================\n\n"
   cd $ROOTDIR/lib
-  ./gradlew clean :${target}:createAAR \
+  ./gradlew clean :${target}:publish \
       --project-prop distDir="${distDir}" \
       --project-prop jniLibsDir="${jniLibsDir}" \
       --project-prop revision="$REVISION" \

@@ -1,6 +1,6 @@
 {
   "name": "jsc-android",
-  "version": "250231.0.0",
+  "version": "2026004.0.0",
   "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
   "repository": {
     "type": "git",
@@ -26,12 +26,12 @@
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.26.1",
+    "webkitGTK": "2.26.4",
     "chromiumICUCommit": "64e5d7d43a1ff205e3787ab6150bbc1a1837332b"
   },
   "devDependencies": {
-    "commander": "^4.0.1",
-    "rimraf": "^3.0.0",
-    "semver": "^6.3.0"
+    "commander": "^12.1.0",
+    "rimraf": "^6.0.1",
+    "semver": "^7.6.3"
   }
 }

@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.webkit.androidjsc_cppruntime" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

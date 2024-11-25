@@ -1,5 +1,0 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <instrumentation android:targetPackage="com.test"
-                     android:name="androidx.test.runner.AndroidJUnitRunner"/>
-</manifest>
