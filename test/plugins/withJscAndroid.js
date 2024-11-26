@@ -1,28 +1,38 @@
 const assert = require('assert');
-const { withProjectBuildGradle } = require('expo/config-plugins');
+const { withAppBuildGradle } = require('expo/config-plugins');
 
-const withJscAndroidProjectBuildGradle = (config) => {
-  return withProjectBuildGradle(config, (config) => {
+const withJscAndroidAppBuildGradle = (config) => {
+  return withAppBuildGradle(config, (config) => {
     assert(config.modResults.language === 'groovy');
-    if (!config.modResults.contents.match(/\/\/ Local dist maven repo/)) {
-      const mavenRepo = `
-        maven {
-            // Local dist maven repo
-            url('../../dist')
-        }`;
-      config.modResults.contents = config.modResults.contents.replace(
-        /^(allprojects \{[\s\S]+?repositories \{)/gm,
-        `$1${mavenRepo}`
-      );
-    }
-
     if (
       !config.modResults.contents.match(
-        /io\.github\.react-native-community:jsc-android:/
+        /@generated withJscAndroidAppBuildGradle/
       )
     ) {
-      config.modResults.contents += `
-allprojects {
+      const code = `
+// [begin] @generated withJscAndroidAppBuildGradle
+afterEvaluate {
+  project.rootProject.allprojects {
+    // Remove original mavenCentral
+    repositories.removeIf { repo ->
+      repo instanceof MavenArtifactRepository && repo.url.toString().contains('https://repo.maven.apache.org/maven2')
+    }
+
+    repositories {
+      maven {
+        // Local dist maven repo
+        url("\${rootDir}/../../dist")
+      }
+
+      mavenCentral {
+        content {
+          excludeGroup('org.webkit')
+          excludeGroup('io.github.react-native-community')
+        }
+      }
+    }
+  }
+
   configurations.all {
     resolutionStrategy.dependencySubstitution {
       substitute(module('org.webkit:android-jsc'))
@@ -30,15 +40,16 @@ allprojects {
     }
   }
 }
+// [end] @generated withJscAndroidAppBuildGradle
 `;
+      config.modResults.contents += code;
     }
-
     return config;
   });
 };
 
 const withJscAndroid = (config) => {
-  config = withJscAndroidProjectBuildGradle(config);
+  config = withJscAndroidAppBuildGradle(config);
   return config;
 };
 

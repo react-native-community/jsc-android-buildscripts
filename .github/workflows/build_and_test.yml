@@ -99,8 +99,6 @@ jobs:
           mv archive/dist dist
           mv archive/dist.unstripped dist.unstripped
           rmdir archive
-          find dist
-          find dist.unstripped
       shell: bash
 
     - name: 🍺 Install Maestro
