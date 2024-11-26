@@ -79,12 +79,14 @@ createAAR() {
   local distDir=$2
   local jniLibsDir=$3
   local i18n=$4
+  local headersDir=${distDir}/include
   printf "\n\n\t\t===================== create aar :${target}: =====================\n\n"
   cd $ROOTDIR/lib
   ./gradlew clean :${target}:publish \
       --project-prop distDir="${distDir}" \
       --project-prop jniLibsDir="${jniLibsDir}" \
-      --project-prop revision="$REVISION" \
+      --project-prop headersDir="${headersDir}" \
+      --project-prop version="${npm_package_version}" \
       --project-prop i18n="${i18n}"
   cd $ROOTDIR
 }
@@ -104,19 +106,19 @@ export I18N=true
 prep
 compile
 
-export DISTDIR=${ROOTDIR}/dist
 printf "\n\n\t\t===================== create stripped distributions =====================\n\n"
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_false} "false"
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_DIR_I18N_true} "true"
-createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
+export DISTDIR=${ROOTDIR}/dist
 copyHeaders ${DISTDIR}
+createAAR "jsc-android" ${DISTDIR} ${INSTALL_DIR_I18N_false} "false"
+createAAR "jsc-android" ${DISTDIR} ${INSTALL_DIR_I18N_true} "true"
+createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
 
 printf "\n\n\t\t===================== create unstripped distributions =====================\n\n"
 export DISTDIR=${ROOTDIR}/dist.unstripped
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_false} "false"
-createAAR "android-jsc" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_true} "true"
-createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
 copyHeaders ${DISTDIR}
+createAAR "jsc-android" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_false} "false"
+createAAR "jsc-android" ${DISTDIR} ${INSTALL_UNSTRIPPED_DIR_I18N_true} "true"
+createAAR "cppruntime" ${DISTDIR} ${INSTALL_CPPRUNTIME_DIR} "false"
 
 npm run info
 

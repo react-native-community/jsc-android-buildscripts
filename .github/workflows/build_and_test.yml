@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
 
     steps:
     - uses: actions/checkout@v4
@@ -91,6 +94,13 @@ jobs:
         name: archive
         path: archive
 
+    - name: Extract archive
+      run: |
+          mv archive/dist dist
+          mv archive/dist.unstripped dist.unstripped
+          rmdir archive
+      shell: bash
+
     - name: 🍺 Install Maestro
       run: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -115,6 +125,20 @@ jobs:
         target: google_apis
         working-directory: test
         script: |
-          mv ../archive/dist ../dist
           npx expo run:android --variant release --no-bundler
+          adb logcat -c
+          set +e
           maestro test maestro.yaml
+          STATUS=$?
+          adb logcat -d > adb.log
+          exit $STATUS
+
+    - name: Upload failed artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failure_artifacts
+        path: |
+          $HOME/.maestro/tests/**/*
+          test/android/app/build/outputs/apk/release/app-release.apk
+          test/adb.log
