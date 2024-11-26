@@ -1,5 +1,8 @@
 const assert = require('assert');
-const { withAppBuildGradle } = require('expo/config-plugins');
+const {
+  withAppBuildGradle,
+  withProjectBuildGradle,
+} = require('expo/config-plugins');
 
 const withJscAndroidAppBuildGradle = (config) => {
   return withAppBuildGradle(config, (config) => {
@@ -13,7 +16,7 @@ const withJscAndroidAppBuildGradle = (config) => {
 // [begin] @generated withJscAndroidAppBuildGradle
 afterEvaluate {
   project.rootProject.allprojects {
-    // Remove original mavenCentral
+    // Remove original mavenCentral added by RNGP
     repositories.removeIf { repo ->
       repo instanceof MavenArtifactRepository && repo.url.toString().contains('https://repo.maven.apache.org/maven2')
     }
@@ -48,8 +51,28 @@ afterEvaluate {
   });
 };
 
+const withJscAndroidProjectBuildGradle = (config) => {
+  return withProjectBuildGradle(config, (config) => {
+    assert(config.modResults.language === 'groovy');
+    const code = `
+        mavenCentral {
+            content {
+                excludeGroup('org.webkit')
+                excludeGroup('io.github.react-native-community')
+            }
+        }
+`;
+    config.modResults.contents = config.modResults.contents.replace(
+      /^(\s+)(mavenCentral\(\))(\s*)$/gm,
+      code
+    );
+    return config;
+  });
+};
+
 const withJscAndroid = (config) => {
   config = withJscAndroidAppBuildGradle(config);
+  config = withJscAndroidProjectBuildGradle(config);
   return config;
 };
 
