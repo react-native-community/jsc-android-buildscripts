@@ -56,7 +56,6 @@ android {
 
   prefab {
     jsc {
-      headerOnly true
       headers file(headersDir).absolutePath
     }
   }
