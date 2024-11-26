@@ -94,6 +94,15 @@ jobs:
         name: archive
         path: archive
 
+    - name: Extract archive
+      run: |
+          mv archive/dist dist
+          mv archive/dist.unstripped dist.unstripped
+          rmdir archive
+          find dist
+          find dist.unstripped
+      shell: bash
+
     - name: 🍺 Install Maestro
       run: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -118,7 +127,6 @@ jobs:
         target: google_apis
         working-directory: test
         script: |
-          mv ../archive/dist ../dist
           npx expo run:android --variant release --no-bundler
           adb logcat -c
           set +e
