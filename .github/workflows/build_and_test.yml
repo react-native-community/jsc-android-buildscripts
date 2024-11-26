@@ -120,4 +120,19 @@ jobs:
         script: |
           mv ../archive/dist ../dist
           npx expo run:android --variant release --no-bundler
+          adb logcat -c
+          set +e
           maestro test maestro.yaml
+          STATUS=$?
+          adb logcat -d > adb.log
+          exit $STATUS
+
+    - name: Upload failed artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failure_artifacts
+        path: |
+          $HOME/.maestro/tests/**/*
+          test/android/app/build/outputs/apk/release/app-release.apk
+          test/adb.log
