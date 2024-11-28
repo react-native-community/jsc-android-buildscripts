@@ -11,6 +11,8 @@ def i18n = project.findProperty("i18n") ?: ""
 def signingKey = project.findProperty('signingKey')
 def signingPassword = project.findProperty('signingPassword')
 
+def prefabHeadersDir = "${buildDir}/prefab-headers"
+
 if (!distDir) throw new RuntimeException("expecting --project-prop distDir=??? but was empty")
 if (!jniLibsDir) throw new RuntimeException("expecting --project-prop jniLibsDir=??? but was empty")
 if (!version) throw new RuntimeException("expecting --project-prop version=??? but was empty")
@@ -56,7 +58,7 @@ android {
 
   prefab {
     jsc {
-      headers file(headersDir).absolutePath
+      headers file(prefabHeadersDir).absolutePath
     }
   }
 
@@ -72,7 +74,17 @@ project.group = "io.github.react-native-community"
 def artifactName = Boolean.valueOf(i18n) ? "jsc-android-intl" : "jsc-android"
 project.version = "${version}"
 
+tasks.register('preparePrefabHeaders', Copy) {
+  from("${headersDir}")
+  filesMatching('**/*.h') {
+    path = "JavaScriptCore/${it.name}"
+  }
+  into(file("${prefabHeadersDir}"))
+}
+
 afterEvaluate {
+  preBuild.dependsOn(preparePrefabHeaders)
+
   publishing {
     publications {
       release(MavenPublication) {
