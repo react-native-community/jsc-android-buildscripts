@@ -26,8 +26,10 @@
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.26.4",
-    "chromiumICUCommit": "64e5d7d43a1ff205e3787ab6150bbc1a1837332b"
+    "bunWebKitRepo": "https://github.com/oven-sh/WebKit.git",
+    "bunWebKitCommit": "6d0f3aac0b817cc01a846b3754b21271adedac12",
+    "icuRelease": "release-74-2",
+    "icuArchive": "icu4c-74_2-src.tgz"
   },
   "devDependencies": {
     "commander": "^12.1.0",

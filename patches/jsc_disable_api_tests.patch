@@ -1,0 +1,16 @@
+diff --git a/webkit/Source/cmake/OptionsJSCOnly.cmake b/webkit/Source/cmake/OptionsJSCOnly.cmake
+index f00830dd41..f9e131cfa3 100644
+--- a/webkit/Source/cmake/OptionsJSCOnly.cmake
++++ b/webkit/Source/cmake/OptionsJSCOnly.cmake
+@@ -101,10 +101,8 @@ else ()
+ endif ()
+ WEBKIT_OPTION_END()
+ 
+-if (WIN32)
++if (NOT DEFINED ENABLE_API_TESTS)
+     set(ENABLE_API_TESTS OFF)
+-else ()
+-    set(ENABLE_API_TESTS ON)
+ endif ()
+ 
+ if (WTF_CPU_ARM OR WTF_CPU_MIPS)

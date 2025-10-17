@@ -1,0 +1,40 @@
+diff --git a/webkit/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp b/webkit/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp
+index 72339a29d7..cfaac6b233 100644
+--- a/webkit/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp
++++ b/webkit/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp
+@@ -758,7 +758,7 @@ TEST(WTF, ExternalStringImplCreate8bit)
+     bool freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
++        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, nullptr, [&freeFunctionCalled](void*, void*, unsigned) mutable {
+             freeFunctionCalled = true;
+         });
+ 
+@@ -780,7 +780,7 @@ TEST(WTF, ExternalStringImplCreate16bit)
+     bool freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
++        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, nullptr, [&freeFunctionCalled](void*, void*, unsigned) mutable {
+             freeFunctionCalled = true;
+         });
+ 
+@@ -809,7 +809,7 @@ TEST(WTF, ExternalStringAtom)
+     bool freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
++        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, nullptr, [&freeFunctionCalled](void*, void*, unsigned) mutable {
+             freeFunctionCalled = true;
+         });    
+ 
+@@ -845,7 +845,7 @@ TEST(WTF, ExternalStringToSymbol)
+     bool freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create(buffer.span8(), [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
++        auto external = ExternalStringImpl::create(buffer.span8(), nullptr, [&freeFunctionCalled](void*, void*, unsigned) mutable {
+             freeFunctionCalled = true;
+         });
+ 

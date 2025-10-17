@@ -1,0 +1,12 @@
+diff --git a/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp b/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
+index 09b051775b..c1599e5c9d 100644
+--- a/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
+@@ -220,6 +220,7 @@ void JSPromise::fulfillWithNonPromise(JSGlobalObject* lexicalGlobalObject, JSVal
+     VM& vm = lexicalGlobalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
+     uint32_t flags = this->flags();
++    UNUSED_PARAM(scope);
+     ASSERT_WITH_MESSAGE(!value.inherits<Exception>(), "Promise fulfilled with exception");
+     ASSERT_WITH_MESSAGE(!value.inherits<JSPromise>(), "Promise fulfilled with another promise");
+ 

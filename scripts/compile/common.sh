@@ -53,6 +53,7 @@ PLATFORM_CFLAGS_arm=""
 PLATFORM_LDFLAGS_arm=""
 JNI_ARCH_arm=armeabi-v7a
 
+PLATFORM_CFLAGS_arm64="-mtune=cortex-a77"
 PLATFORM_LDFLAGS_arm64=""
 JNI_ARCH_arm64=arm64-v8a
 
@@ -74,13 +75,14 @@ JNI_ARCH=${!var}
 
 # options flags
 # INTL
-SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=1"
+SWITCH_COMMON_CFLAGS_INTL_OFF=""
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 
 # switches
 fix_zero_value_flag "INTL"
 process_switch_options "INTL"
+
 
 # checks
 err=false
@@ -99,8 +101,8 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -Oz -flto=full"
-    ICU_CFLAGS_BUILD_TYPE="-Oz"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -Oz -flto=thin"
+    ICU_CFLAGS_BUILD_TYPE="-Oz -flto=thin"
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
     CFLAGS_BUILD_TYPE=""
@@ -115,6 +117,7 @@ COMMON_LDFLAGS=" \
 -Wl,--exclude-libs,libgcc.a \
 -Wl,--no-undefined \
 -Wl,-z,max-page-size=16384 \
+-flto=thin \
 "
 
 COMMON_CFLAGS=" \
@@ -141,5 +144,9 @@ ICU_LDFLAGS="$COMMON_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
 
-JSC_LDFLAGS="$COMMON_LDFLAGS"
+JSC_LDFLAGS="$COMMON_LDFLAGS -llog"
 JSC_CFLAGS="$COMMON_CFLAGS -Wno-implicit-const-int-float-conversion -DU_STATIC_IMPLEMENTATION=1 -DU_SHOW_CPLUSPLUS_API=0 -DTRUE=1 -DFALSE=0"
+
+if [[ -n "$JSC_VERSION" ]]; then
+  JSC_CFLAGS="$JSC_CFLAGS -DJSC_VERSION=\\\"${JSC_VERSION}\\\""
+fi

@@ -1,0 +1,29 @@
+diff --git a/webkit/Source/JavaScriptCore/API/JSBase.cpp b/webkit/Source/JavaScriptCore/API/JSBase.cpp
+index f0b01ec79a..1c9869b40b 100644
+--- a/webkit/Source/JavaScriptCore/API/JSBase.cpp
++++ b/webkit/Source/JavaScriptCore/API/JSBase.cpp
+@@ -37,6 +37,12 @@
+ #include "OpaqueJSString.h"
+ #include "SourceCode.h"
+ 
++#if OS(ANDROID)
++#include <android/log.h>
++#ifndef JSC_VERSION
++#define JSC_VERSION "unknown"
++#endif
++#endif
+ #if ENABLE(REMOTE_INSPECTOR)
+ #include "JSGlobalObjectInspectorController.h"
+ #endif
+@@ -220,3 +226,11 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
+ 
+     return toRef(object);
+ }
++
++#if OS(ANDROID)
++__attribute__((constructor))
++static void logJSCVersion()
++{
++    __android_log_print(ANDROID_LOG_INFO, "JavaScriptCore.Version", "%s", JSC_VERSION);
++}
++#endif

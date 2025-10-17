@@ -9,51 +9,48 @@ ICU_PATCHSET=(
 )
 
 JSC_PATCHSET=(
-  # Basic build setup, e.g. libjsc.so output name
-  "jsc.patch"
+  # Android-specific logging for version identification
+  "jsc_android_log_version.patch"
 
-  # Feature toggles, e.g. disable unnecessary build or JIT settings
-  "jsc_features.patch"
+  # Ensure PRIu64 fallback matches 64-bit width on Android builds
+  "jsc_android_uv_pri64.patch"
 
-  # NDK does not support backtrace and execinfo.h
-  "jsc_fix_build_error_execinfo.patch"
+  # Fix Collator stub implementation for builds without ICU collation
+  "jsc_android_collator_static.patch"
 
-  # Fix build error which related to C++StringView
-  "jsc_fix_build_error_stringview.patch"
+  # Provide defaults for Bun-specific macros on non-Bun platforms
+  "jsc_android_define_bun_macros.patch"
 
-  # Integrate with Chromium ICU
-  "jsc_icu_integrate.patch"
+  # Update TestWTF to match new ExternalStringImpl signature
+  "jsc_fix_external_string_tests.patch"
 
-  # Support getting correct locale setting in Android system
-  "jsc_locale_support.patch"
+  # Disable building TestWebKitAPI when consuming JSC only
+  "jsc_disable_api_tests.patch"
 
-  # Will print current JSC version in adb log during initialization
-  "jsc_startup_log_version.patch"
+  # Provide stubs for DFG abstract heap when DFG JIT is disabled
+  "jsc_stub_dfg_abstract_heap.patch"
 
-  # Misc errors
-  "jsc_fix_build_error_miss_headers.patch"
+  # Guard async frame helper when Bun additions disabled
+  "jsc_async_frame_guard.patch"
 
-  # Workaround JIT crash on arm64, especially for Saumsung S7 Edge
-  "jsc_fix_arm64_jit_crash.patch"
+  # Guard Bun-specific error helpers when Bun additions are disabled
+  "jsc_guard_error_instance.patch"
 
-  # Intl default timezone with Android integration
-  "jsc_intl_timezone.patch"
+  # Silence unused parameter warnings in modules and promise helpers
+  "jsc_android_silence_unused.patch"
 
-  # Improve heap GC mechanism like iOS
-  "jsc_heap_gc_like_ios.patch"
+  # Include Android-specific WTF sources for logging and real-time threads
+  "jsc_android_wtf_sources.patch"
 
-  # GC concurrent issue potential fix
-  # https://trac.webkit.org/changeset/251307/webkit
-  "jsc_fix_concurrent_gc_issue.patch"
+  # Avoid unused-result warning in CLI wait helper
+  "jsc_android_jsc_wait.patch"
+
+  # Guard JIT helpers when DFG/WebAssembly are disabled
+  "jsc_android_jit_guards.patch"
+
+  # Avoid ICU formatting dependencies when validating time zones
+  "jsc_android_timezone_validate.patch"
 )
-
-if [[ "$I18N" = false ]]
-then
-  JSC_PATCHSET+=(
-    # Disable i18n for non-i18n build
-    "jsc_disable_icu.patch"
-  )
-fi
 
 ######################################################################################
 # Patchset management end

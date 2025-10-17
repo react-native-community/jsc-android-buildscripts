@@ -1,0 +1,22 @@
+diff --git a/webkit/Source/JavaScriptCore/jsc.cpp b/webkit/Source/JavaScriptCore/jsc.cpp
+index 2b3b231e54..6b861fd1fe 100644
+--- a/webkit/Source/JavaScriptCore/jsc.cpp
++++ b/webkit/Source/JavaScriptCore/jsc.cpp
+@@ -3649,7 +3649,7 @@ int main(int argc, char** argv)
+         WTF::fastDisableScavenger();
+         fprintf(stdout, "\njs shell waiting for input to exit\n");
+         fflush(stdout);
+-        getc(stdin);
++        (void)getc(stdin);
+     }
+ 
+ #if OS(UNIX)
+@@ -3658,7 +3658,7 @@ int main(int argc, char** argv)
+         fprintf(stdout, "\njs shell waiting for `kill -USR2 [pid]` to exit\n");
+         fflush(stdout);
+ 
+-        waitToExit.wait();
++        (void)waitToExit.wait();
+ 
+         fprintf(stdout, "\njs shell exiting\n");
+         fflush(stdout);
