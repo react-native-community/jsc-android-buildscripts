@@ -35,12 +35,13 @@ patchAndMakeICU() {
 
   if [[ "$BUILD_TYPE" = "Release" ]]
   then
-    CFLAGS="-Os -flto=thin"
-    CXXFLAGS="--std=c++11 -flto=thin"
+    local OPT_FLAGS="-O2 -flto=thin -fvectorize -fslp-vectorize -funroll-loops"
+    CFLAGS="$OPT_FLAGS"
+    CXXFLAGS="-std=c++2b $OPT_FLAGS"
     LDFLAGS="-flto=thin"
   else
     CFLAGS="-g2"
-    CXXFLAGS="--std=c++11"
+    CXXFLAGS="-std=c++2b"
     LDFLAGS=""
   fi
 

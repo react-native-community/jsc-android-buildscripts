@@ -101,8 +101,8 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -Oz -flto=thin"
-    ICU_CFLAGS_BUILD_TYPE="-Oz -flto=thin"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -O2 -flto=thin -fvectorize -fslp-vectorize -funroll-loops"
+    ICU_CFLAGS_BUILD_TYPE="-O2 -flto=thin -fvectorize -fslp-vectorize -funroll-loops"
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
     CFLAGS_BUILD_TYPE=""
@@ -136,6 +136,7 @@ $CFLAGS_BUILD_TYPE \
 "
 
 COMMON_CXXFLAGS=" \
+-std=c++2b \
 "
 
 ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS $ICU_CFLAGS_BUILD_TYPE"

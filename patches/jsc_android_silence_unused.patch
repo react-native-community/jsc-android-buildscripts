@@ -1,12 +1,78 @@
+diff --git a/webkit/Source/JavaScriptCore/runtime/JSModuleNamespaceObject.cpp b/webkit/Source/JavaScriptCore/runtime/JSModuleNamespaceObject.cpp
+index 2e2203099e..9c8917096d 100644
+--- a/webkit/Source/JavaScriptCore/runtime/JSModuleNamespaceObject.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/JSModuleNamespaceObject.cpp
+@@ -45,6 +45,7 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
+ {
+     VM& vm = globalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
++    UNUSED_PARAM(shouldPreventExtensions);
+     Base::finishCreation(vm);
+     ASSERT(inherits(info()));
+ 
+@@ -208,6 +209,9 @@ bool JSModuleNamespaceObject::put(JSCell* cell, JSGlobalObject* globalObject, Pr
+ {
+     VM& vm = globalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
++    UNUSED_PARAM(cell);
++    UNUSED_PARAM(propertyName);
++    UNUSED_PARAM(value);
+ 
+ #if USE(BUN_JSC_ADDITIONS)
+     auto* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+diff --git a/webkit/Source/JavaScriptCore/runtime/JSModuleRecord.cpp b/webkit/Source/JavaScriptCore/runtime/JSModuleRecord.cpp
+index 24cea00a3f..41ccae3c5e 100644
+--- a/webkit/Source/JavaScriptCore/runtime/JSModuleRecord.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/JSModuleRecord.cpp
+@@ -63,18 +63,18 @@ JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& m
+ {
+ }
+ 
+-#if USE(BUN_JSC_ADDITIONS)
+ size_t JSModuleRecord::estimatedSize(JSCell* cell, VM& vm)
+ {
+-    const auto& thisObject = jsCast<JSModuleRecord*>(cell);
+     size_t size = Base::estimatedSize(cell, vm);
++#if USE(BUN_JSC_ADDITIONS)
++    const auto& thisObject = jsCast<JSModuleRecord*>(cell);
+     const SourceCode& sourceCode = thisObject->sourceCode();
+     StringView view = sourceCode.provider() ? sourceCode.provider()->source() : StringView();
+     size += view.length() * (view.is8Bit() ? sizeof(Latin1Character) : sizeof(UChar));
+     size += sourceCode.memoryCost();
++#endif
+     return size;
+ }
+-#endif
+ void JSModuleRecord::destroy(JSCell* cell)
+ {
+     JSModuleRecord* thisObject = static_cast<JSModuleRecord*>(cell);
 diff --git a/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp b/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
-index 09b051775b..c1599e5c9d 100644
+index 09b051775b..a0a4a6b10f 100644
 --- a/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
 +++ b/webkit/Source/JavaScriptCore/runtime/JSPromise.cpp
-@@ -220,6 +220,7 @@ void JSPromise::fulfillWithNonPromise(JSGlobalObject* lexicalGlobalObject, JSVal
+@@ -219,6 +219,7 @@ void JSPromise::fulfillWithNonPromise(JSGlobalObject* lexicalGlobalObject, JSVal
+ {
      VM& vm = lexicalGlobalObject->vm();
      auto scope = DECLARE_THROW_SCOPE(vm);
-     uint32_t flags = this->flags();
 +    UNUSED_PARAM(scope);
+     uint32_t flags = this->flags();
      ASSERT_WITH_MESSAGE(!value.inherits<Exception>(), "Promise fulfilled with exception");
      ASSERT_WITH_MESSAGE(!value.inherits<JSPromise>(), "Promise fulfilled with another promise");
- 
+diff --git a/webkit/Source/JavaScriptCore/runtime/ModuleProgramExecutable.cpp b/webkit/Source/JavaScriptCore/runtime/ModuleProgramExecutable.cpp
+index be5602f0b7..2f26538268 100644
+--- a/webkit/Source/JavaScriptCore/runtime/ModuleProgramExecutable.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/ModuleProgramExecutable.cpp
+@@ -37,10 +37,11 @@ ModuleProgramExecutable::ModuleProgramExecutable(JSGlobalObject* globalObject, c
+ {
+     SourceProviderSourceType sourceType = source.provider()->sourceType();
+     ASSERT(sourceType == SourceProviderSourceType::Module
+-    #if USE(BUN_JSC_ADDITIONS)
++#if USE(BUN_JSC_ADDITIONS)
+     || sourceType == SourceProviderSourceType::BunTranspiledModule
+-    #endif
++#endif
+     );
++    UNUSED_PARAM(sourceType);
+     VM& vm = globalObject->vm();
+     if (vm.typeProfiler() || vm.controlFlowProfiler())
+         vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(), typeProfilingEndOffset());
