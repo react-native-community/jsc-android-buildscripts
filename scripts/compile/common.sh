@@ -86,7 +86,7 @@ process_switch_options "INTL"
 
 # checks
 err=false
-if ! [[ $ANDROID_API_FOR_ABI_32 ]]; then echo "set ANDROID_API_FOR_ABI_32 to the minimum supported Android platform version for arm and x86 (e.g. 16)"; err=true; fi
+if [[ "${INCLUDE_32_BIT_ABIS:-0}" == "1" ]] && ! [[ $ANDROID_API_FOR_ABI_32 ]]; then echo "set ANDROID_API_FOR_ABI_32 to the minimum supported Android platform version for arm and x86 (e.g. 16)"; err=true; fi
 if ! [[ $ANDROID_API_FOR_ABI_64 ]]; then echo "set ANDROID_API_FOR_ABI_64 to the minimum supported Android platform version for arm64 and x86_64 (e.g. 21)"; err=true; fi
 if ! [[ $FLAVOR ]]; then echo "set FLAVOR to the name of the flavor"; err=true; fi
 if ! [[ $CROSS_COMPILE_PLATFORM ]]; then echo "set JSC_ARCH to one of {arm,arm64,x86,x86_64}"; err=true; fi
@@ -101,8 +101,8 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -O2 -flto=thin -fvectorize -fslp-vectorize -funroll-loops"
-    ICU_CFLAGS_BUILD_TYPE="-O2 -flto=thin -fvectorize -fslp-vectorize -funroll-loops"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -O2 -flto=thin"
+    ICU_CFLAGS_BUILD_TYPE="-O2 -flto=thin"
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
     CFLAGS_BUILD_TYPE=""
@@ -132,15 +132,16 @@ $FRAME_POINTER_FLAG \
 -DCUSTOMIZE_REACT_NATIVE \
 $SWITCH_COMMON_CFLAGS_INTL \
 $CFLAGS_BUILD_TYPE \
+-Wno-pass-failed=loop-vectorize \
 -D__ANDROID_MIN_SDK_VERSION__=${ANDROID_API} \
 "
 
 COMMON_CXXFLAGS=" \
--std=c++2b \
+-std=c++20 \
 "
 
 ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
-ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
+ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS"
 ICU_LDFLAGS="$COMMON_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
