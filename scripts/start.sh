@@ -2,7 +2,19 @@
 
 export ANDROID_API_FOR_ABI_32=24
 export ANDROID_API_FOR_ABI_64=24
+export ANDROID_TARGET_API=35
 export ROOTDIR=$PWD
+
+# Default toolchain locations when not provided.
+DEFAULT_ANDROID_HOME="$HOME/Library/Android/sdk"
+if [[ -z "$ANDROID_HOME" || ! -d "$ANDROID_HOME" ]]; then
+  export ANDROID_HOME="$DEFAULT_ANDROID_HOME"
+fi
+
+DEFAULT_ANDROID_NDK="$ANDROID_HOME/ndk/28.2.13676358"
+if [[ -z "$ANDROID_NDK" || ! -d "$ANDROID_NDK" ]]; then
+  export ANDROID_NDK="$DEFAULT_ANDROID_NDK"
+fi
 
 source $ROOTDIR/scripts/env.sh
 source $ROOTDIR/scripts/info.sh
@@ -17,27 +29,48 @@ patchAndMakeICU() {
   ICU_VERSION_MAJOR="$(awk '/ICU_VERSION_MAJOR_NUM/ {print $3}' $TARGETDIR/icu/source/common/unicode/uvernum.h)"
   printf "ICU version: ${ICU_VERSION_MAJOR}\n"
   $SCRIPT_DIR/patch.sh icu
-
   rm -rf $TARGETDIR/icu/host
   mkdir -p $TARGETDIR/icu/host
   cd $TARGETDIR/icu/host
 
   if [[ "$BUILD_TYPE" = "Release" ]]
   then
-    CFLAGS="-Os"
+    local OPT_FLAGS="-O2 -flto=thin -Wno-pass-failed=loop-vectorize"
+    CFLAGS="$OPT_FLAGS"
+    CXXFLAGS="-std=c++20 $OPT_FLAGS"
+    LDFLAGS="-flto=thin"
   else
     CFLAGS="-g2"
+    CXXFLAGS="-std=c++20"
+    LDFLAGS=""
   fi
 
-  ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
-  $TARGETDIR/icu/source/runConfigureICU Linux \
-  --prefix=$PWD/prebuilts \
-  CFLAGS="$CFLAGS" \
-  CXXFLAGS="--std=c++11" \
-  --disable-tests \
-  --disable-samples \
-  --disable-layout \
-  --disable-layoutex
+  ICU_FILTER_FILE="${TARGETDIR}/icu/filters/android.json"
+  local CONFIG_ENV=(env "CFLAGS=$CFLAGS" "CXXFLAGS=$CXXFLAGS")
+  if [[ -n "$LDFLAGS" ]]; then
+    CONFIG_ENV+=("LDFLAGS=$LDFLAGS")
+  fi
+
+  if [[ -f "$ICU_FILTER_FILE" ]]; then
+    printf "Using ICU data filter: %s\n" "$ICU_FILTER_FILE"
+    ICU_DATA_FILTER_FILE="$ICU_FILTER_FILE" \
+      "${CONFIG_ENV[@]}" \
+      $TARGETDIR/icu/source/runConfigureICU Linux \
+      --prefix=$PWD/prebuilts \
+      --disable-tests \
+      --disable-samples \
+      --disable-layout \
+      --disable-layoutex
+  else
+    printf "ICU data filter not found at %s, building without data pruning\n" "$ICU_FILTER_FILE"
+    "${CONFIG_ENV[@]}" \
+      $TARGETDIR/icu/source/runConfigureICU Linux \
+      --prefix=$PWD/prebuilts \
+      --disable-tests \
+      --disable-samples \
+      --disable-layout \
+      --disable-layoutex
+  fi
 
   make -j5
   cd $ROOTDIR
@@ -98,13 +131,17 @@ copyHeaders() {
   cp -Rf $TARGETDIR/webkit/Source/JavaScriptCore/API/*.h ${distDir}/include
 }
 
-export I18N=false
-prep
-compile
+if [[ "${SKIP_NO_INTL}" != "1" ]]; then
+  export I18N=false
+  prep
+  compile
+fi
 
-export I18N=true
-prep
-compile
+if [[ "${SKIP_INTL}" != "1" ]]; then
+  export I18N=true
+  prep
+  compile
+fi
 
 printf "\n\n\t\t===================== create stripped distributions =====================\n\n"
 export DISTDIR=${ROOTDIR}/dist

@@ -26,8 +26,16 @@ else
     BUILD_TYPE_CONFIG="--enable-debug=yes"
 fi
 
-ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
-$TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
+ICU_FILTER_FILE="${TARGETDIR}/icu/filters/android.json"
+if [[ -f "$ICU_FILTER_FILE" ]]; then
+    echo "Using ICU data filter: ${ICU_FILTER_FILE}"
+    CONFIGURE_PREFIX=(env ICU_DATA_FILTER_FILE="$ICU_FILTER_FILE")
+else
+    echo "ICU data filter not found at ${ICU_FILTER_FILE}; building without data pruning"
+    CONFIGURE_PREFIX=()
+fi
+
+"${CONFIGURE_PREFIX[@]}" $TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
     $BUILD_TYPE_CONFIG \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-static=yes \

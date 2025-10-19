@@ -1,0 +1,16 @@
+diff --git a/webkit/Source/JavaScriptCore/runtime/StackFrame.h b/webkit/Source/JavaScriptCore/runtime/StackFrame.h
+index b689e68d58..5578051a6b 100644
+--- a/webkit/Source/JavaScriptCore/runtime/StackFrame.h
++++ b/webkit/Source/JavaScriptCore/runtime/StackFrame.h
+@@ -100,7 +100,11 @@ public:
+ 
+     bool isAsyncFrameWithoutCodeBlock() const
+     {
++#if USE(BUN_JSC_ADDITIONS)
+         return isAsyncFrame() && !codeBlock();
++#else
++        return false;
++#endif
+     }
+ 
+ #if USE(BUN_JSC_ADDITIONS)
