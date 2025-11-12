@@ -1,0 +1,14 @@
+diff --git a/webkit/Source/WTF/wtf/Assertions.h b/webkit/Source/WTF/wtf/Assertions.h
+--- a/webkit/Source/WTF/wtf/Assertions.h
++++ b/webkit/Source/WTF/wtf/Assertions.h
+@@ -49,7 +49,7 @@
+ #include <stddef.h>
+ #include <stdlib.h>
+ #include <wtf/ExportMacros.h>
+ 
+-#if OS(ANDROID) && !USE(BUN_JSC_ADDITIONS)
++#if OS(ANDROID)
+ #include <android/log.h>
+ #endif
+ 
+ #if OS(DARWIN)

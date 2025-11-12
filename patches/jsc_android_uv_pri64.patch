@@ -1,0 +1,16 @@
+diff --git a/webkit/Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp b/webkit/Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
+index e39afda511..48f46d76fc 100644
+--- a/webkit/Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
++++ b/webkit/Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
+@@ -21,11 +21,12 @@
+ 
+ #include "BPlatform.h"
+ #include <cstdint>
++#include <inttypes.h>
+ 
+ #if BOS(LINUX)
+ 
+ #ifndef PRIu64
+-#define PRIu64 "lu"
++#define PRIu64 "llu"
+ #endif

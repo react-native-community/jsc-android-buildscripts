@@ -1,0 +1,45 @@
+diff --git a/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake b/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake
+index 0ab58fe2a2..4b94606617 100644
+--- a/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake
++++ b/webkit/Source/WTF/wtf/PlatformJSCOnly.cmake
+@@ -36,8 +36,16 @@ else ()
+         text/unix/TextBreakIteratorInternalICUUnix.cpp
+ 
+         unix/LanguageUnix.cpp
+-        unix/LoggingUnix.cpp
+     )
++    if (CMAKE_SYSTEM_NAME MATCHES "Android")
++        list(APPEND WTF_SOURCES
++            android/LoggingAndroid.cpp
++        )
++    else ()
++        list(APPEND WTF_SOURCES
++            unix/LoggingUnix.cpp
++        )
++    endif ()
+     if (WTF_OS_FUCHSIA)
+         list(APPEND WTF_SOURCES
+             fuchsia/CPUTimeFuchsia.cpp
+@@ -97,6 +105,22 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+ 
+         unix/MemoryPressureHandlerUnix.cpp
+     )
++    list(APPEND WTF_PUBLIC_HEADERS
++        linux/CurrentProcessMemoryStatus.h
++        linux/ProcessMemoryFootprint.h
++    )
++elseif (CMAKE_SYSTEM_NAME MATCHES "Android")
++    list(APPEND WTF_SOURCES
++        linux/CurrentProcessMemoryStatus.cpp
++        linux/MemoryFootprintLinux.cpp
++        linux/RealTimeThreads.cpp
++
++        unix/MemoryPressureHandlerUnix.cpp
++    )
++    list(APPEND WTF_PUBLIC_HEADERS
++        linux/CurrentProcessMemoryStatus.h
++        linux/ProcessMemoryFootprint.h
++    )
+ elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+     list(APPEND WTF_SOURCES
+         generic/MemoryFootprintGeneric.cpp

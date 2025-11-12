@@ -26,9 +26,12 @@ process_switch_options() {
 }
 
 if ! [[ $ROOTDIR ]]; then ROOTDIR=`pwd`; fi
+source $ROOTDIR/scripts/toolchain.sh
 ARCH=$JSC_ARCH
 
-TARGETDIR=$ROOTDIR/build/target
+if [[ -z "$TARGETDIR" ]]; then
+  TARGETDIR=$ROOTDIR/build/target
+fi
 
 # platform specific settings
 CROSS_COMPILE_PLATFORM_arm="arm-linux-androideabi"
@@ -53,6 +56,8 @@ PLATFORM_CFLAGS_arm=""
 PLATFORM_LDFLAGS_arm=""
 JNI_ARCH_arm=armeabi-v7a
 
+# Optimize for Snapdragon XR2 Gen 2 class hardware: require ARMv8.2 and tune for Cortex-X3.
+PLATFORM_CFLAGS_arm64="-march=armv8.2-a -mtune=cortex-x3"
 PLATFORM_LDFLAGS_arm64=""
 JNI_ARCH_arm64=arm64-v8a
 
@@ -74,7 +79,7 @@ JNI_ARCH=${!var}
 
 # options flags
 # INTL
-SWITCH_COMMON_CFLAGS_INTL_OFF="-DUCONFIG_NO_COLLATION=1 -DUCONFIG_NO_FORMATTING=1"
+SWITCH_COMMON_CFLAGS_INTL_OFF=""
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_OFF="--no-intl"
 SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 
@@ -82,9 +87,10 @@ SWITCH_BUILD_WEBKIT_OPTIONS_INTL_ON="--intl"
 fix_zero_value_flag "INTL"
 process_switch_options "INTL"
 
+
 # checks
 err=false
-if ! [[ $ANDROID_API_FOR_ABI_32 ]]; then echo "set ANDROID_API_FOR_ABI_32 to the minimum supported Android platform version for arm and x86 (e.g. 16)"; err=true; fi
+if [[ "${INCLUDE_32_BIT_ABIS:-0}" == "1" ]] && ! [[ $ANDROID_API_FOR_ABI_32 ]]; then echo "set ANDROID_API_FOR_ABI_32 to the minimum supported Android platform version for arm and x86 (e.g. 16)"; err=true; fi
 if ! [[ $ANDROID_API_FOR_ABI_64 ]]; then echo "set ANDROID_API_FOR_ABI_64 to the minimum supported Android platform version for arm64 and x86_64 (e.g. 21)"; err=true; fi
 if ! [[ $FLAVOR ]]; then echo "set FLAVOR to the name of the flavor"; err=true; fi
 if ! [[ $CROSS_COMPILE_PLATFORM ]]; then echo "set JSC_ARCH to one of {arm,arm64,x86,x86_64}"; err=true; fi
@@ -99,8 +105,16 @@ DEBUG_SYMBOL_LEVEL="-g2"
 if [[ "$BUILD_TYPE" = "Release" ]]
 then
     FRAME_POINTER_FLAG="-fomit-frame-pointer"
-    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -Oz -flto=full"
-    ICU_CFLAGS_BUILD_TYPE="-Oz"
+    CFLAGS_BUILD_TYPE="-DNDEBUG -g0 -O2"
+    ICU_CFLAGS_BUILD_TYPE="-O2"
+    if [[ -n "$JSC_TOOLCHAIN_LTO_FLAG" ]]; then
+        CFLAGS_BUILD_TYPE="$CFLAGS_BUILD_TYPE $JSC_TOOLCHAIN_LTO_FLAG"
+        ICU_CFLAGS_BUILD_TYPE="$ICU_CFLAGS_BUILD_TYPE $JSC_TOOLCHAIN_LTO_FLAG"
+    fi
+    if [[ -n "$JSC_TOOLCHAIN_RELEASE_CFLAGS" ]]; then
+        CFLAGS_BUILD_TYPE="$CFLAGS_BUILD_TYPE $JSC_TOOLCHAIN_RELEASE_CFLAGS"
+        ICU_CFLAGS_BUILD_TYPE="$ICU_CFLAGS_BUILD_TYPE $JSC_TOOLCHAIN_RELEASE_CFLAGS"
+    fi
 else
     FRAME_POINTER_FLAG="-fno-omit-frame-pointer"
     CFLAGS_BUILD_TYPE=""
@@ -116,6 +130,10 @@ COMMON_LDFLAGS=" \
 -Wl,--no-undefined \
 -Wl,-z,max-page-size=16384 \
 "
+
+if [[ "$BUILD_TYPE" = "Release" && -n "$JSC_TOOLCHAIN_RELEASE_LDFLAGS" ]]; then
+    COMMON_LDFLAGS="$COMMON_LDFLAGS $JSC_TOOLCHAIN_RELEASE_LDFLAGS"
+fi
 
 COMMON_CFLAGS=" \
 -fstack-protector \
@@ -133,13 +151,18 @@ $CFLAGS_BUILD_TYPE \
 "
 
 COMMON_CXXFLAGS=" \
+-std=c++${JSC_TOOLCHAIN_CXX_STANDARD:-23} \
 "
 
 ICU_CFLAGS="$COMMON_CFLAGS $PLATFORM_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
-ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS $ICU_CFLAGS_BUILD_TYPE"
+ICU_CXXFLAGS="$COMMON_CXXFLAGS $ICU_CFLAGS"
 ICU_LDFLAGS="$COMMON_LDFLAGS \
 $PLATFORM_LDFLAGS \
 "
 
-JSC_LDFLAGS="$COMMON_LDFLAGS"
+JSC_LDFLAGS="$COMMON_LDFLAGS -llog"
 JSC_CFLAGS="$COMMON_CFLAGS -Wno-implicit-const-int-float-conversion -DU_STATIC_IMPLEMENTATION=1 -DU_SHOW_CPLUSPLUS_API=0 -DTRUE=1 -DFALSE=0"
+
+if [[ -n "$JSC_VERSION" ]]; then
+  JSC_CFLAGS="$JSC_CFLAGS -DJSC_VERSION=\\\"${JSC_VERSION}\\\""
+fi

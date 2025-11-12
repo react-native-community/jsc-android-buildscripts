@@ -1,0 +1,17 @@
+diff --git a/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c b/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c
+--- a/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c
++++ b/webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c
+@@ -221,9 +221,13 @@ static void dump_thread_diagnostics(pthread_t thread)
+ #endif
+ #if PAS_PLATFORM(PLAYSTATION)
+     getname_result = pthread_get_name_np(thread, thread_name);
++#else
++#if PAS_OS(ANDROID)
++    getname_result = -1;
+ #else
+     getname_result = pthread_getname_np(thread, thread_name, sizeof(thread_name));
+ #endif
++#endif
+     if (!getname_result)
+         pas_log("[%d] thread %p has name %s\n", getpid(), (void*)thread, thread_name);
+     else

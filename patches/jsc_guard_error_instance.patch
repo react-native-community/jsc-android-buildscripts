@@ -1,0 +1,58 @@
+diff --git a/webkit/Source/JavaScriptCore/runtime/ErrorInstance.cpp b/webkit/Source/JavaScriptCore/runtime/ErrorInstance.cpp
+index 07999a9b28..e694388e2e 100644
+--- a/webkit/Source/JavaScriptCore/runtime/ErrorInstance.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/ErrorInstance.cpp
+@@ -108,6 +108,7 @@ String appendSourceToErrorMessage(CodeBlock* codeBlock, BytecodeIndex bytecodeIn
+     return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
+ }
+ 
++#if USE(BUN_JSC_ADDITIONS)
+ void ErrorInstance::setStackFrames(VM& vm, WTF::Vector<StackFrame>&& stackFrames)
+ {
+     std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>(WTFMove(stackFrames));
+@@ -116,6 +117,7 @@ void ErrorInstance::setStackFrames(VM& vm, WTF::Vector<StackFrame>&& stackFrames
+     m_stackTrace = WTFMove(stackTrace);
+     vm.writeBarrier(this);
+ }
++#endif
+ 
+ size_t ErrorInstance::estimatedSize(JSCell* cell, VM& vm)
+ {
+@@ -370,11 +372,16 @@ void ErrorInstance::computeErrorInfo(VM& vm, bool allocationAllowed)
+     UNUSED_PARAM(allocationAllowed);
+ 
+     if (m_stackTrace && !m_stackTrace->isEmpty()) {
+-        auto& fn = vm.onComputeErrorInfo();
+         WTF::String stackString;
+-        if (fn) {
+-            stackString = fn(vm, *m_stackTrace.get(), m_lineColumn.line, m_lineColumn.column, m_sourceURL, this->bunErrorData());
+-        } else {
++        bool handled = false;
++#if USE(BUN_JSC_ADDITIONS)
++        auto& computeErrorInfo = vm.onComputeErrorInfo();
++        if (computeErrorInfo) {
++            stackString = computeErrorInfo(vm, *m_stackTrace.get(), m_lineColumn.line, m_lineColumn.column, m_sourceURL, this->bunErrorData());
++            handled = true;
++        }
++#endif
++        if (!handled) {
+             getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
+             stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
+         }
+@@ -394,13 +401,12 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
+         return false;
+ 
+ #if USE(BUN_JSC_ADDITIONS)
+-
+-    auto& fn = vm.onComputeErrorInfoJSValue();
+-    if (fn && m_stackTrace && !m_stackTrace->isEmpty()) {
++    auto& computeErrorInfoJSValue = vm.onComputeErrorInfoJSValue();
++    if (computeErrorInfoJSValue && m_stackTrace && !m_stackTrace->isEmpty()) {
+         m_errorInfoMaterialized = true;
+         DeferGCForAWhile deferGC(vm);
+ 
+-        JSValue stack = fn(vm, *m_stackTrace.get(), m_lineColumn.line, m_lineColumn.column, m_sourceURL, this, this->bunErrorData());
++        JSValue stack = computeErrorInfoJSValue(vm, *m_stackTrace.get(), m_lineColumn.line, m_lineColumn.column, m_sourceURL, this, this->bunErrorData());
+ 
+         {
+             Locker locker { cellLock() };

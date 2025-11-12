@@ -1,0 +1,15 @@
+diff --git a/webkit/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp b/webkit/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp
+index 483d333b83..1612e84271 100644
+--- a/webkit/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp
++++ b/webkit/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp
+@@ -63,6 +63,10 @@
+ 
+ #endif
+ 
++#ifndef BUN_MACOSX
++#define BUN_MACOSX 0
++#endif
++
+ #ifdef MADV_DONTFORK
+ #define BUN_MADV_DONTFORK MADV_DONTFORK
+ #else
