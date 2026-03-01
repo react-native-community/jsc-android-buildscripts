@@ -1,0 +1,11 @@
+--- a/webkit/Source/JavaScriptCore/runtime/OptionsList.h	2025-11-06 00:08:49
++++ b/OptionsList.h.new	2025-11-06 16:08:43
+@@ -650,7 +650,7 @@
+     v(Bool, useMapGetOrInsert, true, Normal, "Expose the Map.prototype.getOrInsert family of methods."_s) \
+     v(Bool, useMathSumPreciseMethod, true, Normal, "Expose the Math.sumPrecise() method."_s) \
+     v(Bool, useMoreCurrencyDisplayChoices, false, Normal, "Enable more currencyDisplay choices for Intl.NumberFormat"_s) \
+-    v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
++    v(Bool, useSharedArrayBuffer, true, Normal, nullptr) \
+     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \
+     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
+     v(Bool, useTrustedTypes, true, Normal, "Enable trusted types eval protection feature."_s) \

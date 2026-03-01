@@ -1,8 +1,13 @@
 const assert = require('assert');
 const {
   withAppBuildGradle,
+  withGradleProperties,
   withProjectBuildGradle,
 } = require('expo/config-plugins');
+
+const DEFAULT_RELATIVE_DIST_PATH = '../../dist-ndk28';
+const GRADLE_DIST_PATH =
+  process.env.JSC_GRADLE_DIST_PATH || DEFAULT_RELATIVE_DIST_PATH;
 
 const withJscAndroidAppBuildGradle = (config) => {
   return withAppBuildGradle(config, (config) => {
@@ -24,7 +29,7 @@ afterEvaluate {
     repositories {
       maven {
         // Local dist maven repo
-        url("\${rootDir}/../../dist")
+        url("\${rootDir}/${GRADLE_DIST_PATH}")
       }
 
       mavenCentral {
@@ -47,6 +52,7 @@ afterEvaluate {
 `;
       config.modResults.contents += code;
     }
+
     return config;
   });
 };
@@ -73,6 +79,41 @@ const withJscAndroidProjectBuildGradle = (config) => {
 const withJscAndroid = (config) => {
   config = withJscAndroidAppBuildGradle(config);
   config = withJscAndroidProjectBuildGradle(config);
+  config = withGradleProperties(config, (config) => {
+    const DEFAULT_ARCHS = ['arm64-v8a', 'x86_64'];
+    const ARCHS_TO_REMOVE = new Set(['armeabi-v7a', 'x86']);
+    const propertyName = 'reactNativeArchitectures';
+    const desiredValue = DEFAULT_ARCHS.join(',');
+    const existingProp = config.modResults.find(
+      (item) => item.type === 'property' && item.key === propertyName
+    );
+    const cleanValue = (value) => {
+      if (!value) return desiredValue;
+      const archs = value
+        .split(',')
+        .map((arch) => arch.trim())
+        .filter(Boolean);
+      if (!archs.length) return desiredValue;
+      const result = [];
+      archs.forEach((arch) => {
+        if (!ARCHS_TO_REMOVE.has(arch) && !result.includes(arch)) {
+          result.push(arch);
+        }
+      });
+      if (!result.length) return desiredValue;
+      return result.join(',');
+    };
+    if (existingProp) {
+      existingProp.value = cleanValue(existingProp.value);
+    } else {
+      config.modResults.push({
+        type: 'property',
+        key: propertyName,
+        value: desiredValue,
+      });
+    }
+    return config;
+  });
   return config;
 };
 

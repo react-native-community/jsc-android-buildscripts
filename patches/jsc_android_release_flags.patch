@@ -1,0 +1,13 @@
+diff --git a/webkit/Source/cmake/OptionsCommon.cmake b/webkit/Source/cmake/OptionsCommon.cmake
+--- a/webkit/Source/cmake/OptionsCommon.cmake
++++ b/webkit/Source/cmake/OptionsCommon.cmake
+@@ -2,6 +2,9 @@
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP OFF)
++# Android builds rely on downstream flags, so keep CMake from adding -O3 automatically.
++set(CMAKE_C_COMPILE_OPTIONS_RELEASE -DNDEBUG CACHE STRING "" FORCE)
++set(CMAKE_CXX_COMPILE_OPTIONS_RELEASE -DNDEBUG CACHE STRING "" FORCE)
+ 
+ add_definitions(-DBUILDING_WITH_CMAKE=1)
+ add_definitions(-DBUILDING_WEBKIT=1)

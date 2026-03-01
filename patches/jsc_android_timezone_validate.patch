@@ -1,0 +1,48 @@
+diff --git a/webkit/Source/JavaScriptCore/runtime/JSDateMath.cpp b/webkit/Source/JavaScriptCore/runtime/JSDateMath.cpp
+index cbd32cefe0..16df1ec5a0 100644
+--- a/webkit/Source/JavaScriptCore/runtime/JSDateMath.cpp
++++ b/webkit/Source/JavaScriptCore/runtime/JSDateMath.cpp
+@@ -502,6 +502,12 @@ static std::tuple<String, Vector<char16_t, 32>> retrieveTimeZoneInformation()
+         getTimeZoneOverride(timeZoneID);
+         String canonical;
+         UErrorCode status = U_ZERO_ERROR;
++#if (defined(UCONFIG_NO_FORMATTING) && UCONFIG_NO_FORMATTING) || !defined(ucal_getCanonicalTimeZoneID)
++        if (!timeZoneID.isEmpty())
++            canonical = String(timeZoneID.span());
++        else
++            canonical = "UTC"_s;
++#else
+         if (timeZoneID.isEmpty()) {
+             status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+             ASSERT_UNUSED(status, U_SUCCESS(status));
+@@ -514,6 +520,7 @@ static std::tuple<String, Vector<char16_t, 32>> retrieveTimeZoneInformation()
+         }
+         if (canonical.isNull() || isUTCEquivalent(canonical))
+             canonical = "UTC"_s;
++#endif
+ 
+         globalCache.get() = std::tuple { canonical.isolatedCopy(), WTFMove(timeZoneID), currentID };
+     }
+diff --git a/webkit/Source/WTF/wtf/DateMath.cpp b/webkit/Source/WTF/wtf/DateMath.cpp
+index d4551c78ef..37b2ef6fc2 100644
+--- a/webkit/Source/WTF/wtf/DateMath.cpp
++++ b/webkit/Source/WTF/wtf/DateMath.cpp
+@@ -1008,6 +1008,10 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
+ 
+ static std::optional<Vector<char16_t, 32>> validateTimeZone(StringView timeZone)
+ {
++#if defined(UCONFIG_NO_FORMATTING) && UCONFIG_NO_FORMATTING
++    UNUSED_PARAM(timeZone);
++    return std::nullopt;
++#else
+     auto buffer = timeZone.upconvertedCharacters();
+     const char16_t* characters = buffer;
+     Vector<char16_t, 32> canonicalBuffer;
+@@ -1015,6 +1019,7 @@ static std::optional<Vector<char16_t, 32>> validateTimeZone(StringView timeZone)
+     if (!U_SUCCESS(status))
+         return std::nullopt;
+     return canonicalBuffer;
++#endif
+ }
+ 
+ bool isTimeZoneValid(StringView timeZone)

@@ -1,0 +1,23 @@
+diff --git a/webkit/Source/JavaScriptCore/domjit/DOMJITEffect.h b/webkit/Source/JavaScriptCore/domjit/DOMJITEffect.h
+index 6ba85116d1..91c6f4dc26 100644
+--- a/webkit/Source/JavaScriptCore/domjit/DOMJITEffect.h
++++ b/webkit/Source/JavaScriptCore/domjit/DOMJITEffect.h
+@@ -25,7 +25,18 @@
+ 
+ #pragma once
+ 
++#if ENABLE(DFG_JIT)
+ #include "DFGAbstractHeap.h"
++#else
++namespace JSC {
++namespace DFG {
++enum AbstractHeapKind : unsigned {
++    Heap,
++    InvalidAbstractHeap
++};
++}
++}
++#endif
+ #include "DOMJITHeapRange.h"
+ 
+ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -1,7 +1,20 @@
 name: Build jsc-android and test
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish npm packages after build/test succeed'
+        type: boolean
+        default: false
+      npm-tag:
+        description: 'npm dist-tag'
+        required: false
+        default: latest
+      dry-run:
+        description: 'Run npm publish in dry-run mode'
+        type: boolean
+        default: true
   push:
     branches: [main]
   pull_request:
@@ -9,9 +22,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - variant: ndk27
+            ndk-version: '27.1.12297006'
+          - variant: ndk28
+            ndk-version: '28.2.13676358'
+          - variant: ndk29
+            ndk-version: '29.0.14206865'
     env:
       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
+      BUILD_CACHE_VERSION: v1
 
     steps:
     - uses: actions/checkout@v4
@@ -30,44 +53,122 @@ jobs:
       with:
         node-version: 22
 
+    - name: Compute build cache key
+      id: build-hash
+      run: |
+        HASH=$(node scripts/build-hash.js)
+        echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
+    - name: Restore JSC build artifacts
+      id: cache-dist
+      uses: actions/cache@v4
+      with:
+        path: |
+          dist-${{ matrix.variant }}
+          dist-${{ matrix.variant }}.unstripped
+        key: jsc-dist-${{ env.BUILD_CACHE_VERSION }}-${{ matrix.variant }}-${{ steps.build-hash.outputs.hash }}
+
+    - name: Restore WebKit sources
+      id: cache-download
+      uses: actions/cache@v4
+      with:
+        path: build/download
+        key: jsc-download-${{ env.BUILD_CACHE_VERSION }}-${{ steps.build-hash.outputs.hash }}
+        restore-keys: |
+          jsc-download-${{ env.BUILD_CACHE_VERSION }}-
+
     - name: Install packages
       run: |
         sudo apt-get update
-        sudo apt-get install coreutils curl git wget python3 ruby gperf -y
+        sudo apt-get install coreutils curl git wget python3 ruby gperf ccache -y
       shell: bash
+
+    - name: Restore ccache
+      id: cache-ccache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ccache
+        key: ccache-${{ env.BUILD_CACHE_VERSION }}-${{ runner.os }}-${{ matrix.variant }}-${{ matrix.ndk-version }}-${{ steps.build-hash.outputs.hash }}
+        restore-keys: |
+          ccache-${{ env.BUILD_CACHE_VERSION }}-${{ runner.os }}-${{ matrix.variant }}-${{ matrix.ndk-version }}-
+
+    - name: Configure ccache
+      run: |
+        mkdir -p ~/.cache/ccache
+        if command -v ccache >/dev/null 2>&1; then
+          ccache --max-size=5G
+          ccache --zero-stats || true
+        fi
+      shell: bash
+
+    - name: Cache Android NDK
+      id: cache-ndk
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.ANDROID_HOME }}/ndk/${{ matrix.ndk-version }}
+        key: android-ndk-${{ runner.os }}-${{ matrix.ndk-version }}
 
     - name: Install Android packages
       run: |
         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
         yes | sdkmanager --licenses || true
-        sdkmanager \
-          "cmake;3.22.1" \
-          "ndk;27.1.12297006"
-        # move out builtin icu headers from ndk and prevent icu build errors
-        mv "${ANDROID_HOME}/ndk/27.1.12297006/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode" "${ANDROID_HOME}/ndk/27.1.12297006/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode2"
+        sdkmanager "cmake;3.22.1"
+        if [[ ! -d "${ANDROID_HOME}/ndk/${{ matrix.ndk-version }}" ]]; then
+          sdkmanager "ndk;${{ matrix.ndk-version }}"
+        fi
+        UNICODE_DIR="${ANDROID_HOME}/ndk/${{ matrix.ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/unicode"
+        if [[ -d "${UNICODE_DIR}" ]]; then
+          mv "${UNICODE_DIR}" "${UNICODE_DIR}2"
+        fi
+        echo "ANDROID_NDK=$ANDROID_HOME/ndk/${{ matrix.ndk-version }}" >> $GITHUB_ENV
+        echo "PATH=$PATH" >> $GITHUB_ENV
+      shell: bash
 
-        echo "ANDROID_NDK=$ANDROID_HOME/ndk/27.1.12297006" >> $GITHUB_ENV
-        echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      shell: bash
+
+    - name: Clean previous build outputs
+      if: steps.cache-dist.outputs.cache-hit != 'true'
+      run: |
+        rm -rf dist dist.unstripped dist-ndk* build/target* build/compiled* build/cppruntime*
+      shell: bash
+
+    - name: Download sources
+      if: steps.cache-download.outputs.cache-hit != 'true'
+      run: yarn download
       shell: bash
 
     - name: Build
+      if: steps.cache-dist.outputs.cache-hit != 'true'
+      env:
+        JSC_NDK_VARIANT: ${{ matrix.variant }}
+      run: yarn start
+      shell: bash
+
+    - name: Show ccache stats
+      if: steps.cache-dist.outputs.cache-hit != 'true'
       run: |
-        yarn install --frozen-lockfile
-        yarn clean
-        yarn download
-        yarn start
+        if command -v ccache >/dev/null 2>&1; then
+          ccache --show-stats
+        fi
       shell: bash
 
     - name: Archive
       run: |
+          rm -rf archive
           mkdir -p archive
-          mv dist archive/
-          mv dist.unstripped archive/
+          if [[ -d "dist-${{ matrix.variant }}" ]]; then
+            cp -R "dist-${{ matrix.variant }}" archive/
+          else
+            echo "Distribution directory dist-${{ matrix.variant }} was not produced." >&2
+            exit 1
+          fi
       shell: bash
 
     - uses: actions/upload-artifact@v4
       with:
-        name: archive
+        name: archive-${{ matrix.variant }}
         path: archive
 
 
@@ -94,13 +195,18 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: archive
+        pattern: archive-*
         path: archive
+        merge-multiple: true
 
     - name: Extract archive
       run: |
-          mv archive/dist dist
-          mv archive/dist.unstripped dist.unstripped
+          shopt -s nullglob
+          for dir in archive/dist-ndk*; do
+            dest=$(basename "$dir")
+            mv "$dir" "$dest"
+          done
+          shopt -u nullglob
           rmdir archive
       shell: bash
 
@@ -128,11 +234,22 @@ jobs:
         target: google_apis
         working-directory: test
         script: |
+          export JSC_GRADLE_DIST_PATH=../../dist-ndk27
           npx expo run:android --variant release --no-bundler
           adb logcat -c
           set +e
           maestro test maestro.yaml
           STATUS=$?
+          if [ $STATUS -eq 0 ]; then
+            for variant in ndk27 ndk28 ndk29; do
+              ../scripts/run-js-smoketest.sh "$variant"
+              EXIT_CODE=$?
+              if [ $EXIT_CODE -ne 0 ]; then
+                STATUS=$EXIT_CODE
+                break
+              fi
+            done
+          fi
           adb logcat -d > adb.log
           exit $STATUS
 
@@ -145,3 +262,57 @@ jobs:
           $HOME/.maestro/tests/**/*
           test/android/app/build/outputs/apk/release/app-release.apk
           test/adb.log
+
+  publish:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true'
+    needs:
+      - build
+      - test
+    runs-on: ubuntu-latest
+    environment:
+      name: npm-publish
+      url: https://www.npmjs.com/package/jsc-android
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ⬢ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: archive-*
+          path: archive
+          merge-multiple: true
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        shell: bash
+
+      - name: Verify npm token availability
+        if: github.event.inputs.dry-run != 'true'
+        run: |
+          if [[ -z "${NPM_TOKEN:-}" ]]; then
+            echo "NPM_TOKEN secret is required for publishing." >&2
+            exit 1
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        shell: bash
+
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: |
+          TAG="${{ github.event.inputs.npm-tag }}"
+          DRY_RUN="${{ github.event.inputs.dry-run }}"
+          PUBLISH_ARGS=("-T" "$TAG")
+          if [[ "$DRY_RUN" == 'true' ]]; then
+            PUBLISH_ARGS+=("--dry-run")
+          fi
+          node scripts/publish.js "${PUBLISH_ARGS[@]}" archive
+        shell: bash

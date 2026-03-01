@@ -20,14 +20,47 @@
     "/dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist; rm -rf build",
+    "clean": "rm -rf dist dist.unstripped dist-ndk* dist-ndk*.unstripped; rm -rf build",
     "info": "./scripts/info.sh",
     "download": "./scripts/download.sh",
     "start": "./scripts/start.sh"
   },
   "config": {
-    "webkitGTK": "2.26.4",
-    "chromiumICUCommit": "64e5d7d43a1ff205e3787ab6150bbc1a1837332b"
+    "bunWebKitRepo": "https://github.com/oven-sh/WebKit.git",
+    "bunWebKitCommit": "26e6460697dab3e8681489ce67857434b2180e6f",
+    "icuRelease": "release-74-2",
+    "icuArchive": "icu4c-74_2-src.tgz",
+    "ndkVariants": [
+      {
+        "id": "ndk27",
+        "label": "Android NDK r27",
+        "npmPackage": "jsc-android-ndk27",
+        "pkgRevisionPrefixes": ["27."],
+        "buildSuffix": "ndk27",
+        "distDir": "dist-ndk27",
+        "distUnstrippedDir": "dist-ndk27.unstripped",
+        "disableLoopVectorization": true
+      },
+      {
+        "id": "ndk28",
+        "label": "Android NDK r28c",
+        "npmPackage": "jsc-android",
+        "pkgRevisionPrefixes": ["28.2."],
+        "buildSuffix": "ndk28",
+        "distDir": "dist-ndk28",
+        "distUnstrippedDir": "dist-ndk28.unstripped",
+        "default": true
+      },
+      {
+        "id": "ndk29",
+        "label": "Android NDK r29",
+        "npmPackage": "jsc-android-ndk29",
+        "pkgRevisionPrefixes": ["29."],
+        "buildSuffix": "ndk29",
+        "distDir": "dist-ndk29",
+        "distUnstrippedDir": "dist-ndk29.unstripped"
+      }
+    ]
   },
   "devDependencies": {
     "commander": "^12.1.0",

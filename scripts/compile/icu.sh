@@ -26,8 +26,23 @@ else
     BUILD_TYPE_CONFIG="--enable-debug=yes"
 fi
 
-ICU_DATA_FILTER_FILE="${TARGETDIR}/icu/filters/android.json" \
-$TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
+ICU_FILTER_FILE="${TARGETDIR}/icu/filters/android.json"
+if [[ -f "$ICU_FILTER_FILE" ]]; then
+    echo "Using ICU data filter: ${ICU_FILTER_FILE}"
+    CONFIGURE_PREFIX=(env ICU_DATA_FILTER_FILE="$ICU_FILTER_FILE")
+else
+    echo "ICU data filter not found at ${ICU_FILTER_FILE}; building without data pruning"
+    CONFIGURE_PREFIX=()
+fi
+
+CC_BIN=$CROSS_COMPILE_PLATFORM_CC-clang
+CXX_BIN=$CROSS_COMPILE_PLATFORM_CC-clang++
+if [[ -n "$JSC_CCACHE_BIN" ]]; then
+    CC_BIN="$JSC_CCACHE_BIN $CC_BIN"
+    CXX_BIN="$JSC_CCACHE_BIN $CXX_BIN"
+fi
+
+"${CONFIGURE_PREFIX[@]}" $TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
     $BUILD_TYPE_CONFIG \
     --host=$CROSS_COMPILE_PLATFORM \
     --enable-static=yes \
@@ -44,8 +59,8 @@ $TARGETDIR/icu/source/configure --prefix=${INSTALL_DIR} \
     CFLAGS="$ICU_CFLAGS" \
     CXXFLAGS="$ICU_CXXFLAGS" \
     LDFLAGS="$ICU_LDFLAGS" \
-    CC=$CROSS_COMPILE_PLATFORM_CC-clang \
-    CXX=$CROSS_COMPILE_PLATFORM_CC-clang++ \
+    CC="$CC_BIN" \
+    CXX="$CXX_BIN" \
     AR=$TOOLCHAIN_DIR/bin/llvm-ar \
     LD=$TOOLCHAIN_DIR/bin/ld \
     RANLIB=$TOOLCHAIN_DIR/bin/llvm-ranlib \
